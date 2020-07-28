@@ -1,0 +1,16 @@
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://192.168.178.26:5432/postgres
+    username: LC_USER
+    password: ''
+    driver-class-name: org.postgresql.Driver
+
+
+encrypt:
+  key-store:
+    location: classpath:/server-prod.jks
+    password: ''
+    alias: localchatprod

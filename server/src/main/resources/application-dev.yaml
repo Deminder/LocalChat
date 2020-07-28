@@ -1,0 +1,16 @@
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://192.168.178.26:5432/postgres
+    username: hims
+    password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
+    driver-class-name: org.postgresql.Driver
+
+
+encrypt:
+  key-store:
+    location: classpath:/server-dev.jks
+    password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
+    alias: localchattest
