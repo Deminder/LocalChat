@@ -1,13 +1,16 @@
 
 spring:
-  profiles:
-    active: dev
   datasource:
-    url: jdbc:postgresql://192.168.178.26:5432/postgres
-    username: hims
-    password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: admin
+    password: secret
     driver-class-name: org.postgresql.Driver
 
+  security:
+    user:
+      name: user
+      password: user
+      roles: manager
 
 encrypt:
   key-store:

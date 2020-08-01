@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/server/src/main/resources/liquibase-diff-changelog.yaml
