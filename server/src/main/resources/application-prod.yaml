@@ -6,8 +6,10 @@ spring:
     password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
     driver-class-name: org.postgresql.Driver
 
+
+
 devtools:
-  add-properties:encrypt: false
+  add-properties: false
 
 key-store:
   location: classpath:/server.jks

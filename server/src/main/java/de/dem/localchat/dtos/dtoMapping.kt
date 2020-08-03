@@ -28,13 +28,13 @@ fun ConversationMessage.toConversationMessageDto() = ConversationMessageDto(
         text = text,
         authorDate = authorDate,
         lastChange = lastChange,
-        authorName = author.user.name
+        authorName = author.user.username
 )
 
 fun Member.toMemberDto() = MemberDto(
-        name = user.name,
+        name = user.username,
         convId = conversation.id,
-        permission = permission.toPermissionDto(),
+        permission = Permission().toPermissionDto(),
         joinDate = joinDate
 )
 

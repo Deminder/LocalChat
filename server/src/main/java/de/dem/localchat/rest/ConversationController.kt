@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/conversation")
 class ConversationController(private val conversationService: ConversationService) {
 
-    @GetMapping("/")
+    @GetMapping
     fun allConversationsOfUser() : List<Conversation> {
         val auth: Authentication = SecurityContextHolder.getContext().authentication?: error("Not logged in!")
         return conversationService.allConversationsByUserName(auth.name?: error("Missing username!"))

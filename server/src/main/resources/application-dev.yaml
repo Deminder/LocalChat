@@ -8,9 +8,9 @@ spring:
 
   security:
     user:
-      name: user
-      password: user
-      roles: manager
+      name: admin
+      password: admin
+      roles: ADMIN
 
 encrypt:
   key-store:

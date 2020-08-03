@@ -1,7 +1,7 @@
 package de.dem.localchat.management.service.impl
 
-import de.dem.localchat.conversation.entity.User
-import de.dem.localchat.management.dataaccess.UserRepository
+import de.dem.localchat.security.entity.User
+import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.management.service.ManagementService
 import org.springframework.stereotype.Service
 
