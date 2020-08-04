@@ -1,6 +1,7 @@
 package de.dem.localchat.rest
 
 import com.ninjasquad.springmockk.MockkBean
+import de.dem.localchat.LocalChatApplication
 import de.dem.localchat.config.SecurityConfig
 import de.dem.localchat.conversation.entity.Conversation
 import de.dem.localchat.conversation.service.ConversationService
@@ -8,15 +9,18 @@ import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import javax.sql.DataSource
 
 @ActiveProfiles(profiles = ["test"])
 @WebMvcTest(
@@ -26,12 +30,17 @@ internal class ConversationControllerTest(
         @Autowired val mockMvc: MockMvc
 ) {
 
+    @Configuration
+    @Import(ConversationController::class)
+    class ContextConfiguration {
+
+    }
+
     @MockkBean
     private lateinit var conversationService: ConversationService
 
 
-
-    @WithMockUser("user1")
+    @WithMockUser(username = "user1", password = "pwd", authorities = ["USER"])
     @Test
     fun allConversationsOfUser() {
 

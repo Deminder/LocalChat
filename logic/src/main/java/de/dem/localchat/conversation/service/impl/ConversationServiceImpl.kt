@@ -10,7 +10,7 @@ class ConversationServiceImpl(
         private val conversationRepository: ConversationRepository
 ) : ConversationService {
     override fun allConversationsByUserName(userName: String): List<Conversation> {
-        return conversationRepository.findAllByUserName(userName)
+        return conversationRepository.findAllByUsername(userName)
     }
 
 }

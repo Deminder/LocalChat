@@ -2,10 +2,7 @@ package de.dem.localchat.security.entity
 
 import de.dem.localchat.foundation.entity.NumericIdentity
 import org.hibernate.annotations.NaturalId
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class User(
@@ -19,6 +16,11 @@ data class User(
         val enabled: Boolean = true,
 
         @ElementCollection
+        @CollectionTable(
+                name="authority",
+                joinColumns = [JoinColumn(name = "user_id")]
+        )
+        @Column(name = "role")
         val authorities: Set<String> = emptySet()
 ) : NumericIdentity(){
 

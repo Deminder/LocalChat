@@ -7,6 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 interface ConversationService {
 
-    @PreAuthorize("hasRole('ADMIN') or #username == authentication.name")
+    @PreAuthorize ("#username == authentication.name")
     fun allConversationsByUserName(@Param("username") userName: String): List<Conversation>
 }

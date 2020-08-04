@@ -5,7 +5,8 @@ spring:
     username: hims
     password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
     driver-class-name: org.postgresql.Driver
-
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL82Dialect
 
 
 devtools:

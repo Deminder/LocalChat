@@ -12,7 +12,7 @@ class UserDetailsServiceImpl(
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String?): LocalChatUserDetails? {
         return username?.let {
-            userRepository.findByName(it)?.let { user ->
+            userRepository.findByUsername(it)?.let { user ->
                 LocalChatUserDetails(user)
             }
         }

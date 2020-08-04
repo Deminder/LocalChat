@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ConversationRepository : CrudRepository<Conversation, Long> {
 
-    @Query("select m.conversation from Member m where m.username = ?1")
-    fun findAllByUserName(userName: String): List<Conversation>
+    @Query("select c from conversation c" +
+            "inner join member m on m.conversation = c.id" +
+            " inner join user u on m.user = u.id" +
+            " where u.username = ?1", nativeQuery = true)
+    fun findAllByUsername(username: String): List<Conversation>
 }

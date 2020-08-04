@@ -1,30 +1,29 @@
 package de.dem.localchat.config
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Configurable
-import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import javax.sql.DataSource
 
-
 @EnableWebSecurity
-class SecurityConfig(
-        @Autowired private val dataSource: DataSource,
-        @Autowired private val persistentTokenRepository: PersistentTokenRepository
-) : WebSecurityConfigurerAdapter() {
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+class SecurityConfig : WebSecurityConfigurerAdapter() {
+    @Autowired
+    private lateinit var dataSource: DataSource
 
+    @Autowired
+    private lateinit var persistentTokenRepository: PersistentTokenRepository
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
-                .withDefaultSchema()
+                .usersByUsernameQuery("select username, password, enabled from user where username = ?")
+                .authoritiesByUsernameQuery("select username, role from authority where username = ?")
     }
 
     @Throws(Exception::class)
@@ -46,4 +45,5 @@ class SecurityConfig(
                 .logout()
                 .logoutSuccessUrl("/logout")
     }
+
 }

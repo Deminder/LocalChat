@@ -15,6 +15,9 @@ data class Member(
         @ManyToOne(cascade = [CascadeType.REMOVE])
         val conversation: Conversation = Conversation(),
 
+        @Embedded
+        val permission: Permission = Permission(),
+
         @CreatedDate
         val joinDate: Date = Date()) : NumericIdentity() {
 }
