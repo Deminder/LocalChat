@@ -3,21 +3,27 @@ package de.dem.localchat.conversation.entity
 import de.dem.localchat.foundation.entity.NumericIdentity
 import de.dem.localchat.security.entity.User
 import org.springframework.data.annotation.CreatedDate
+import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Embedded
+import javax.persistence.Entity
+import javax.persistence.ManyToOne
 
 @Entity
 data class Member(
 
         @ManyToOne(cascade = [CascadeType.REMOVE])
-        val user: User = User(),
+        val user: User,
 
         @ManyToOne(cascade = [CascadeType.REMOVE])
-        val conversation: Conversation = Conversation(),
+        val conversation: Conversation,
 
         @Embedded
-        val permission: Permission = Permission(),
+        val permission: Permission,
+
+        var lastRead: LocalDateTime,
 
         @CreatedDate
-        val joinDate: Date = Date()) : NumericIdentity() {
+        val joinDate: Date) : NumericIdentity() {
 }

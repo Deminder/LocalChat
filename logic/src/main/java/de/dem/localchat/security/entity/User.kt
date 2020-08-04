@@ -17,11 +17,11 @@ data class User(
 
         @ElementCollection
         @CollectionTable(
-                name="authority",
+                name = "authority",
                 joinColumns = [JoinColumn(name = "user_id")]
         )
         @Column(name = "role")
         val authorities: Set<String> = emptySet()
-) : NumericIdentity(){
+) : NumericIdentity() {
 
 }

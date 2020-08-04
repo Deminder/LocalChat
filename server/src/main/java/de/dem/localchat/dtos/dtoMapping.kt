@@ -4,7 +4,7 @@ import de.dem.localchat.conversation.entity.Conversation
 import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
-import de.dem.localchat.conversation.model.ConversationMessageBatch
+import de.dem.localchat.conversation.model.ConversationMessagePage
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
         id = id,
@@ -12,13 +12,13 @@ fun Conversation.toConversationNameDto() = ConversationNameDto(
 )
 
 fun Conversation.toConversationMembersDto() = ConversationMembersDto(
-    id = id,
-    members = members.map { member: Member ->  member.toMemberDto() }
+        id = id,
+        members = members.map { member: Member -> member.toMemberDto() }
 )
 
-fun ConversationMessageBatch.toConversationMessageBatchDto() = ConversationMessageBatchDto(
-        convId = conversation.id,
-        offset = offset,
+fun ConversationMessagePage.toConversationMessageBatchDto() = ConversationMessagePageDto(
+        convId = conversationId,
+        page = page,
         last = last,
         messages = messages.map { message -> message.toConversationMessageDto() }
 )
@@ -34,7 +34,7 @@ fun ConversationMessage.toConversationMessageDto() = ConversationMessageDto(
 fun Member.toMemberDto() = MemberDto(
         name = user.username,
         convId = conversation.id,
-        permission = Permission().toPermissionDto(),
+        permission = permission.toPermissionDto(),
         joinDate = joinDate
 )
 

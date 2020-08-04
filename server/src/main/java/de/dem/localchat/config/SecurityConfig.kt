@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import javax.sql.DataSource
 
@@ -18,12 +19,17 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var persistentTokenRepository: PersistentTokenRepository
 
+    @Autowired
+    private lateinit var userDetailsService: UserDetailsService
+
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .usersByUsernameQuery("select username, password, enabled from user where username = ?")
                 .authoritiesByUsernameQuery("select username, role from authority where username = ?")
+                .and()
+                .userDetailsService(userDetailsService)
     }
 
     @Throws(Exception::class)

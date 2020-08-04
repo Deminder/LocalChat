@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 class ConversationController(private val conversationService: ConversationService) {
 
     @GetMapping
-    fun allConversationsOfUser() : List<Conversation> {
-        val auth: Authentication = SecurityContextHolder.getContext().authentication?: error("Not logged in!")
-        return conversationService.allConversationsByUserName(auth.name?: error("Missing username!"))
+    fun allConversationsOfUser(): List<Conversation> {
+        val auth: Authentication = SecurityContextHolder.getContext().authentication ?: error("Not logged in!")
+        return conversationService.allConversationsByUserName(auth.name ?: error("Missing username!"))
     }
 }

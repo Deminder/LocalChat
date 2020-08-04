@@ -1,7 +1,7 @@
 package de.dem.localchat.rest
 
-import de.dem.localchat.security.entity.User
 import de.dem.localchat.management.service.ManagementService
+import de.dem.localchat.security.entity.User
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

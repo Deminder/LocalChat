@@ -1,8 +1,8 @@
 package de.dem.localchat.dtos
 
-data class ConversationMessageBatchDto(
+data class ConversationMessagePageDto(
         val convId: Long,
-        val offset: Long,
+        val page: Int,
         val last: Boolean,
         val messages: List<ConversationMessageDto>) {
 

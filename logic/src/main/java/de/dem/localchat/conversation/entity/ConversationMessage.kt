@@ -4,22 +4,23 @@ import de.dem.localchat.foundation.entity.NumericIdentity
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.ManyToOne
 
 @Entity
 data class ConversationMessage(
-        val text: String = "",
+        val text: String,
 
         @ManyToOne
-        val author: Member = Member(),
+        val author: Member,
 
         @ManyToOne
-        val conversation: Conversation = Conversation(),
+        val conversation: Conversation,
 
         @CreatedDate
-        val authorDate: LocalDateTime = LocalDateTime.now(),
+        val authorDate: LocalDateTime,
 
         @LastModifiedDate
-        val lastChange: LocalDateTime = LocalDateTime.now()
-)  : NumericIdentity(){
+        val lastChange: LocalDateTime
+) : NumericIdentity() {
 }
