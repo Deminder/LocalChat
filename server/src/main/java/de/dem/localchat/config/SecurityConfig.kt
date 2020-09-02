@@ -26,10 +26,11 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
-                .usersByUsernameQuery("select username, password, enabled from user where username = ?")
-                .authoritiesByUsernameQuery("select username, role from authority where username = ?")
+                .usersByUsernameQuery("select u.username,u.password,u.enabled from user u where u.username = ?")
+                .authoritiesByUsernameQuery("select u.username,u.role from u.authority where u.username = ?")
                 .and()
                 .userDetailsService(userDetailsService)
+
     }
 
     @Throws(Exception::class)
