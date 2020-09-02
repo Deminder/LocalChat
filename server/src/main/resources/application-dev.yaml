@@ -1,21 +1,29 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
     username: admin
     password: secret
     driver-class-name: org.postgresql.Driver
   jpa:
+    properties:
+      hibernate:
+        default_schema: public
     database-platform: org.hibernate.dialect.PostgreSQL82Dialect
-
-  security:
-    user:
-      name: admin
-      password: admin
-      roles: ADMIN
 
 encrypt:
   key-store:
     location: classpath:/server-dev.jks
     password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
     alias: localchattest
+
+manage:
+  admin:
+    password: admin
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: TRACE
