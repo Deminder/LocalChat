@@ -8,7 +8,7 @@ import javax.persistence.Id
 @Entity
 data class UserToken(
         @Id
-        val series: String,
+        val series: String = "123",
 
         @Column(nullable = false)
         val username: String = "user",

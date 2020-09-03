@@ -5,20 +5,23 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class LocalChatUserDetails(
-        val user: User
+        private val username: String,
+        private val password: String,
+        private val enabled: Boolean,
+        private val authorities: Set<String>
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return user.authorities.map {
+        return authorities.map {
             GrantedAuthority { -> it }
         }.toMutableList()
     }
 
     override fun isEnabled(): Boolean {
-        return user.enabled
+        return enabled
     }
 
     override fun getUsername(): String {
-        return user.username
+        return username
     }
 
     override fun isCredentialsNonExpired(): Boolean {
@@ -26,7 +29,7 @@ class LocalChatUserDetails(
     }
 
     override fun getPassword(): String {
-        return user.password
+        return password
     }
 
     override fun isAccountNonExpired(): Boolean {

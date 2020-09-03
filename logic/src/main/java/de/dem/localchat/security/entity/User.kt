@@ -21,7 +21,7 @@ data class User(
                 joinColumns = [JoinColumn(name = "user_id")]
         )
         @Column(name = "role")
-        val authorities: Set<String> = mutableSetOf()
+        val authorities: MutableSet<String> = mutableSetOf()
 ) : NumericIdentity() {
 
 }

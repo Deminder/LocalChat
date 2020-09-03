@@ -49,7 +49,10 @@ class PersistentTokenRepositoryImpl(
                 series = token.series,
                 username = token.username,
                 token = token.tokenValue,
-                lastUsed = LocalDateTime.from(token.date.toInstant())
+                lastUsed = token.date
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime()
         ))
     }
 }
