@@ -32,12 +32,13 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/manage").hasRole("manager")
+                .antMatchers("/api/manage").hasRole("MANAGER")
                 .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .successForwardUrl("/api/manage")
+                .loginPage("/")
+                .loginProcessingUrl("/login")
                 .and()
                 .rememberMe()
                 .alwaysRemember(true)
@@ -45,7 +46,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .tokenValiditySeconds(60 * 60 * 24 * 30) // 30 days
                 .and()
                 .logout()
-                .logoutSuccessUrl("/logout")
+                .logoutUrl("/remove-tokens")
     }
 
 }

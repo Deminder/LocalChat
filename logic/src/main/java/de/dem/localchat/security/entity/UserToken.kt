@@ -1,6 +1,6 @@
 package de.dem.localchat.security.entity
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -16,6 +16,6 @@ data class UserToken(
         @Column(nullable = false)
         val token: String = "abcdef",
 
-        val lastUsed: LocalDateTime = LocalDateTime.now()
+        val lastUsed: ZonedDateTime = ZonedDateTime.now()
 ) {
 }

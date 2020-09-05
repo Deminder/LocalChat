@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.*
 
 @Component
+@Transactional
 class PersistentTokenRepositoryImpl(
         @Autowired val userTokenRepository: UserTokenRepository
 ) : PersistentTokenRepository {
@@ -21,7 +24,7 @@ class PersistentTokenRepositoryImpl(
                     series = series,
                     username = it.username,
                     token = tokenValue,
-                    lastUsed = LocalDateTime.from(lastUsed.toInstant())
+                    lastUsed = ZonedDateTime.from(lastUsed.toInstant())
             ))
         }
     }
@@ -31,9 +34,7 @@ class PersistentTokenRepositoryImpl(
             PersistentRememberMeToken(it.series,
                     it.username,
                     it.token,
-                    Date.from(
-                            it.lastUsed.toInstant(ZoneId.systemDefault() as ZoneOffset?)
-                    )
+                    Date.from(it.lastUsed.toInstant())
             )
         }
 
@@ -49,10 +50,7 @@ class PersistentTokenRepositoryImpl(
                 series = token.series,
                 username = token.username,
                 token = token.tokenValue,
-                lastUsed = token.date
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime()
+                lastUsed = ZonedDateTime.from(token.date.toInstant())
         ))
     }
 }

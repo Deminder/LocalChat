@@ -17,4 +17,6 @@ key-store:
   password: ''
   alias: localchat
 
-
+manage:
+  admin:
+    password: changeme

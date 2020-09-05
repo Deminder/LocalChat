@@ -4,6 +4,7 @@ import de.dem.localchat.foundation.entity.NumericIdentity
 import de.dem.localchat.security.entity.User
 import org.springframework.data.annotation.CreatedDate
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.CascadeType
 import javax.persistence.Embedded
@@ -22,8 +23,8 @@ data class Member(
         @Embedded
         val permission: Permission,
 
-        var lastRead: LocalDateTime,
+        var lastRead: ZonedDateTime,
 
         @CreatedDate
-        val joinDate: Date) : NumericIdentity() {
+        val joinDate: ZonedDateTime) : NumericIdentity() {
 }

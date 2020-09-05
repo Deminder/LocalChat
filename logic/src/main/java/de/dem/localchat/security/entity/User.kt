@@ -2,6 +2,8 @@ package de.dem.localchat.security.entity
 
 import de.dem.localchat.foundation.entity.NumericIdentity
 import org.hibernate.annotations.NaturalId
+import org.springframework.data.annotation.CreatedDate
+import java.time.ZonedDateTime
 import javax.persistence.*
 
 @Entity
@@ -13,7 +15,7 @@ data class User(
         val password: String = "ee7ab",
 
         @Column(nullable = false)
-        val enabled: Boolean = true,
+        var enabled: Boolean = false,
 
         @ElementCollection
         @CollectionTable(
@@ -21,7 +23,9 @@ data class User(
                 joinColumns = [JoinColumn(name = "user_id")]
         )
         @Column(name = "role")
-        val authorities: MutableSet<String> = mutableSetOf()
+        val authorities: MutableSet<String> = mutableSetOf(),
+        @CreatedDate
+        val registerDate: ZonedDateTime = ZonedDateTime.now()
 ) : NumericIdentity() {
 
 }

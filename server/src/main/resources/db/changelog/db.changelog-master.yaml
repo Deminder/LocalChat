@@ -247,3 +247,13 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
             validate: true
+  - changeSet:
+      id: 1599323803086-1
+      author: jan (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: register_date
+                  type: timestamp
+            tableName: user

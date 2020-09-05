@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class RegistrationServiceImpl(
         @Autowired val userRepository: UserRepository,
-        @Value("\${manage.admin.password}") val adminPassword: String
+        @Value("\${manage.admin.password:admin}") val adminPassword: String
 ) : RegistrationService {
 
     @Transactional

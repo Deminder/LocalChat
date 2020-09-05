@@ -17,10 +17,6 @@ encrypt:
     password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
     alias: localchattest
 
-manage:
-  admin:
-    password: admin
-
 logging:
   level:
     org:
