@@ -24,7 +24,7 @@ class PersistentTokenRepositoryImpl(
                     series = series,
                     username = it.username,
                     token = tokenValue,
-                    lastUsed = ZonedDateTime.from(lastUsed.toInstant())
+                    lastUsed = toZoned(lastUsed)
             ))
         }
     }
@@ -50,7 +50,9 @@ class PersistentTokenRepositoryImpl(
                 series = token.series,
                 username = token.username,
                 token = token.tokenValue,
-                lastUsed = ZonedDateTime.from(token.date.toInstant())
+                lastUsed = toZoned(token.date)
         ))
     }
+
+    private fun toZoned(date: Date) = date.toInstant().atZone(ZoneId.systemDefault())
 }
