@@ -33,3 +33,6 @@ build/
 .vscode/
 /server/src/main/resources/liquibase-diff-changelog.yaml
 /server-dev.jks
+/scripts/requests/cookies.txt
+/gradle/wrapper/
+/.mvn/.gradle-enterprise/gradle-enterprise-workspace-id
