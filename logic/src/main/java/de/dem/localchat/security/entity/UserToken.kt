@@ -8,14 +8,14 @@ import javax.persistence.Id
 @Entity
 data class UserToken(
         @Id
-        val series: String = "123",
+        val series: String,
 
         @Column(nullable = false)
-        val username: String = "user",
+        val username: String,
 
         @Column(nullable = false)
-        val token: String = "abcdef",
+        val token: String,
 
-        val lastUsed: ZonedDateTime = ZonedDateTime.now()
+        val lastUsed: ZonedDateTime
 ) {
 }

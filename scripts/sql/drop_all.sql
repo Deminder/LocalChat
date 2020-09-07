@@ -1,0 +1,9 @@
+SET SCHEMA public;
+DROP TABLE conversation_message;
+DROP TABLE member;
+DROP TABLE conversation;
+DROP TABLE authority;
+DROP TABLE user_token;
+DROP TABLE "user";
+DROP TABLE databasechangelog;
+DROP TABLE databasechangeloglock;

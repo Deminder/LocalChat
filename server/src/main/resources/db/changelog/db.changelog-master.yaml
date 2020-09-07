@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1596577245210-1
+      id: 1599492192534-1
       author: jan (generated)
       changes:
         - createTable:
@@ -15,30 +15,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: authority
   - changeSet:
-      id: 1596577245210-2
-      author: jan (generated)
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                    primaryKeyName: conversationPK
-                  name: id
-                  type: BIGINT
-              - column:
-                  name: create_date
-                  type: TIMESTAMP WITHOUT TIME ZONE
-              - column:
-                  constraints:
-                    nullable: false
-                  name: name
-                  type: VARCHAR(255)
-            tableName: conversation
-  - changeSet:
-      id: 1596577245210-3
+      id: 1599492192534-2
       author: jan (generated)
       changes:
         - createTable:
@@ -68,7 +45,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: conversation_message
   - changeSet:
-      id: 1596577245210-4
+      id: 1599492192534-3
       author: jan (generated)
       changes:
         - createTable:
@@ -120,35 +97,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: member
   - changeSet:
-      id: 1596577245210-5
-      author: jan (generated)
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                    primaryKeyName: userPK
-                  name: id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: enabled
-                  type: BOOLEAN
-              - column:
-                  constraints:
-                    nullable: false
-                  name: password
-                  type: VARCHAR(255)
-              - column:
-                  name: username
-                  type: VARCHAR(255)
-            tableName: user
-  - changeSet:
-      id: 1596577245210-6
+      id: 1599492192534-4
       author: jan (generated)
       changes:
         - createTable:
@@ -175,7 +124,64 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: user_token
   - changeSet:
-      id: 1596577245210-7
+      id: 1599492192534-5
+      author: jan (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: conversationPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: create_date
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: creator
+                  type: VARCHAR(255)
+            tableName: conversation
+  - changeSet:
+      id: 1599492192534-6
+      author: jan (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: userPK
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: enabled
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: register_date
+                  type: TIMESTAMP WITHOUT TIME ZONE
+            tableName: user
+  - changeSet:
+      id: 1599492192534-7
       author: jan (generated)
       changes:
         - addUniqueConstraint:
@@ -183,46 +189,7 @@ databaseChangeLog:
             constraintName: UK_t8tbwelrnviudxdaggwr1kd9b
             tableName: user
   - changeSet:
-      id: 1596577245210-8
-      author: jan (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: conversation_id
-            baseTableName: member
-            constraintName: FK2m6rh88h9lqanm2anb5g1vi4t
-            deferrable: false
-            initiallyDeferred: false
-            referencedColumnNames: id
-            referencedTableName: conversation
-            validate: true
-  - changeSet:
-      id: 1596577245210-9
-      author: jan (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: conversation_id
-            baseTableName: conversation_message
-            constraintName: FKhh4tgo7pncgc8xchsutwtvvg7
-            deferrable: false
-            initiallyDeferred: false
-            referencedColumnNames: id
-            referencedTableName: conversation
-            validate: true
-  - changeSet:
-      id: 1596577245210-10
-      author: jan (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: author_id
-            baseTableName: conversation_message
-            constraintName: FKqx034ktdjxqks98kh2qx4fpc9
-            deferrable: false
-            initiallyDeferred: false
-            referencedColumnNames: id
-            referencedTableName: member
-            validate: true
-  - changeSet:
-      id: 1596577245210-11
+      id: 1599492192534-8
       author: jan (generated)
       changes:
         - addForeignKeyConstraint:
@@ -231,11 +198,58 @@ databaseChangeLog:
             constraintName: FKr1wgeo077ok1nr1shx0t70tg8
             deferrable: false
             initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
             referencedColumnNames: id
             referencedTableName: user
             validate: true
   - changeSet:
-      id: 1596577245210-12
+      id: 1599492192534-9
+      author: jan (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: conversation_id
+            baseTableName: conversation_message
+            constraintName: FKhh4tgo7pncgc8xchsutwtvvg7
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: conversation
+            validate: true
+  - changeSet:
+      id: 1599492192534-10
+      author: jan (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: conversation_message
+            constraintName: FKqx034ktdjxqks98kh2qx4fpc9
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: member
+            validate: true
+  - changeSet:
+      id: 1599492192534-11
+      author: jan (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: conversation_id
+            baseTableName: member
+            constraintName: FK2m6rh88h9lqanm2anb5g1vi4t
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: conversation
+            validate: true
+  - changeSet:
+      id: 1599492192534-12
       author: jan (generated)
       changes:
         - addForeignKeyConstraint:
@@ -244,41 +258,9 @@ databaseChangeLog:
             constraintName: FKswb523yn1xw3806ojrfpcyadl
             deferrable: false
             initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
             referencedColumnNames: id
             referencedTableName: user
             validate: true
-  - changeSet:
-      id: 1599323803086-1
-      author: jan (generated)
-      changes:
-        - addColumn:
-            columns:
-              - column:
-                  name: register_date
-                  type: timestamp
-            tableName: user
-  - changeSet:
-      id: 1599483218406-3
-      author: jan (generated)
-      changes:
-        - addColumn:
-            columns:
-              - column:
-                  name: creator
-                  type: varchar(255)
-            tableName: conversation
-  - changeSet:
-      id: 1599483218406-1
-      author: jan (generated)
-      changes:
-        - dropUniqueConstraint:
-            constraintName: UK_t8tbwelrnviudxdaggwr1kd9b
-            tableName: user
-  - changeSet:
-      id: 1599483218406-2
-      author: jan (generated)
-      changes:
-        - addUniqueConstraint:
-            columnNames: username
-            constraintName: UK_t8tbwelrnviudxdaggwr1kd9b
-            tableName: user
+

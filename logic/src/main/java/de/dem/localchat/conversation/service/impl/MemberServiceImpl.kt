@@ -7,6 +7,7 @@ import de.dem.localchat.conversation.service.MemberService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import java.util.Collections.max
 
 @Service
 class MemberServiceImpl(
@@ -34,7 +35,7 @@ class MemberServiceImpl(
             memberRepository.findByConversationIdAndUserUsername(
                     message.conversation.id, SecurityContextHolder.getContext().authentication.name
             )?.let { member ->
-                member.lastRead = listOf(member.lastRead, message.authorDate).max()!!
+                member.lastRead = max(listOf(member.lastRead, message.authorDate))
                 memberRepository.save(member)
             }
 

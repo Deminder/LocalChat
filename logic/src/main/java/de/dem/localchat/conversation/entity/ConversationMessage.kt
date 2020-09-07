@@ -4,8 +4,8 @@ import de.dem.localchat.foundation.entity.NumericIdentity
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import java.time.Instant
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.ManyToOne
@@ -22,9 +22,9 @@ data class ConversationMessage(
         val conversation: Conversation,
 
         @CreatedDate
-        val authorDate: ZonedDateTime,
+        val authorDate: Instant,
 
         @LastModifiedDate
-        val lastChange: ZonedDateTime
+        val lastChange: Instant
 ) : NumericIdentity() {
 }

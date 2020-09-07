@@ -1,12 +1,12 @@
 package de.dem.localchat.dtos
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 data class ConversationMessageDto(
         val id: Long,
         val text: String,
-        val authorDate: ZonedDateTime,
-        val lastChange: ZonedDateTime,
+        val authorDate: Instant,
+        val lastChange: Instant,
         val authorName: String) {
 
 }

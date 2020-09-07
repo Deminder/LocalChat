@@ -37,7 +37,10 @@ class RegistrationServiceImpl(
     override fun initAdmin() {
         if( ! isRegistered("admin") ) {
             userRepository.save(
-                    User("admin", enc(adminPassword), authorities = mutableSetOf("ADMIN", "MANAGER"))
+                    User("admin",
+                            enc(adminPassword),
+                            enabled = true,
+                            authorities = mutableSetOf("ADMIN", "MANAGER"))
             )
         }
     }
