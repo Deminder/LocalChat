@@ -1,6 +1,7 @@
 package de.dem.localchat.conversation.entity
 
 import de.dem.localchat.foundation.entity.NumericIdentity
+import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -19,6 +20,9 @@ data class Conversation(
 
         @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
         val messages: List<ConversationMessage>,
+
+        @CreatedBy
+        val creator: String,
 
         @CreatedDate
         val createDate: LocalDateTime) : NumericIdentity() {

@@ -257,3 +257,28 @@ databaseChangeLog:
                   name: register_date
                   type: timestamp
             tableName: user
+  - changeSet:
+      id: 1599483218406-3
+      author: jan (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: creator
+                  type: varchar(255)
+            tableName: conversation
+  - changeSet:
+      id: 1599483218406-1
+      author: jan (generated)
+      changes:
+        - dropUniqueConstraint:
+            constraintName: UK_t8tbwelrnviudxdaggwr1kd9b
+            tableName: user
+  - changeSet:
+      id: 1599483218406-2
+      author: jan (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: username
+            constraintName: UK_t8tbwelrnviudxdaggwr1kd9b
+            tableName: user

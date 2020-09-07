@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableJpaRepositories
 @EnableTransactionManagement
 @EnableConfigurationProperties
-class LocalChatApplication {
-
-}
+class LocalChatApplication
 
 fun main(args: Array<String>) {
     runApplication<LocalChatApplication>(*args) {

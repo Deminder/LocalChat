@@ -9,6 +9,8 @@
     "test": "ng test",
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
+    "check": "ng lint && ng test --watch=false --browsers=ChromeHeadless",
+    "clean": "rm -rf dist/",
     "e2e": "ng e2e"
   },
   "private": true,

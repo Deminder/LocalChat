@@ -50,11 +50,13 @@ internal class ConversationControllerTest(
                         name = "conv1",
                         messages = emptyList(),
                         members = emptySet(),
+                        creator = "user1",
                         createDate = LocalDateTime.now()
                 ), Conversation(
                         name = "conv2",
                         messages = emptyList(),
                         members = emptySet(),
+                        creator = "user2",
                         createDate = LocalDateTime.now()
                 ))
 
