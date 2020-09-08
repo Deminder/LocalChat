@@ -6,6 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 interface RegistrationService {
     fun registerUser(name: String, password: String)
 
+    fun changePassword(password: String)
+
     @PreAuthorize("#username == authentication.name")
     fun deleteUser(@Param("username") name: String)
 

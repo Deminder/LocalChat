@@ -5,6 +5,7 @@ import de.dem.localchat.security.entity.User
 import de.dem.localchat.security.service.RegistrationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,6 +25,14 @@ class RegistrationServiceImpl(
         userRepository.save(
                 User(name, enc(password), authorities = mutableSetOf("USER"))
         )
+    }
+
+    override fun changePassword(password: String) {
+        val name = SecurityContextHolder.getContext().authentication?.name ?: error("Not authenticated!")
+        userRepository.findByUsername(name)?.let {
+            it.password = enc(password)
+            userRepository.save(it)
+        } ?: error("User '${name}' not found!")
     }
 
     override fun deleteUser(name: String) {
