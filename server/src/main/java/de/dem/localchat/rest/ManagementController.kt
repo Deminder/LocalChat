@@ -13,6 +13,7 @@ class ManagementController(private val managementService: ManagementService) {
 
     @GetMapping("/users")
     fun getAllUsers(enabled: Boolean?): List<User> {
+
         return managementService.allUsers()
                 .filter { enabled == null || it.enabled == enabled}
     }

@@ -11,6 +11,10 @@ module.exports = exports = {
     },
 
     "extends": "eslint:recommended",
+    
+    "parserOptions": {
+      "sourceType": "module"
+    },
 
     "rules": {
         // Possible Errors (overrides from recommended set)
