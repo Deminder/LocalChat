@@ -4,6 +4,7 @@ import de.dem.localchat.foundation.entity.NumericIdentity
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.Instant
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -14,15 +15,16 @@ data class Conversation(
         @Column(nullable = false)
         val name: String,
 
-        @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
-        val members: Set<Member>,
-
-        @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
-        val messages: List<ConversationMessage>,
-
         @CreatedBy
-        val creator: String,
+        var creator: String = "",
 
         @CreatedDate
-        val createDate: LocalDateTime) : NumericIdentity() {
+        var createDate: Instant = Instant.EPOCH
+
+) : NumericIdentity() {
+        @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
+        var members: Set<Member> = emptySet()
+
+        @OneToMany(fetch = FetchType.LAZY, mappedBy = "conversation")
+        var messages: List<ConversationMessage> = emptyList()
 }

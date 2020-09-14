@@ -20,9 +20,9 @@ data class Member(
         @Embedded
         val permission: Permission,
 
-        var lastRead: Instant,
+        val lastRead: Instant = Instant.EPOCH,
 
         @CreatedDate
-        val joinDate: Instant
+        val joinDate: Instant = Instant.EPOCH
 ) : NumericIdentity() {
 }

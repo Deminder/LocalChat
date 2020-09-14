@@ -1,26 +1,23 @@
 package de.dem.localchat.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import de.dem.localchat.LocalChatApplication
-import de.dem.localchat.config.SecurityConfig
 import de.dem.localchat.conversation.entity.Conversation
 import de.dem.localchat.conversation.service.ConversationService
+import de.dem.localchat.conversation.service.MemberService
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Instant
 import java.time.LocalDateTime
 
 @ActiveProfiles(profiles = ["test"])
@@ -40,27 +37,26 @@ internal class ConversationControllerTest(
     @MockkBean
     private lateinit var conversationService: ConversationService
 
+    @MockkBean
+    private lateinit var memberService: MemberService
+
 
     @WithMockUser(username = "user1", password = "pwd", authorities = ["USER"])
     @Test
     fun allConversationsOfUser() {
 
-        every { conversationService.allConversationsByUserName("user1") } returns
+        every { conversationService.conversationsByUserName("user1") } returns
                 listOf(Conversation(
                         name = "conv1",
-                        messages = emptyList(),
-                        members = emptySet(),
                         creator = "user1",
-                        createDate = LocalDateTime.now()
+                        createDate = Instant.now()
                 ), Conversation(
                         name = "conv2",
-                        messages = emptyList(),
-                        members = emptySet(),
                         creator = "user2",
-                        createDate = LocalDateTime.now()
+                        createDate = Instant.now()
                 ))
 
-        mockMvc.perform(get("/api/conversation"))
+        mockMvc.perform(get("/api/conversations"))
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("\$[0].name").value("conv1"))

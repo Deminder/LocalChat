@@ -8,7 +8,8 @@ import de.dem.localchat.conversation.model.ConversationMessagePage
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
         id = id,
-        name = name
+        name = name,
+        createDate = createDate
 )
 
 fun Conversation.toConversationMembersDto() = ConversationMembersDto(
@@ -32,13 +33,22 @@ fun ConversationMessage.toConversationMessageDto() = ConversationMessageDto(
 )
 
 fun Member.toMemberDto() = MemberDto(
-        name = user.username,
+        userId = user.id,
+        username = user.username,
         convId = conversation.id,
         permission = permission.toPermissionDto(),
         joinDate = joinDate
 )
 
 fun Permission.toPermissionDto() = PermissionDto(
+        read = read,
+        write = read,
+        voice = voice,
+        moderate = moderate,
+        administrate = administrate
+)
+
+fun PermissionDto.toPermission() = Permission(
         read = read,
         write = read,
         voice = voice,

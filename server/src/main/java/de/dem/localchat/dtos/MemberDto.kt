@@ -4,7 +4,8 @@ import java.time.Instant
 
 
 data class MemberDto(
-        val name: String,
+        val userId: Long,
+        val username: String,
         val convId: Long,
         val permission: PermissionDto,
         val joinDate: Instant

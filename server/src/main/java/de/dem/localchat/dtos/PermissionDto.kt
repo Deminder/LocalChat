@@ -1,9 +1,9 @@
 package de.dem.localchat.dtos
 
-class PermissionDto(
-        read: Boolean,
-        write: Boolean,
-        voice: Boolean,
-        moderate: Boolean,
-        administrate: Boolean) {
+data class PermissionDto(
+        val read: Boolean = false,
+        val write: Boolean = false,
+        val voice: Boolean = false,
+        val moderate: Boolean = false,
+        val administrate: Boolean = false) {
 }

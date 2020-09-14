@@ -17,23 +17,23 @@ class ManagementServiceImpl(
                 .filterNotNull()
     }
 
-    override fun disableUser(username: String) {
+    @Transactional
+    override fun setUserEnabled(id: Long, enabled: Boolean) {
         if (isAdmin()) {
-            userRepository.deactivateUser(username)
-        }
-
-    }
-
-    override fun enableUser(username: String) {
-        if (isAdmin()) {
-            userRepository.enableUser(username)
+            userRepository.findById(id).ifPresent {
+                it.enabled = enabled
+            }
         }
     }
 
-    private fun isAdmin(): Boolean {
-        return SecurityContextHolder.getContext().authentication?.let {
-            it.authorities.find { a -> a.authority == "ADMIN" }
-        } != null
+    override fun deleteUser(id: Long) {
+        if (isAdmin()) {
+            userRepository.deleteById(id)
+        }
     }
+
+    private fun isAdmin() = SecurityContextHolder.getContext().authentication?.let {
+        it.authorities.find { a -> a.authority == "ADMIN" }
+    } != null
 
 }

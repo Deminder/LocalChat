@@ -1,11 +1,10 @@
 package de.dem.localchat.dtos
 
-import javax.validation.constraints.NotNull
+import java.time.Instant
 
 data class ConversationNameDto(
-        @NotNull
         val id: Long,
-        @NotNull
-        val name: String) {
+        val name: String,
+        val createDate: Instant) {
 
 }

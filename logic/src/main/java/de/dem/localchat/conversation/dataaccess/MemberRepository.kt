@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 interface MemberRepository : CrudRepository<Member, Long> {
 
     fun findByConversationIdAndUserUsername(conversationId: Long, username: String): Member?
+    fun findByConversationIdAndUserId(conversationId: Long, userId: Long): Member?
 
     fun findByConversationId(conversationId: Long): List<Member>
-
 }

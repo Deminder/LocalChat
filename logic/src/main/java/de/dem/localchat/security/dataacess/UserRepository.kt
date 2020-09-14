@@ -9,12 +9,4 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : CrudRepository<User, Long> {
     fun findByUsername(username: String?): User?
-
-    @Modifying
-    @Query("UPDATE User u SET u.enabled = false WHERE u.username = ?1")
-    fun deactivateUser(username: String)
-
-    @Modifying
-    @Query("UPDATE User u SET u.enabled = true WHERE u.username = ?1")
-    fun enableUser(username: String)
 }
