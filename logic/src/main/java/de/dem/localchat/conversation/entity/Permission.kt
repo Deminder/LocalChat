@@ -7,5 +7,4 @@ data class Permission(
         val voice: Boolean = false,
         val moderate: Boolean = false,
         val administrate: Boolean = false
-) {
-}
+)

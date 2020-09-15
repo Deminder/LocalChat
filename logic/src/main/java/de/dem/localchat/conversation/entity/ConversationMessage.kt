@@ -1,21 +1,23 @@
 package de.dem.localchat.conversation.entity
 
-import de.dem.localchat.foundation.entity.NumericIdentity
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.Instant
 
 data class ConversationMessage(
+        @Id
+        val id: Long? = null,
+
         val text: String,
 
-        val author: Member,
+        val authorId: Long,
 
-        val conversation: Conversation,
+        val conversationId: Long,
 
         @CreatedDate
         val authorDate: Instant,
 
         @LastModifiedDate
         val lastChange: Instant
-) : NumericIdentity() {
-}
+)

@@ -5,11 +5,6 @@ spring:
     username: admin
     password: secret
     driver-class-name: org.postgresql.Driver
-  jpa:
-    properties:
-      hibernate:
-        default_schema: public
-    database-platform: org.hibernate.dialect.PostgreSQL82Dialect
 
 encrypt:
   key-store:

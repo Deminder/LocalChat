@@ -2,10 +2,13 @@ package de.dem.localchat.conversation.service.impl
 
 import de.dem.localchat.conversation.dataaccess.ConversationMessageRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
+import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.exception.ConversationException
 import de.dem.localchat.conversation.service.MemberService
+import de.dem.localchat.security.dataacess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.util.Collections.max
@@ -13,7 +16,8 @@ import java.util.Collections.max
 @Service
 class MemberServiceImpl(
         @Autowired private val memberRepository: MemberRepository,
-        @Autowired private val conversationMessageRepository: ConversationMessageRepository
+        @Autowired private val conversationMessageRepository: ConversationMessageRepository,
+        @Autowired private val userRepository: UserRepository,
 ) : MemberService {
     override fun isMember(conversationId: Long, username: String, authority: String): Boolean {
         return memberRepository.findByIdAndUsername(conversationId, username)
@@ -29,20 +33,19 @@ class MemberServiceImpl(
                 } ?: false
     }
 
-    override fun updateLastRead(conversationMessageId: Long) {
-        conversationMessageRepository.findById(conversationMessageId).orElseThrow {
-            ConversationException("Conversation message does not exist!")
-        }.let { message ->
-            authorizedMember(message.conversation.id)?.let { member ->
-                member.copy(
-                        lastRead = max(listOf(member.lastRead, message.authorDate)))
-                        .let {
-                            memberRepository.save(member)
-                        }
-            }
+    override fun updateLastRead(conversationMessageId: Long): Member =
+            conversationMessageRepository.findById(conversationMessageId).orElseThrow {
+                ConversationException("Conversation message does not exist!")
+            }.let { message ->
+                authorizedMember(message.conversationId)?.let { member ->
+                    member.copy(
+                            lastRead = max(listOf(member.lastRead, message.authorDate)))
+                            .let {
+                                memberRepository.save(member)
+                            }
+                }
+            } ?: error("Failed updating last read!")
 
-        }
-    }
 
     private fun authorizedMember(cid: Long) = SecurityContextHolder.getContext().authentication?.let {
         memberRepository.findByIdAndUsername(cid, it.name)
@@ -50,7 +53,7 @@ class MemberServiceImpl(
 
     private fun subjectAndAuthorPair(cid: Long, subjectId: Long) =
             authorizedMember(cid)?.let { author ->
-                memberRepository.findByConversationIdAndUserId(cid, subjectId)?.let { subject ->
+                memberRepository.findByConvIdAndUserId(cid, subjectId)?.let { subject ->
                     Pair(author, subject)
                 }
             }
@@ -102,6 +105,9 @@ class MemberServiceImpl(
             subjectAndAuthorPair(conversationId, userId)?.let { (author, subject) ->
                 removePermission(subject.id == author.id, subject.permission, author.permission)
             } ?: false
+
+    override fun memberName(cid: Long, userId: Long) =
+        userRepository.findByIdOrNull(userId)?.username ?: "[Unknown]"
 
     /**
      * Any user can remove themselves.

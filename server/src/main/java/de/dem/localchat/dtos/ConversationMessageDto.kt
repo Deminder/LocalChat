@@ -7,6 +7,6 @@ data class ConversationMessageDto(
         val text: String,
         val authorDate: Instant,
         val lastChange: Instant,
-        val authorName: String) {
+        val authorUserId: Long) {
 
 }

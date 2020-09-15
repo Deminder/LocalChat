@@ -33,7 +33,7 @@ class ConversationController(
     @GetMapping("/{cid}/members")
     fun listMembers(@PathVariable("cid") cid: Long): List<MemberDto> {
         return conversationService.membersOfConversation(cid).map {
-            it.toMemberDto()
+            it.toMemberDto(memberService.memberName(cid, it.userId))
         }
     }
 
@@ -43,7 +43,7 @@ class ConversationController(
             @PathVariable("uid") uid: Long,
             @Valid permission: PermissionDto): MemberDto {
         return memberService.permissionChange(cid, uid, permission.toPermission()).let {
-            it.toMemberDto()
+            it.toMemberDto(memberService.memberName(cid, it.userId))
         }
     }
 

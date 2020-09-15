@@ -8,7 +8,7 @@ interface MemberService {
 
     fun isMember(conversationId: Long, username: String, authority: String): Boolean
 
-    fun updateLastRead(conversationMessageId: Long)
+    fun updateLastRead(conversationMessageId: Long): Member
 
     /**
      * Change permission of user of specified userId.
@@ -28,4 +28,6 @@ interface MemberService {
      * Whether the author user is allowed to delete the subject user with the specified userId.
      */
     fun allowedRemoval(conversationId: Long, userId: Long): Boolean
+
+    fun memberName(cid: Long, userId: Long): String
 }

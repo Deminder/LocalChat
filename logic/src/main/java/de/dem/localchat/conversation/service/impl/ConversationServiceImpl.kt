@@ -74,8 +74,8 @@ class ConversationServiceImpl(
                                 .mapNotNull { memberName ->
                                     userRepository.findByUsername(memberName)?.let { user ->
                                         Member(
-                                                conversation = it,
-                                                user = user,
+                                                conversationId = it.id!!,
+                                                userId = user.id!!,
                                                 permission = Permission(
                                                         read = true, write = true, voice = true,
                                                         moderate = memberName == adminName,

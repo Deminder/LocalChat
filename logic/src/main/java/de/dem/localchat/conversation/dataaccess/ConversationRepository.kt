@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository
 interface ConversationRepository : CrudRepository<Conversation, Long> {
 
     @Query("SELECT c FROM conversation c, member m, user u WHERE " +
-            "m.conversation.id = c.id AND m.user.id = u.id AND u.username = :username")
+            "m.conversation_id = c.id AND m.user_id = u.id AND u.username = :username")
     fun findAllByUsername(@Param("username") username: String): List<Conversation>
 
 }

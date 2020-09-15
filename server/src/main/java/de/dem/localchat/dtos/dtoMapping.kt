@@ -7,7 +7,7 @@ import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
-        id = id,
+        id = id ?: -1,
         name = name,
         createDate = createDate
 )
@@ -20,17 +20,18 @@ fun ConversationMessagePage.toConversationMessageBatchDto() = ConversationMessag
 )
 
 fun ConversationMessage.toConversationMessageDto() = ConversationMessageDto(
-        id = id,
+        id = id ?: -1,
         text = text,
         authorDate = authorDate,
         lastChange = lastChange,
-        authorName = author.user.username
+        authorUserId = authorId
 )
 
-fun Member.toMemberDto() = MemberDto(
-        userId = user.id,
-        username = user.username,
-        convId = conversation.id,
+
+fun Member.toMemberDto(memberName: String) = MemberDto(
+        userId = userId,
+        username = memberName,
+        convId = conversationId,
         permission = permission.toPermissionDto(),
         joinDate = joinDate
 )

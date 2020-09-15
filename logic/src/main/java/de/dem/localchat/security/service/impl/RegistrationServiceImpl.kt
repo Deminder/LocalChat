@@ -23,7 +23,10 @@ class RegistrationServiceImpl(
             throw IllegalArgumentException("User '${name}' already exists!")
         }
         userRepository.save(
-                User(name, enc(password), authorities = setOf("USER"))
+                User(
+                        username = name,
+                        password = enc(password),
+                        authorities = setOf("USER"))
         )
     }
 
@@ -43,10 +46,11 @@ class RegistrationServiceImpl(
 
     @Transactional
     override fun initAdmin() {
-        if( ! isRegistered("admin") ) {
+        if (!isRegistered("admin")) {
             userRepository.save(
-                    User("admin",
-                            enc(adminPassword),
+                    User(
+                            username = "admin",
+                            password = enc(adminPassword),
                             enabled = true,
                             authorities = mutableSetOf("ADMIN", "MANAGER"))
             )

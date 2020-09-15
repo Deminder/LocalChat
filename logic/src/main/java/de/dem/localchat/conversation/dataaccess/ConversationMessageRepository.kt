@@ -11,16 +11,18 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ConversationMessageRepository : PagingAndSortingRepository<ConversationMessage, Long> {
 
-    fun findAllByConversationId(conversationId: Long, pageable: Pageable): Page<ConversationMessage>
+    @Query("SELECT cm FROM conversation_message cm WHERE " +
+            "cm.conversation_id = :cid")
+    fun findAllByConversationId(@Param("cid") conversationId: Long, pageable: Pageable): Page<ConversationMessage>
 
     @Query("SELECT m FROM conversation_message m WHERE " +
-            "m.conversation.id = :convId AND m.text ~ :pattern")
-    fun findAllMessagesByPattern(@Param("convId") conversationId: Long,
+            "m.conversation_id = :cid AND m.text ~ :pattern")
+    fun findAllMessagesByPattern(@Param("cid") conversationId: Long,
                                  @Param("pattern") searchPattern: String,
                                  pageable: Pageable): Page<ConversationMessage>
 
     @Query("SELECT m FROM conversation_message m WHERE " +
-            "m.conversation.id = :convId AND m.text LIKE CONCAT('%', :pattern, '%')")
+            "m.conversation_id = :convId AND m.text LIKE CONCAT('%', :pattern, '%')")
     fun findAllMessagesByString(@Param("convId") conversationId: Long,
                                 @Param("pattern") searchPattern: String,
                                 pageable: Pageable): Page<ConversationMessage>
