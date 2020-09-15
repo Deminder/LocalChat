@@ -3,6 +3,7 @@ package de.dem.localchat.management.service.impl
 import de.dem.localchat.management.service.ManagementService
 import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.security.entity.User
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,11 +18,10 @@ class ManagementServiceImpl(
                 .filterNotNull()
     }
 
-    @Transactional
     override fun setUserEnabled(id: Long, enabled: Boolean) {
         if (isAdmin()) {
-            userRepository.findById(id).ifPresent {
-                it.enabled = enabled
+            userRepository.findByIdOrNull(id)?.let {
+                userRepository.save(it.copy(enabled = enabled))
             }
         }
     }

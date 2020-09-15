@@ -8,7 +8,6 @@ import de.dem.localchat.conversation.service.MemberService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.Collections.max
 
 @Service
@@ -17,7 +16,7 @@ class MemberServiceImpl(
         @Autowired private val conversationMessageRepository: ConversationMessageRepository
 ) : MemberService {
     override fun isMember(conversationId: Long, username: String, authority: String): Boolean {
-        return memberRepository.findByConversationIdAndUserUsername(conversationId, username)
+        return memberRepository.findByIdAndUsername(conversationId, username)
                 ?.permission?.let {
                     return@let when (authority) {
                         "READ" -> it.read
@@ -46,7 +45,7 @@ class MemberServiceImpl(
     }
 
     private fun authorizedMember(cid: Long) = SecurityContextHolder.getContext().authentication?.let {
-        memberRepository.findByConversationIdAndUserUsername(cid, it.name)
+        memberRepository.findByIdAndUsername(cid, it.name)
     }
 
     private fun subjectAndAuthorPair(cid: Long, subjectId: Long) =

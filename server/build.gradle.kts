@@ -37,7 +37,7 @@ liquibase {
                 "password" to "secret",
                 "driver" to "org.postgresql.Driver",
                 "referenceUrl" to "hibernate:spring:de.dem.localchat" +
-                        "?dialect=org.hibernate.dialect.PostgreSQL82Dialect" +
+                        "?dialect=org.hibernate.dialect.PostgreSQL82Dialect" + // TODO JDBC dialect
                         "&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy" +
                         "&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy",
                 "changeLogFile" to "src/main/resources/db/changelog/db.changelog-master-diff.yaml"

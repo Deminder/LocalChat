@@ -12,11 +12,6 @@ fun Conversation.toConversationNameDto() = ConversationNameDto(
         createDate = createDate
 )
 
-fun Conversation.toConversationMembersDto() = ConversationMembersDto(
-        id = id,
-        members = members.map { member: Member -> member.toMemberDto() }
-)
-
 fun ConversationMessagePage.toConversationMessageBatchDto() = ConversationMessagePageDto(
         convId = conversationId,
         page = page,

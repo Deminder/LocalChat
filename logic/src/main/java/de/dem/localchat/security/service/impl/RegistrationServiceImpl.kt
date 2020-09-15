@@ -23,15 +23,14 @@ class RegistrationServiceImpl(
             throw IllegalArgumentException("User '${name}' already exists!")
         }
         userRepository.save(
-                User(name, enc(password), authorities = mutableSetOf("USER"))
+                User(name, enc(password), authorities = setOf("USER"))
         )
     }
 
     override fun changePassword(password: String) {
         val name = SecurityContextHolder.getContext().authentication?.name ?: error("Not authenticated!")
         userRepository.findByUsername(name)?.let {
-            it.password = enc(password)
-            userRepository.save(it)
+            userRepository.save(it.copy(password = enc(password)))
         } ?: error("User '${name}' not found!")
     }
 
