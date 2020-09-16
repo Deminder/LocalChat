@@ -20,8 +20,8 @@ import java.util.*
 @Configuration
 @EnableSwagger2
 @Import(BeanValidatorPluginsConfiguration::class)
-@EnableWebMvc
-class SpringFoxConfig : WebMvcConfigurationSupport() {
+class SpringFoxConfig {
+
     @Bean
     fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
@@ -44,10 +44,4 @@ class SpringFoxConfig : WebMvcConfigurationSupport() {
         )
     }
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/")
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/")
-    }
 }

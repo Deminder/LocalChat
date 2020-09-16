@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { ConversationComponent } from './conversation/conversation.component';
 import { appreducer } from './store/reducers/app.reducer';
 import { ConversationEffects } from './store/effects/conversation.effects';
+import {HttpClientModule} from '@angular/common/http';
 
 export const metaReducers = [];
 
@@ -25,6 +26,7 @@ export const metaReducers = [];
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
+    HttpClientModule,
     AppRoutingModule,
     StoreModule.forRoot(
       {

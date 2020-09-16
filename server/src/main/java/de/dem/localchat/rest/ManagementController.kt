@@ -2,7 +2,6 @@ package de.dem.localchat.rest
 
 import de.dem.localchat.management.service.ManagementService
 import de.dem.localchat.security.entity.User
-import org.springframework.data.rest.webmvc.ResourceNotFoundException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -12,7 +11,7 @@ class ManagementController(private val managementService: ManagementService) {
     @GetMapping("/users")
     fun getAllUsers(enabled: Boolean?): List<User> {
         return managementService.allUsers()
-                .filter { enabled == null || it.enabled == enabled}
+                .filter { enabled == null || it.enabled == enabled }
     }
 
     @PostMapping("/users/{id}/disable")
@@ -27,7 +26,7 @@ class ManagementController(private val managementService: ManagementService) {
 
     @GetMapping("/users/{id}")
     fun getUser(@PathVariable id: Long): User {
-        return managementService.allUsers().find { it.id == id } ?: throw ResourceNotFoundException("No such user!")
+        return managementService.allUsers().find { it.id == id } ?: error("No such user!")
     }
 
     @DeleteMapping("/users/{id}")

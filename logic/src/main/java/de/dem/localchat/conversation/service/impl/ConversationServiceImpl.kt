@@ -25,13 +25,13 @@ class ConversationServiceImpl(
         @Autowired private val conversationMessageRepository: ConversationMessageRepository
 ) : ConversationService {
 
-    override fun conversationsByUserName(userName: String): List<Conversation> {
-        return conversationRepository.findAllByUsername(userName)
-    }
+    override fun conversationsByUserName(userName: String): List<Conversation> =
+            conversationRepository.findAllByUsername(userName)
 
-    override fun membersOfConversation(conversationId: Long): List<Member> {
-        return memberRepository.findByConversationId(conversationId)
-    }
+
+    override fun membersOfConversation(conversationId: Long): List<Member> =
+            memberRepository.findByConversationId(conversationId)
+
 
     override fun changeConversationName(conversationId: Long, newName: String) =
             conversationRepository.findByIdOrNull(conversationId)?.let {
@@ -39,24 +39,23 @@ class ConversationServiceImpl(
             } ?: error("No such conversation!")
 
 
-    private fun descDate(page: Int, pageSize: Int): Pageable {
-        return PageRequest.of(page, pageSize, Sort.by("authorDate").descending())
-    }
+    private fun descDate(page: Int, pageSize: Int) =
+            PageRequest.of(page, pageSize, Sort.by("authorDate").descending())
 
-    override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int): Page<ConversationMessage> {
-        return conversationMessageRepository.findAllByConversationId(conversationId, descDate(page, pageSize))
-    }
+    override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int): Page<ConversationMessage> =
+            conversationMessageRepository.findAllByConversationId(conversationId, descDate(page, pageSize))
+
 
     override fun searchConversationMessages(conversationId: Long,
                                             searchPattern: String,
                                             regex: Boolean,
                                             page: Int,
-                                            pageSize: Int): Page<ConversationMessage> {
-        return when (regex) {
-            true -> conversationMessageRepository::findAllMessagesByPattern
-            false -> conversationMessageRepository::findAllMessagesByString
-        }.invoke(conversationId, searchPattern, descDate(page, pageSize))
-    }
+                                            pageSize: Int): Page<ConversationMessage> =
+            when (regex) {
+                true -> conversationMessageRepository::findAllMessagesByPattern
+                false -> conversationMessageRepository::findAllMessagesByString
+            }.invoke(conversationId, searchPattern, descDate(page, pageSize))
+
 
     override fun createConversation(adminName: String,
                                     conversationName: String,

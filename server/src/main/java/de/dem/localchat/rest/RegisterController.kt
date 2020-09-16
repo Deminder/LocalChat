@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/register-user")
+@RequestMapping("/api/register-user")
 class RegisterController(private val registrationService: RegistrationService) {
 
 

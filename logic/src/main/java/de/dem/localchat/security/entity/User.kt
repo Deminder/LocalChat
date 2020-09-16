@@ -16,8 +16,6 @@ data class User(
 
         val enabled: Boolean = false,
 
-        val memberships: Set<Member> = emptySet(),
-
         val authorities: Set<String> = emptySet(),
 
         @CreatedDate
