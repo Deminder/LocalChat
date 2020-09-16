@@ -1,9 +1,7 @@
 package de.dem.localchat.security.entity
 
-import de.dem.localchat.conversation.entity.Member
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.Transient
 import java.time.Instant
 
 data class User(

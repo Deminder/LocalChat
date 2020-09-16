@@ -2,7 +2,7 @@ package de.dem.localchat.security.service.impl
 
 import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.security.entity.User
-import de.dem.localchat.security.service.RegistrationService
+import de.dem.localchat.security.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional
 
 
 @Service
-class RegistrationServiceImpl(
+class UserServiceImpl(
         @Autowired val userRepository: UserRepository,
         @Value("\${manage.admin.password:admin}") val adminPassword: String
-) : RegistrationService {
+) : UserService {
 
     @Transactional
     override fun registerUser(name: String, password: String) {
@@ -60,6 +60,9 @@ class RegistrationServiceImpl(
     override fun isRegistered(name: String): Boolean {
         return userRepository.findByUsername(name) != null
     }
+
+    override fun userByName(username: String): User? =
+        userRepository.findByUsername(username)
 
     private fun enc(password: String): String {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password)

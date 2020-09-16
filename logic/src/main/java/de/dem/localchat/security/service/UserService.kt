@@ -1,9 +1,10 @@
 package de.dem.localchat.security.service
 
+import de.dem.localchat.security.entity.User
 import org.springframework.data.repository.query.Param
 import org.springframework.security.access.prepost.PreAuthorize
 
-interface RegistrationService {
+interface UserService {
     fun registerUser(name: String, password: String)
 
     fun changePassword(password: String)
@@ -13,4 +14,5 @@ interface RegistrationService {
 
     fun initAdmin()
     fun isRegistered(name: String): Boolean
+    fun userByName(username: String): User?
 }

@@ -5,6 +5,7 @@ import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
+import de.dem.localchat.security.entity.User
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
         id = id ?: -1,
@@ -50,4 +51,10 @@ fun PermissionDto.toPermission() = Permission(
         voice = voice,
         moderate = moderate,
         administrate = administrate
+)
+
+fun User.toUserDts() = UserDts(
+        id = id ?: -1,
+        username = username,
+        registerDate
 )

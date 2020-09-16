@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,18 +16,22 @@ import { ConversationComponent } from './conversation/conversation.component';
 import { appreducer } from './store/reducers/app.reducer';
 import { ConversationEffects } from './store/effects/conversation.effects';
 import {HttpClientModule} from '@angular/common/http';
+import { LoginComponent } from './login/login.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 export const metaReducers = [];
 
 @NgModule({
-  declarations: [AppComponent, ConversationComponent],
+  declarations: [AppComponent, ConversationComponent, LoginComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
+    MatInputModule,
     HttpClientModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     StoreModule.forRoot(
       {
