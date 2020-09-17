@@ -1,0 +1,40 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <app-field-error [errors]="errors" field="username"></app-field-error>
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+    <input matInput type="text" formControlName="username" />
+  </mat-form-field>
+  <app-field-error [errors]="errors" field="password"></app-field-error>
+  <mat-form-field>
+    <mat-label>Password</mat-label>
+    <input
+      matInput
+      [type]="hide ? 'password' : 'text'"
+      formControlName="password"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Repeat Password</mat-label>
+    <input
+      matInput
+      [type]="hide ? 'password' : 'text'"
+      formControlName="passwordRepeat"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      (click)="hide = !hide"
+      [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hide"
+    >
+      <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+    </button>
+    <mat-error *ngIf="registerForm.errors?.unmatchingPassword"
+      >Passwords do not match!</mat-error
+    >
+  </mat-form-field>
+  <button mat-raised-button [disabled]="!registerForm.valid" type="submit">
+    Register
+  </button>
+</form>

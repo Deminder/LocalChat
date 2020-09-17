@@ -11,5 +11,6 @@
     <mat-icon>share</mat-icon>
   </button>
 </mat-toolbar>
+<mat-progress-bar *ngIf="isProgressActive$ | async" mode="query"></mat-progress-bar>
 
 <router-outlet></router-outlet>

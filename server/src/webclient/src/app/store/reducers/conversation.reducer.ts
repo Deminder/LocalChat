@@ -1,6 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
 import { listConversationsSuccess } from '../actions/conversation.actions';
 
+export const conversationKey = 'conversation';
+
 export interface ConversationState {
   currentCID: number;
 }

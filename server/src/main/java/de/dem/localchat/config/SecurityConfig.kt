@@ -36,8 +36,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/manage").hasRole("MANAGER")
-                .antMatchers("/api/user").permitAll()
+                .antMatchers("/api/manage/**").hasRole("MANAGER")
+                .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
                 .and()

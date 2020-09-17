@@ -9,6 +9,7 @@ import {
 
 @Injectable()
 export class ConversationEffects {
+
   loadConversations$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listConversations),

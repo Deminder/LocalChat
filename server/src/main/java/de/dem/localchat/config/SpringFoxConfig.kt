@@ -28,7 +28,8 @@ class SpringFoxConfig {
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.regex(".api.*"))
-                .build().apiInfo(getApiInfo())
+                .build()
+                .apiInfo(getApiInfo())
     }
 
     private fun getApiInfo(): ApiInfo {
@@ -36,7 +37,7 @@ class SpringFoxConfig {
                 "Local Chat API",
                 "-",
                 "0.1",
-                "tos url",
+                "-",
                 Contact("admin", "localhost", "admin@localhost"),
                 "GPLv3",
                 "https://www.gnu.org/licenses/gpl-3.0.txt",

@@ -22,7 +22,7 @@ class ConversationController(
     }
 
     @PostMapping
-    fun createConversation(@Valid createRequest: ConversationCreateRequest): ConversationNameDto {
+    fun createConversation(@RequestBody @Valid createRequest: ConversationCreateRequest): ConversationNameDto {
         return conversationService.createConversation(
                 username(), createRequest.conversationName, createRequest.memberNames).let {
             it.toConversationNameDto()

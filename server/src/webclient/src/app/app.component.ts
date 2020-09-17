@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {Store} from '@ngrx/store';
+import {isProgressActive} from './store/selectors/progress.selectors';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'webclient';
+
+  isProgressActive$ = this.store.select(isProgressActive);
+
+  constructor(private store: Store) { }
 }

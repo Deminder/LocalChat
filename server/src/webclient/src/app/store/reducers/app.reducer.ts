@@ -3,16 +3,27 @@ import {
   conversationReducer,
   ConversationState,
   initialConversationState,
+  conversationKey,
 } from './conversation.reducer';
 
+import {
+  progressReducer,
+  ProgressState,
+  initialProgressState,
+  progressKey,
+} from './progress.reducer';
+
 export interface AppState {
-  conversation: ConversationState;
+  [conversationKey]: ConversationState;
+  [progressKey]: ProgressState;
 }
 
 export const initialAppState: AppState = {
-  conversation: initialConversationState,
+  [conversationKey]: initialConversationState,
+  [progressKey]: initialProgressState,
 };
 
 export const appreducer: ActionReducerMap<AppState, any> = {
-  conversation: conversationReducer,
+  [conversationKey]: conversationReducer,
+  [progressKey]: progressReducer,
 };
