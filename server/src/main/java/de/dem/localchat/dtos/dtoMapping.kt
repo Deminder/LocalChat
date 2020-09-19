@@ -6,17 +6,24 @@ import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.security.entity.User
+import java.time.Instant
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
         id = id ?: -1,
         name = name,
-        createDate = createDate
+        createDate = createDate,
+        lastUpdate = lastUpdate ?: Instant.EPOCH
 )
 
-fun ConversationMessagePage.toConversationMessageBatchDto() = ConversationMessagePageDto(
+fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessagePageDto(
         convId = conversationId,
         page = page,
+        pageSize = pageSize,
         last = last,
+        olderThan = olderThan,
+        newerThan = newerThan,
+        search = search,
+        regex = regex,
         messages = messages.map { message -> message.toConversationMessageDto() }
 )
 

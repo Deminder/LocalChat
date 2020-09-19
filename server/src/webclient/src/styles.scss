@@ -30,4 +30,13 @@ $candy-app-theme: mat-light-theme((
 // that you are using.
 @include angular-material-theme($candy-app-theme);
 
-@Import 'assets/google-web-font-local.css'
+@Import 'assets/google-web-font-local.css';
+
+body {
+  margin: 0px;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
+}

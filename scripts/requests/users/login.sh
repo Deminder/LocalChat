@@ -7,4 +7,6 @@ fi
 
 ./ccurl.sh -X POST -j \
 	-F "username=$USERNAME" -F "password=$PASSWORD" \
-	http://localhost:9432/login
+	http://localhost:9432/api/user/login
+#	-H "Content-Type: application/json" \
+

@@ -46,7 +46,7 @@ class UserServiceImpl(
 
     @Transactional
     override fun initAdmin() {
-        if (!isRegistered("admin")) {
+        if (!isRegistered("admin"))
             userRepository.save(
                     User(
                             username = "admin",
@@ -54,17 +54,12 @@ class UserServiceImpl(
                             enabled = true,
                             authorities = mutableSetOf("ADMIN", "MANAGER"))
             )
-        }
+
     }
 
-    override fun isRegistered(name: String): Boolean {
-        return userRepository.findByUsername(name) != null
-    }
+    override fun isRegistered(name: String) = userRepository.findByUsername(name) != null
 
-    override fun userByName(username: String): User? =
-        userRepository.findByUsername(username)
+    override fun userByName(username: String) = userRepository.findByUsername(username)
 
-    private fun enc(password: String): String {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password)
-    }
+    private fun enc(password: String) = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password)
 }

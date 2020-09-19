@@ -9,8 +9,10 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ConversationRepository : CrudRepository<Conversation, Long> {
 
-    @Query("SELECT c FROM conversation c, member m, user u WHERE " +
-            "m.conversation_id = c.id AND m.user_id = u.id AND u.username = :username")
+    @Query("SELECT c.*, ci.last_author_date as last_update " +
+            "FROM conversation c, conversation_info ci, member m, user u WHERE " +
+            "c.id = ci.id AND m.conversation_id = c.id AND m.user_id = u.id AND u.username = :username " +
+            "ORDER BY last_update DESC")
     fun findAllByUsername(@Param("username") username: String): List<Conversation>
 
 }

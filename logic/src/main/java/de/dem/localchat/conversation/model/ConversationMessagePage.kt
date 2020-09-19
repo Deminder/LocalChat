@@ -1,11 +1,16 @@
 package de.dem.localchat.conversation.model
 
 import de.dem.localchat.conversation.entity.ConversationMessage
+import java.time.Instant
 
 data class ConversationMessagePage(
         val conversationId: Long,
-        val page: Int = 0,
-        val last: Boolean = false,
-        val messages: List<ConversationMessage> = emptyList()
-) {
-}
+        val page: Int,
+        val pageSize: Int,
+        val last: Boolean,
+        val messages: List<ConversationMessage>,
+        val olderThan: Instant? = null,
+        val newerThan: Instant? = null,
+        val search: String? = null,
+        val regex: Boolean? = null,
+)

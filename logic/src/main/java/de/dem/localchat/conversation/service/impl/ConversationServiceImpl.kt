@@ -4,18 +4,17 @@ import de.dem.localchat.conversation.dataaccess.ConversationMessageRepository
 import de.dem.localchat.conversation.dataaccess.ConversationRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
 import de.dem.localchat.conversation.entity.Conversation
-import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
+import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.security.dataacess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class ConversationServiceImpl(
@@ -42,20 +41,30 @@ class ConversationServiceImpl(
     private fun descDate(page: Int, pageSize: Int) =
             PageRequest.of(page, pageSize, Sort.by("authorDate").descending())
 
-    override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int): Page<ConversationMessage> =
-            conversationMessageRepository.findAllByConversationId(conversationId, descDate(page, pageSize))
+    override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int,
+                                         olderThan: Instant,
+                                         newerThan: Instant,
+                                         search: String?,
+                                         regex: Boolean) =
+            descDate(page, pageSize).let { pageRequest ->
+                if (search == null)
+                    conversationMessageRepository.findAllByConversationIdBetween(
+                            conversationId, olderThan, newerThan, pageRequest)
+                else (if (regex)
+                    conversationMessageRepository::findAllMessagesByPattern
+                else conversationMessageRepository::findAllMessagesByString)
+                        .invoke(conversationId, olderThan, newerThan, search, pageRequest)
 
-
-    override fun searchConversationMessages(conversationId: Long,
-                                            searchPattern: String,
-                                            regex: Boolean,
-                                            page: Int,
-                                            pageSize: Int): Page<ConversationMessage> =
-            when (regex) {
-                true -> conversationMessageRepository::findAllMessagesByPattern
-                false -> conversationMessageRepository::findAllMessagesByString
-            }.invoke(conversationId, searchPattern, descDate(page, pageSize))
-
+            }.let {
+                ConversationMessagePage(
+                        conversationId = conversationId,
+                        page = page,
+                        pageSize = pageSize,
+                        olderThan = olderThan,
+                        last = it.isLast,
+                        messages = it.content
+                )
+            }
 
     override fun createConversation(adminName: String,
                                     conversationName: String,

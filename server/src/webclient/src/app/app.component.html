@@ -1,16 +1,30 @@
 <mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+  <button
+    mat-icon-button
+    (click)="sidenav.toggle()"
+    aria-label="Toggle Sidenav"
+  >
     <mat-icon>menu</mat-icon>
   </button>
   <span>Local Chat</span>
   <span class="example-spacer"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button>
-</mat-toolbar>
-<mat-progress-bar *ngIf="isProgressActive$ | async" mode="query"></mat-progress-bar>
 
-<router-outlet></router-outlet>
+  <ng-template [ngIf]="isSettingsOpen$ | async">
+    <button mat-icon-button aria-label="Back" routerLink="/">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </ng-template>
+  <ng-template [ngIf]="!(isSettingsOpen$ | async)">
+    <button mat-icon-button aria-label="Open settings" routerLink="/settings">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </ng-template>
+</mat-toolbar>
+
+<app-sidenav #sidenav>
+  <mat-progress-bar
+    *ngIf="isProgressActive$ | async"
+    mode="query"
+  ></mat-progress-bar>
+  <router-outlet></router-outlet>
+</app-sidenav>

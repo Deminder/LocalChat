@@ -42,8 +42,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/")
-                .loginProcessingUrl("/login")
+                .loginPage("/authorize")
+                .loginProcessingUrl("/api/user/login")
                 .and()
                 .rememberMe()
                 .alwaysRemember(true)
@@ -51,7 +51,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .tokenValiditySeconds(60 * 60 * 24 * 30) // 30 days
                 .and()
                 .logout()
-                .logoutUrl("/remove-tokens")
+                .logoutUrl("/api/user/remove-tokens")
     }
 
 }

@@ -2,7 +2,12 @@
   <app-field-error [errors]="errors" field="username"></app-field-error>
   <mat-form-field>
     <mat-label>Username</mat-label>
-    <input matInput type="text" formControlName="username" />
+    <input
+      matInput
+      type="text"
+      autocomplete="username"
+      formControlName="username"
+    />
   </mat-form-field>
   <app-field-error [errors]="errors" field="password"></app-field-error>
   <mat-form-field>
@@ -10,6 +15,7 @@
     <input
       matInput
       [type]="hide ? 'password' : 'text'"
+      autocomplete="current-password"
       formControlName="password"
     />
     <button

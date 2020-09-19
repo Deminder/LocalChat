@@ -14,7 +14,7 @@ data class Member(
         val conversationId: Long,
 
         @Embedded.Empty
-        val permission: Permission,
+        val permission: Permission = Permission(),
 
         val lastRead: Instant = Instant.EPOCH,
 

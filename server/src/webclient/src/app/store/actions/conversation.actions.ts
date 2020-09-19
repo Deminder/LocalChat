@@ -1,11 +1,16 @@
 import { createAction, props } from '@ngrx/store';
+import { ConversationNameDto } from 'src/app/openapi/model/models';
 
 export const listConversations = createAction(
-  '[Conversation List] Load Conversation List',
+  '[Conversation/API] List',
   props<{}>()
 );
 
 export const listConversationsSuccess = createAction(
-  '[Conversation List] Load Conversation List Success',
-  props<{id: number}>()
+  '[Conversation/API] List Success',
+  props<{ convs: ConversationNameDto[] }>()
+);
+
+export const listConversationsFailure = createAction(
+  '[Conversation] List Failure'
 );

@@ -9,7 +9,7 @@ export class NotifyService {
   observers: Map<string, Subject<any>> = new Map();
 
   publish(label: string, obj: any): void {
-    console.log(`[${label}] ${obj}`);
+    console.log(`[${label}] ${JSON.stringify(obj)}`);
     const obs = this.observers.get(label);
     if (obs) {
       obs.next(obj);

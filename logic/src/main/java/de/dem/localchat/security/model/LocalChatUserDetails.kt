@@ -12,7 +12,7 @@ class LocalChatUserDetails(
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return authorities.map {
-            GrantedAuthority { it }
+            GrantedAuthority { "ROLE_${it}" }
         }.toMutableList()
     }
 

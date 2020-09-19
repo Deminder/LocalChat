@@ -6,7 +6,7 @@ export const progressStart = createAction(
 );
 
 export const progressStop = createAction(
-  '[Progress] Start',
+  '[Progress] Stop',
   props<{action: Action}>()
 );
 

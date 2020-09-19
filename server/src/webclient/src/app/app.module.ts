@@ -5,6 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -16,16 +19,19 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConversationComponent } from './conversation/conversation.component';
 import { appreducer } from './store/reducers/app.reducer';
-import { ConversationEffects } from './store/effects/conversation.effects';
+import { ConversationEffects } from './store/effects/conversation/conversation.effects';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './authorize/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthorizeComponent } from './authorize/authorize.component';
 import { RegisterComponent } from './authorize/register/register.component';
 import { AuthorizeEffects } from './store/effects/authorize/authorize.effects';
+import { ProgressEffects } from './store/effects/progress/progress.effects';
 import { routerKey } from './store/reducers/router.reducer';
 import { FieldErrorComponent } from './authorize/field-error/field-error.component';
 import { FielderrorPipe } from './shared/fielderror.pipe';
+import { SidenavComponent } from './sidenav/sidenav.component';
+import { SettingsComponent } from './settings/settings.component';
 
 export const metaReducers = [];
 
@@ -38,6 +44,8 @@ export const metaReducers = [];
     RegisterComponent,
     FieldErrorComponent,
     FielderrorPipe,
+    SidenavComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,7 +55,10 @@ export const metaReducers = [];
     MatButtonModule,
     MatInputModule,
     MatTabsModule,
+    MatCardModule,
     MatProgressBarModule,
+    MatSidenavModule,
+    MatListModule,
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
@@ -58,7 +69,7 @@ export const metaReducers = [];
       },
       { metaReducers }
     ),
-    EffectsModule.forRoot([ConversationEffects, AuthorizeEffects]),
+    EffectsModule.forRoot([ConversationEffects, AuthorizeEffects, ProgressEffects]),
     StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

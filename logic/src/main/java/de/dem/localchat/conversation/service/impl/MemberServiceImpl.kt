@@ -51,32 +51,39 @@ class MemberServiceImpl(
         memberRepository.findByIdAndUsername(cid, it.name)
     }
 
+    /**
+     * Find or create member. Creates an unsaved member if user not yet member of conversation.
+     */
+    private fun findOrCreateMember(cid: Long, userId: Long) =
+            memberRepository.findByConvIdAndUserId(cid, userId) ?: if (userRepository.existsById(userId))
+                Member(conversationId = cid, userId = userId) else
+                error("User with id $userId does not exist!")
+
+
     private fun subjectAndAuthorPair(cid: Long, subjectId: Long) =
             authorizedMember(cid)?.let { author ->
-                memberRepository.findByConvIdAndUserId(cid, subjectId)?.let { subject ->
-                    Pair(author, subject)
-                }
+                findOrCreateMember(cid, subjectId) to author
             }
 
 
-    override fun permissionChange(conversationId: Long, userId: Long, newPermission: Permission) =
-            subjectAndAuthorPair(conversationId, userId)?.let { (author, subject) ->
+    override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission) =
+            subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
                 subject.copy(
                         permission = writeNewPermission(subject.id == author.id,
                                 subject.permission, newPermission, author.permission))
                         .let {
                             memberRepository.save(it)
                         }
-            } ?: error("Failed to update member!")
+            } ?: error("Failed to insert or update member!")
 
 
-    override fun allowedPermissionChange(conversationId: Long, userId: Long, newPermission: Permission) =
-            subjectAndAuthorPair(conversationId, userId)?.let { (author, subject) ->
-                changePermission(author.id == subject.id, subject.permission, author.permission)
+    override fun allowedPermissionChange(conversationId: Long, userId: Long) =
+            subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
+                modificationPermission(author.id == subject.id, subject.permission, author.permission)
             } ?: Permission()
 
 
-    private fun changePermission(selfSubject: Boolean, subjectPermission: Permission, authorPermission: Permission) =
+    private fun modificationPermission(selfSubject: Boolean, subjectPermission: Permission, authorPermission: Permission) =
             authorPermission.moderate.let { m ->
                 authorPermission.administrate.let { a ->
                     Permission(read = m || a, write = m || a, voice = m || a,
@@ -91,7 +98,7 @@ class MemberServiceImpl(
     private fun writeNewPermission(ss: Boolean,
                                    op: Permission,
                                    np: Permission,
-                                   ap: Permission) = changePermission(ss, op, ap).let { cp ->
+                                   ap: Permission) = modificationPermission(ss, op, ap).let { cp ->
         Permission(
                 read = (cp.read && np.read) || op.read,
                 write = (cp.write && np.write) || op.write,
@@ -102,12 +109,13 @@ class MemberServiceImpl(
 
 
     override fun allowedRemoval(conversationId: Long, userId: Long) =
-            subjectAndAuthorPair(conversationId, userId)?.let { (author, subject) ->
+            subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
                 removePermission(subject.id == author.id, subject.permission, author.permission)
             } ?: false
 
     override fun memberName(cid: Long, userId: Long) =
-        userRepository.findByIdOrNull(userId)?.username ?: "[Unknown]"
+            userRepository.findByIdOrNull(userId)?.username ?: "[Unknown]"
+
 
     /**
      * Any user can remove themselves.
@@ -119,7 +127,7 @@ class MemberServiceImpl(
 
 
     override fun removeMember(conversationId: Long, userId: Long) {
-        subjectAndAuthorPair(conversationId, userId)?.let { (author, subject) ->
+        subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
             if (removePermission(subject.id == author.id, subject.permission, author.permission)) {
                 memberRepository.delete(subject)
             }

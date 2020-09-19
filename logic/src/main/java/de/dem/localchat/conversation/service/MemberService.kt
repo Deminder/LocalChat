@@ -13,7 +13,7 @@ interface MemberService {
     /**
      * Change permission of user of specified userId.
      */
-    fun permissionChange(conversationId: Long, userId: Long, newPermission: Permission): Member
+    fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission): Member
     fun removeMember(conversationId: Long, userId: Long)
 
     /**
@@ -21,7 +21,7 @@ interface MemberService {
      * Boolean fields indicate whether the author is allowed
      * to change the permission of its subject user with the specified userId.
      */
-    fun allowedPermissionChange(conversationId: Long, userId: Long, newPermission: Permission): Permission
+    fun allowedPermissionChange(conversationId: Long, userId: Long): Permission
 
 
     /**

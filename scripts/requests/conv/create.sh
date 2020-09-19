@@ -1,7 +1,7 @@
 #!/bin/bash
-
+MEMBERS=${2:-[]}
 ./ccurl.sh -X POST \
-	-F "conversationName=$1" -F "memberNames=${2:-user2}" \
+	-H "Content-Type: application/json" \
+	--data "{\"conversationName\":\"$1\",\"memberNames\":$MEMBERS}" \
 	http://localhost:9432/api/conversations
-#-H "Content-Type: application/json" \
-#--data "{\"conversationName\":\"$1\",\"memberNames\":[\"user2\"]}" \
+#-F "conversationName=$1" -F "memberNames=${2:-user2}" \

@@ -3,12 +3,12 @@ import { createSelector, createFeatureSelector } from '@ngrx/store';
 
 export const routerKey = 'router';
 
-export interface State {
+export interface RouterState {
   router: fromRouter.RouterReducerState<any>;
 }
 
 export const selectRouter = createFeatureSelector<
-  State,
+  RouterState,
   fromRouter.RouterReducerState<any>
 >(routerKey);
 
@@ -24,3 +24,13 @@ export const {
 } = fromRouter.getSelectors(selectRouter);
 
 export const selectRegisteredUsername = selectQueryParam('registered');
+
+export const selectedConversationId = createSelector(
+  selectRouteParam('conversationId'),
+  (id) => Number(id)
+);
+
+export const isSettingsOpen = createSelector(
+  selectUrl,
+  (data) => data === '/settings'
+);

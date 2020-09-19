@@ -3,6 +3,7 @@ package de.dem.localchat.conversation.entity
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.ReadOnlyProperty
 import java.time.Instant
 
 data class Conversation(
@@ -15,5 +16,8 @@ data class Conversation(
         val creator: String = "",
 
         @CreatedDate
-        val createDate: Instant = Instant.EPOCH
+        val createDate: Instant = Instant.EPOCH,
+
+        @ReadOnlyProperty
+        val lastUpdate: Instant? = null
 )

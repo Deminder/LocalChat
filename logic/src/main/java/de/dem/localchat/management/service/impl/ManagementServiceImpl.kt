@@ -33,7 +33,7 @@ class ManagementServiceImpl(
     }
 
     private fun isAdmin() = SecurityContextHolder.getContext().authentication?.let {
-        it.authorities.find { a -> a.authority == "ADMIN" }
+        it.authorities.find { a -> a.authority == "ROLE_ADMIN" }
     } != null
 
 }

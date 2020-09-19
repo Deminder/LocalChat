@@ -1,74 +1,87 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { mergeMap, map, tap, catchError } from 'rxjs/operators';
-import { login, register } from '../../actions/authorize.actions';
+import { Action, Store } from '@ngrx/store';
+import {
+  FunctionWithParametersType,
+  TypedAction,
+} from '@ngrx/store/src/models';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { login, logout, register } from '../../actions/authorize.actions';
 import { progressStart, progressStop } from '../../actions/progress.actions';
 import { AuthorizeService } from './authorize.service';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { Router } from '@angular/router';
-import { of } from 'rxjs';
 
 @Injectable()
 export class AuthorizeEffects {
-  logout$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(login),
-        tap(() => progressStart({ action: login })),
-        mergeMap((a) =>
-          this.authorizeService.logout().pipe(
-            tap(() => this.router.navigate(['/authorize'])),
-            catchError((error) =>
-              of(this.notifyService.publish('logout-errors', error.errors))
-            ),
-            map(() => progressStop({ action: a }))
-          )
-        )
-      ),
-    { useEffectsErrorHandler: false }
+  logout$ = this.createAuthEffect(
+    logout,
+    this.authorizeService.logout,
+    () => this.router.navigate(['/authorize']),
+    'Logout failed!',
+    'logout-errors'
   );
 
-  login$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(login),
-        tap(() => progressStart({ action: login })),
-        mergeMap((a) =>
-          this.authorizeService.login(a.creds).pipe(
-            tap(() => this.router.navigate(['/'])),
-            catchError((error) =>
-              of(this.notifyService.publish('login-errors', error.errors))
-            ),
-            map(() => progressStop({ action: a }))
-          )
-        )
-      ),
-    { useEffectsErrorHandler: false }
+  login$ = this.createAuthEffect(
+    login,
+    (a) => this.authorizeService.login(a.creds),
+    () => this.router.navigate(['/']),
+    'Login failed!',
+    'login-errors'
   );
 
-  register$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(register),
-        tap(() => progressStart({ action: login })),
-        mergeMap((a) =>
-          this.authorizeService.register(a.creds).pipe(
-            tap( () => this.router.navigate(['/authorize'], {
-                  queryParams: { registered: a.creds.username },
-                })
-            ),
-            catchError((error) =>
-              of(this.notifyService.publish('register-errors', error.errors))
-            ),
-            map(() => progressStop({ action: a }))
-          )
-        )
-      ),
-    { useEffectsErrorHandler: false }
+  register$ = this.createAuthEffect(
+    register,
+    (a) => this.authorizeService.register(a.creds),
+    () => this.router.navigate(['/authorize']),
+    'Register failed!',
+    'register-errors'
   );
+
+  createAuthEffect<
+    AC extends FunctionWithParametersType<P, R & TypedAction<T>> &
+      TypedAction<T>,
+    P extends any[],
+    R extends object,
+    T extends string = string,
+    S = void
+  >(
+    actionCreator: AC,
+    serviceCall: (action: ReturnType<AC>) => Observable<S>,
+    resultProcess: (value: S) => void,
+    errorMessage: string,
+    notifyLabel: string,
+    field: string = 'password'
+  ): Observable<Action> {
+    return createEffect(
+      () =>
+        this.actions$.pipe(
+          ofType(actionCreator),
+          tap((action) => this.store.dispatch(progressStart({ action }))),
+          tap(() => this.notifyService.publish(notifyLabel, null)),
+          switchMap((a) =>
+            serviceCall(a).pipe(
+              tap(resultProcess),
+              catchError((error) =>
+                of(
+                  this.notifyService.publish(
+                    notifyLabel,
+                    error.errors ?? [{ field, defaultMessage: errorMessage }]
+                  )
+                )
+              ),
+              map(() => progressStop({ action: a }))
+            )
+          )
+        ),
+      { useEffectsErrorHandler: false }
+    );
+  }
 
   constructor(
     private actions$: Actions,
+    private store: Store,
     private authorizeService: AuthorizeService,
     private notifyService: NotifyService,
     private router: Router

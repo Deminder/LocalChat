@@ -39,7 +39,7 @@ springBoot {
 dependencies {
     runtimeOnly(project(":server:webclient"))
     implementation(project(":logic"))
-    compileOnly("org.flywaydb:flyway-core:6.5.5")
+    implementation("org.flywaydb:flyway-core:6.5.5")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-validation")

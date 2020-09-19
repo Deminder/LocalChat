@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { UserDts } from '../../../openapi/model/models';
 import { Credentials } from '../../actions/authorize.actions';
 
@@ -15,19 +15,19 @@ export class AuthorizeService {
 
   login(creds: Credentials): Observable<string> {
     return this.http
-      .post<string>('/login', creds)
-      .pipe(catchError(this.handleError));
+      .post(`${this.endpoint}/login`, {}, {params: creds, responseType: 'text'})
+      .pipe( catchError(this.handleError));
   }
 
   logout(): Observable<string> {
     return this.http
-      .post<string>('/remove-tokens', {})
+      .post(`${this.endpoint}/remove-tokens`, {}, {responseType: 'text'})
       .pipe(catchError(this.handleError));
   }
 
   register(creds: Credentials): Observable<string> {
     return this.http
-      .post<string>(`${this.endpoint}/register`, creds)
+      .post(`${this.endpoint}/register`, creds, {responseType: 'text'})
       .pipe(catchError(this.handleError));
   }
 

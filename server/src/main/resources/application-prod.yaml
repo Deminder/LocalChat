@@ -5,14 +5,13 @@ spring:
     username: hims
     password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
     driver-class-name: org.postgresql.Driver
-  spring:
-    flyway:
-      url: jdbc:postgresql://192.168.178.26:5432/postgres?currentSchema=localchat
-      user: hims
-      password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
-      schemas: localchat
-      locations: classpath:db/migration
-      enabled: true
+  flyway:
+    url: jdbc:postgresql://192.168.178.26:5432/postgres?currentSchema=localchat
+    user: hims
+    password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
+    schemas: localchat
+    locations: classpath:db/migration
+    enabled: true
 
 
 devtools:

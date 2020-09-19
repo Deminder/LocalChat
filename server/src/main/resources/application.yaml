@@ -1,11 +1,3 @@
-spring:
-  flyway:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
-    user: admin
-    password: secret
-    schemas: public
-    locations: classpath:db/migration
-    enabled: true
 
 server:
   port: 9432

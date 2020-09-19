@@ -5,6 +5,6 @@ import java.time.Instant
 data class ConversationNameDto(
         val id: Long,
         val name: String,
-        val createDate: Instant) {
-
-}
+        val createDate: Instant,
+        val lastUpdate: Instant
+)

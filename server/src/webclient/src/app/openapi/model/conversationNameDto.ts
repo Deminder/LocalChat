@@ -14,6 +14,7 @@
 export interface ConversationNameDto { 
     createDate: string;
     id: number;
+    lastUpdate: string;
     name: string;
 }
 
