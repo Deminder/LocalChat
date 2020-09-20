@@ -6,6 +6,7 @@ import de.dem.localchat.dtos.*
 import de.dem.localchat.dtos.requests.ConversationCreateRequest
 import de.dem.localchat.dtos.requests.MemberUpdateRequest
 import de.dem.localchat.dtos.requests.MessageSearchRequest
+import de.dem.localchat.dtos.requests.MessageUpsertRequest
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -19,21 +20,32 @@ class ConversationController(
 
     @GetMapping
     fun allConversationsOfUser(): List<ConversationNameDto> {
-        return conversationService.conversationsByUserName(username())
+        return conversationService.listConversations()
                 .map { it.toConversationNameDto() }
     }
 
     @PostMapping
     fun createConversation(@RequestBody @Valid createRequest: ConversationCreateRequest): ConversationNameDto {
         return conversationService.createConversation(
-            username(), createRequest.conversationName, createRequest.memberNames).toConversationNameDto()
+                createRequest.conversationName, createRequest.memberNames).toConversationNameDto()
     }
 
-    @GetMapping("/{cid}/messages")
+    @PostMapping("/{cid}/messages/upsert")
+    fun upsertMessage(@PathVariable("cid") cid: Long,
+                       @RequestBody r: MessageUpsertRequest): ConversationMessageDto {
+        return conversationService.upsertMessage(cid, r.messageId, r.text).toConversationMessageDto()
+    }
+
+    @PostMapping("/{cid}/messages")
     fun searchMessages(@PathVariable("cid") cid: Long,
                        @RequestBody r: MessageSearchRequest): ConversationMessagePageDto {
         return conversationService.conversationMessagePage(cid, r.page, r.pageSize,
             r.olderThan, r.newerThan, r.search, r.regex).toConversationMessagePageDto()
+    }
+
+    @DeleteMapping("/{cid}/messages/{mid}")
+    fun deleteMessage(@PathVariable("cid") cid: Long, @PathVariable("mid") messageId: Long) {
+        return conversationService.deleteMessage(cid, messageId)
     }
 
     @GetMapping("/{cid}/members")
@@ -71,7 +83,5 @@ class ConversationController(
                 memberService.allowedRemoval(cid, uid)
         )
     }
-
-    private fun username() = SecurityContextHolder.getContext().authentication?.name ?: error("Not logged in!")
 
 }

@@ -9,15 +9,15 @@ data class ConversationMessage(
         @Id
         val id: Long? = null,
 
-        val text: String,
+        val text: String = "",
 
         val authorId: Long,
 
         val conversationId: Long,
 
         @CreatedDate
-        val authorDate: Instant,
+        val authorDate: Instant = Instant.EPOCH,
 
         @LastModifiedDate
-        val lastChange: Instant
+        val lastChange: Instant = Instant.EPOCH
 )

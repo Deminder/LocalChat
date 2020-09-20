@@ -19,19 +19,21 @@ class MemberServiceImpl(
         @Autowired private val conversationMessageRepository: ConversationMessageRepository,
         @Autowired private val userRepository: UserRepository,
 ) : MemberService {
-    override fun isMember(conversationId: Long, username: String, authority: String): Boolean {
-        return memberRepository.findByIdAndUsername(conversationId, username)
-                ?.permission?.let {
-                    return@let when (authority) {
-                        "READ" -> it.read
-                        "WRITE" -> it.write
-                        "VOICE" -> it.voice
-                        "MOD" -> it.moderate
-                        "ADMIN" -> it.administrate
-                        else -> false
-                    }
-                } ?: false
-    }
+    override fun isMember(conversationId: Long, username: String, vararg authority: String): Boolean =
+            memberRepository.findByIdAndUsername(conversationId, username)
+                    ?.permission?.let {
+                        authority.any { auth ->
+                            when (auth) {
+                                "READ" -> it.read
+                                "WRITE" -> it.write
+                                "VOICE" -> it.voice
+                                "MOD" -> it.moderate
+                                "ADMIN" -> it.administrate
+                                else -> false
+                            }
+                        }
+                    } ?: false
+
 
     override fun updateLastRead(conversationMessageId: Long): Member =
             conversationMessageRepository.findById(conversationMessageId).orElseThrow {
@@ -45,6 +47,14 @@ class MemberServiceImpl(
                             }
                 }
             } ?: error("Failed updating last read!")
+
+    /**
+     * True if a member wrote a message and is still member of the conversation
+     */
+    override fun wroteMessage(cid: Long, username: String, messageId: Long) =
+            authorizedMember(cid)?.let {
+                conversationMessageRepository.findByIdAndAuthorId(messageId, it.userId) != null
+            } ?: false
 
 
     private fun authorizedMember(cid: Long) = SecurityContextHolder.getContext().authentication?.let {
@@ -63,24 +73,27 @@ class MemberServiceImpl(
     private fun subjectAndAuthorPair(cid: Long, subjectId: Long) =
             authorizedMember(cid)?.let { author ->
                 findOrCreateMember(cid, subjectId) to author
-            }
+            } ?: error("Requesting user must be member of conversation $cid!")
 
 
-    override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission) =
-            subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
+    override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission): Member =
+            subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
                 subject.copy(
                         permission = writeNewPermission(subject.id == author.id,
                                 subject.permission, newPermission, author.permission))
                         .let {
-                            memberRepository.save(it)
+                            if (it.permission == newPermission)
+                                memberRepository.save(it)
+                            else error("Permission change failed due to lacking modification permission! " +
+                                    "Expected $newPermission got ${it.permission}")
                         }
-            } ?: error("Failed to insert or update member!")
+            }
 
 
     override fun allowedPermissionChange(conversationId: Long, userId: Long) =
-            subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
+            subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
                 modificationPermission(author.id == subject.id, subject.permission, author.permission)
-            } ?: Permission()
+            }
 
 
     private fun modificationPermission(selfSubject: Boolean, subjectPermission: Permission, authorPermission: Permission) =
@@ -109,9 +122,9 @@ class MemberServiceImpl(
 
 
     override fun allowedRemoval(conversationId: Long, userId: Long) =
-            subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
+            subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
                 removePermission(subject.id == author.id, subject.permission, author.permission)
-            } ?: false
+            }
 
     override fun memberName(cid: Long, userId: Long) =
             userRepository.findByIdOrNull(userId)?.username ?: "[Unknown]"
@@ -127,10 +140,10 @@ class MemberServiceImpl(
 
 
     override fun removeMember(conversationId: Long, userId: Long) {
-        subjectAndAuthorPair(conversationId, userId)?.let { (subject, author) ->
+        subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
             if (removePermission(subject.id == author.id, subject.permission, author.permission)) {
                 memberRepository.delete(subject)
             }
-        } ?: error("Failed to delete member!")
+        }
     }
 }

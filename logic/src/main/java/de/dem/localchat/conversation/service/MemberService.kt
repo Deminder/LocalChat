@@ -1,12 +1,16 @@
 package de.dem.localchat.conversation.service
 
+import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 
 
 interface MemberService {
 
-    fun isMember(conversationId: Long, username: String, authority: String): Boolean
+    /**
+     * True if user is member of conversation and has at least one of the specified authorities
+     */
+    fun isMember(conversationId: Long, username: String, vararg authority: String): Boolean
 
     fun updateLastRead(conversationMessageId: Long): Member
 
@@ -30,4 +34,6 @@ interface MemberService {
     fun allowedRemoval(conversationId: Long, userId: Long): Boolean
 
     fun memberName(cid: Long, userId: Long): String
+
+    fun wroteMessage(cid: Long, username: String, messageId: Long): Boolean
 }

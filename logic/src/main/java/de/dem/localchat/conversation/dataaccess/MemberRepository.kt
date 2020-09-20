@@ -8,12 +8,12 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MemberRepository : CrudRepository<Member, Long> {
 
-    @Query("SELECT m.* FROM member m, user u WHERE " +
+    @Query("SELECT m.* FROM member m, \"user\" u WHERE " +
             "m.conversation_id = :conversationId AND u.id = m.user_id AND u.username = :username")
     fun findByIdAndUsername(conversationId: Long,
                             username: String): Member?
 
-    @Query("SELECT m.* FROM member m, user u WHERE " +
+    @Query("SELECT m.* FROM member m, \"user\" u WHERE " +
             "m.conversation_id = :cid AND u.id = :userId")
     fun findByConvIdAndUserId(conversationId: Long, userId: Long): Member?
 

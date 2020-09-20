@@ -1,6 +1,7 @@
 package de.dem.localchat.conversation.service
 
 import de.dem.localchat.conversation.entity.Conversation
+import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.model.ConversationMessagePage
 import org.springframework.data.repository.query.Param
@@ -10,15 +11,14 @@ import java.time.Instant
 
 interface ConversationService {
 
-    @PreAuthorize("#username == authentication.name")
-    fun conversationsByUserName(@Param("username") userName: String): List<Conversation>
+    fun listConversations(): List<Conversation>
 
-    @PreAuthorize("@memberService.isMember(#conversationId, authentication.name, 'READ')")
-    fun membersOfConversation(@Param("conversationId") conversationId: Long): List<Member>
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'READ', 'ADMIN')")
+    fun membersOfConversation(@Param("cid") conversationId: Long): List<Member>
 
-    @PreAuthorize("@memberService.isMember(#conversationId, authentication.name, 'READ')")
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'READ')")
     fun conversationMessagePage(
-            @Param("conversationId") conversationId: Long,
+            @Param("cid") conversationId: Long,
             page: Int,
             pageSize: Int,
             olderThan: Instant,
@@ -27,10 +27,15 @@ interface ConversationService {
             regex: Boolean): ConversationMessagePage
 
 
+    fun createConversation(conversationName: String, memberNames: Set<String>): Conversation
 
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'ADMIN')")
+    fun changeConversationName(@Param("cid") conversationId: Long, newName: String): Conversation
 
-    fun createConversation(adminName: String, conversationName: String, memberNames: Set<String>): Conversation
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'WRITE')")
+    fun upsertMessage(@Param("cid") conversationId: Long, messageId: Long?, text: String): ConversationMessage
 
-    @PreAuthorize("@memberService.isMember(#conversationId, authentication.name, 'ADMIN')")
-    fun changeConversationName(conversationId: Long, newName: String): Conversation
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'MOD') || " +
+            "@memberServiceImpl.wroteMessage(#cid, authentication.name, messageId)")
+    fun deleteMessage(@Param("cid") conversationId: Long, messageId: Long)
 }

@@ -1,8 +1,16 @@
 #!/bin/bash
 NAME=${1:-conv123}
-MEMBERS='["user123","user456"]'
+MEMBERS=${2:-'[]'}
 
-./conv/create.sh $NAME $MEMBERS
+function grepCIDByName {
+    grep -oP '"id":\d+,"name":"'$1'"' | grep -oP '\d+' | head -n 1
+}
 
-# TODO send messages
+CID=$(./conv/create.sh $NAME $MEMBERS 2> /dev/null | grepCIDByName $NAME)
+if [ -z $CID ]; then
+    echo "CID not found!"
+    exit 1
+fi
+
+echo $CID
 

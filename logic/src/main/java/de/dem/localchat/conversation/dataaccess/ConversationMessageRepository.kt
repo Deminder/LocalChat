@@ -38,4 +38,6 @@ interface ConversationMessageRepository : PagingAndSortingRepository<Conversatio
                                 newerThan: Instant,
                                 searchPattern: String,
                                 pageable: Pageable): Page<ConversationMessage>
+
+    fun findByIdAndAuthorId(messageId: Long, authorId: Long): ConversationMessage?
 }

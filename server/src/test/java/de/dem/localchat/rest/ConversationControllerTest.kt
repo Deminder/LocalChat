@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Instant
-import java.time.LocalDateTime
 
 @ActiveProfiles(profiles = ["test"])
 @WebMvcTest(
@@ -45,7 +44,7 @@ internal class ConversationControllerTest(
     @Test
     fun allConversationsOfUser() {
 
-        every { conversationService.conversationsByUserName("user1") } returns
+        every { conversationService.listConversations() } returns
                 listOf(Conversation(
                         name = "conv1",
                         creator = "user1",
