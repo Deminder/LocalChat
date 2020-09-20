@@ -9,7 +9,7 @@ import { Credentials } from 'src/app/store/actions/authorize.actions';
 })
 export class LoginComponent implements OnInit {
   @Input()
-  errors: {defaultMessage: string, field: string}[] = [];
+  errors: { defaultMessage: string; field: string }[] = [];
 
   @Input()
   initialUsername = '';
@@ -40,4 +40,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  reset(username: string = ''): void {
+    this.loginForm.reset();
+    this.loginForm.get('username').setValue(username);
+  }
 }

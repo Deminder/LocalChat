@@ -34,7 +34,10 @@ export class AuthorizeEffects {
   register$ = this.createAuthEffect(
     register,
     (a) => this.authorizeService.register(a.creds),
-    () => this.router.navigate(['/authorize']),
+    (_, a) =>
+      this.router.navigate(['/authorize'], {
+        queryParams: { registered: a.creds.username },
+      }),
     'Register failed!',
     'register-errors'
   );
@@ -49,7 +52,7 @@ export class AuthorizeEffects {
   >(
     actionCreator: AC,
     serviceCall: (action: ReturnType<AC>) => Observable<S>,
-    resultProcess: (value: S) => void,
+    resultProcess: (value: S, action: ReturnType<AC>) => void,
     errorMessage: string,
     notifyLabel: string,
     field: string = 'password'
@@ -62,12 +65,20 @@ export class AuthorizeEffects {
           tap(() => this.notifyService.publish(notifyLabel, null)),
           switchMap((a) =>
             serviceCall(a).pipe(
-              tap(resultProcess),
+              tap((s) => resultProcess(s, a)),
               catchError((error) =>
                 of(
                   this.notifyService.publish(
                     notifyLabel,
-                    error.errors ?? [{ field, defaultMessage: errorMessage }]
+                    error.errors ?? [
+                      {
+                        field,
+                        defaultMessage:
+                          typeof error === 'string'
+                            ? JSON.parse(error).message ?? error
+                            : errorMessage,
+                      },
+                    ]
                   )
                 )
               ),
