@@ -11,8 +11,8 @@ import java.time.Instant
 fun Conversation.toConversationNameDto() = ConversationNameDto(
         id = id ?: -1,
         name = name,
-        createDate = createDate,
-        lastUpdate = lastUpdate ?: Instant.EPOCH
+        createDate = createDate.toEpochMilli(),
+        lastUpdate = lastUpdate?.toEpochMilli() ?: 0
 )
 
 fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessagePageDto(
@@ -20,8 +20,8 @@ fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessage
         page = page,
         pageSize = pageSize,
         last = last,
-        olderThan = olderThan,
-        newerThan = newerThan,
+        olderThan = olderThan?.toEpochMilli(),
+        newerThan = newerThan?.toEpochMilli(),
         search = search,
         regex = regex,
         messages = messages.map { message -> message.toConversationMessageDto() }
@@ -30,8 +30,8 @@ fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessage
 fun ConversationMessage.toConversationMessageDto() = ConversationMessageDto(
         id = id ?: -1,
         text = text,
-        authorDate = authorDate,
-        lastChange = lastChange,
+        authorDate = authorDate.toEpochMilli(),
+        lastChange = lastChange.toEpochMilli(),
         authorUserId = authorId
 )
 
@@ -41,7 +41,7 @@ fun Member.toMemberDto(memberName: String) = MemberDto(
         username = memberName,
         convId = conversationId,
         permission = permission.toPermissionDto(),
-        joinDate = joinDate
+        joinDate = joinDate.toEpochMilli()
 )
 
 fun Permission.toPermissionDto() = PermissionDto(
@@ -63,5 +63,5 @@ fun PermissionDto.toPermission() = Permission(
 fun User.toUserDts() = UserDts(
         id = id ?: -1,
         username = username,
-        registerDate
+        registerDate = registerDate.toEpochMilli()
 )

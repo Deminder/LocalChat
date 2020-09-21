@@ -1,0 +1,23 @@
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" [(opened)]="opened">
+    <mat-card>
+      <mat-card-content>Conversation List</mat-card-content>
+    </mat-card>
+    <mat-selection-list [multiple]="false">
+      <ng-template ngFor let-conv [ngForOf]="conversations$ | async">
+      <mat-list-option
+        [selected]="(conversationId$ | async) === conv.id"
+        [routerLink]="'/chat/' + conv.id"
+        [value]="conv.id"
+      >
+        {{ conv.name }}
+      </mat-list-option>
+      <mat-divider></mat-divider>
+      </ng-template>
+    </mat-selection-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

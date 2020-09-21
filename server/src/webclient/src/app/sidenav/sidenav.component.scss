@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-grow: 1;
+}
+
+.mat-sidenav {
+  width: 12em;
+}
+
+.mat-sidenav-container {
+  width: 100%;
+  min-height: 30em;
+  min-width: 20em;
+}

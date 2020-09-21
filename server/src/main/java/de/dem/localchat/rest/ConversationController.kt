@@ -7,8 +7,8 @@ import de.dem.localchat.dtos.requests.ConversationCreateRequest
 import de.dem.localchat.dtos.requests.MemberUpdateRequest
 import de.dem.localchat.dtos.requests.MessageSearchRequest
 import de.dem.localchat.dtos.requests.MessageUpsertRequest
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import javax.validation.Valid
 
 
@@ -30,9 +30,9 @@ class ConversationController(
                 createRequest.conversationName, createRequest.memberNames).toConversationNameDto()
     }
 
-    @PostMapping("/{cid}/messages/upsert")
+    @PutMapping("/{cid}/messages")
     fun upsertMessage(@PathVariable("cid") cid: Long,
-                       @RequestBody r: MessageUpsertRequest): ConversationMessageDto {
+                      @RequestBody r: MessageUpsertRequest): ConversationMessageDto {
         return conversationService.upsertMessage(cid, r.messageId, r.text).toConversationMessageDto()
     }
 
@@ -40,7 +40,8 @@ class ConversationController(
     fun searchMessages(@PathVariable("cid") cid: Long,
                        @RequestBody r: MessageSearchRequest): ConversationMessagePageDto {
         return conversationService.conversationMessagePage(cid, r.page, r.pageSize,
-            r.olderThan, r.newerThan, r.search, r.regex).toConversationMessagePageDto()
+                Instant.ofEpochMilli(r.olderThan), Instant.ofEpochMilli(r.newerThan),
+                r.search, r.regex).toConversationMessagePageDto()
     }
 
     @DeleteMapping("/{cid}/messages/{mid}")

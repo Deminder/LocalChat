@@ -9,8 +9,8 @@ data class MessageSearchRequest(
         val page: Int = 0,
         @field: Positive
         val pageSize: Int = 200,
-        val olderThan: Instant = Instant.now(),
-        val newerThan: Instant = Instant.EPOCH,
+        val olderThan: Long = Instant.now().toEpochMilli(),
+        val newerThan: Long = 0,
         val search: String? = null,
         val regex: Boolean = false
 )

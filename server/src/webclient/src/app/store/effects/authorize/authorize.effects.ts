@@ -12,6 +12,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 import { login, logout, register } from '../../actions/authorize.actions';
 import { progressStart, progressStop } from '../../actions/progress.actions';
 import { AuthorizeService } from './authorize.service';
+import { getSelf } from '../../actions/user.actions';
 
 @Injectable()
 export class AuthorizeEffects {
@@ -19,15 +20,16 @@ export class AuthorizeEffects {
     logout,
     this.authorizeService.logout,
     () => this.router.navigate(['/authorize']),
-    'Logout failed!',
     'logout-errors'
   );
 
   login$ = this.createAuthEffect(
     login,
     (a) => this.authorizeService.login(a.creds),
-    () => this.router.navigate(['/']),
-    'Login failed!',
+    () => {
+      this.store.dispatch(getSelf());
+      this.router.navigate(['/']);
+    },
     'login-errors'
   );
 
@@ -38,7 +40,6 @@ export class AuthorizeEffects {
       this.router.navigate(['/authorize'], {
         queryParams: { registered: a.creds.username },
       }),
-    'Register failed!',
     'register-errors'
   );
 
@@ -53,40 +54,23 @@ export class AuthorizeEffects {
     actionCreator: AC,
     serviceCall: (action: ReturnType<AC>) => Observable<S>,
     resultProcess: (value: S, action: ReturnType<AC>) => void,
-    errorMessage: string,
-    notifyLabel: string,
-    field: string = 'password'
+    notifyLabel: string
   ): Observable<Action> {
-    return createEffect(
-      () =>
-        this.actions$.pipe(
-          ofType(actionCreator),
-          tap((action) => this.store.dispatch(progressStart({ action }))),
-          tap(() => this.notifyService.publish(notifyLabel, null)),
-          switchMap((a) =>
-            serviceCall(a).pipe(
-              tap((s) => resultProcess(s, a)),
-              catchError((error) =>
-                of(
-                  this.notifyService.publish(
-                    notifyLabel,
-                    error.errors ?? [
-                      {
-                        field,
-                        defaultMessage:
-                          typeof error === 'string'
-                            ? JSON.parse(error).message ?? error
-                            : errorMessage,
-                      },
-                    ]
-                  )
-                )
-              ),
-              map(() => progressStop({ action: a }))
-            )
+    return createEffect(() =>
+      this.actions$.pipe(
+        ofType(actionCreator),
+        tap((a) => this.store.dispatch(progressStart({ action: a.type }))),
+        tap(() => this.notifyService.publish(notifyLabel, null)),
+        switchMap((a) =>
+          serviceCall(a).pipe(
+            tap((s) => resultProcess(s, a)),
+            catchError((errors) =>
+              of(this.notifyService.publish(notifyLabel, errors))
+            ),
+            map(() => progressStop({ action: a.type }))
           )
-        ),
-      { useEffectsErrorHandler: false }
+        )
+      )
     );
   }
 

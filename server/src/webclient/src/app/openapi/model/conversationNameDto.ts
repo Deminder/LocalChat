@@ -12,9 +12,9 @@
 
 
 export interface ConversationNameDto { 
-    createDate: string;
+    createDate: number;
     id: number;
-    lastUpdate: string;
+    lastUpdate: number;
     name: string;
 }
 

@@ -1,13 +1,11 @@
-import { createAction, props, Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 
 export const progressStart = createAction(
   '[Progress] Start',
-  props<{action: Action}>()
+  props<{ action: string }>()
 );
 
 export const progressStop = createAction(
   '[Progress] Stop',
-  props<{action: Action}>()
+  props<{ action: string }>()
 );
-
-

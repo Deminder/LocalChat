@@ -1,10 +1,10 @@
-import { Action, createReducer, on } from '@ngrx/store';
-import { progressStart, progressStop } from '../actions/progress.actions';
+import {createReducer, on} from '@ngrx/store';
+import {progressStart, progressStop} from '../actions/progress.actions';
 
 export const progressKey = 'progress';
 
 export interface ProgressState {
-  activeActions: Action[];
+  activeActions: string[];
 }
 
 export const initialProgressState: ProgressState = {

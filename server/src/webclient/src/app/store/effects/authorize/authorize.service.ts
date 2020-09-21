@@ -15,34 +15,36 @@ export class AuthorizeService {
 
   login(creds: Credentials): Observable<string> {
     return this.http
-      .post(`${this.endpoint}/login`, {}, {params: creds, responseType: 'text'})
-      .pipe( catchError(this.handleError));
+      .post(
+        `${this.endpoint}/login`,
+        {},
+        { params: creds, responseType: 'text' }
+      )
+      .pipe(catchError(this.handleFormError));
   }
 
   logout(): Observable<string> {
     return this.http
-      .post(`${this.endpoint}/remove-tokens`, {}, {responseType: 'text'})
-      .pipe(catchError(this.handleError));
+      .post(`${this.endpoint}/remove-tokens`, {}, { responseType: 'text' })
+      .pipe(catchError(this.handleFormError));
   }
 
   register(creds: Credentials): Observable<string> {
     return this.http
-      .post(`${this.endpoint}/register`, creds, {responseType: 'text'})
-      .pipe(catchError(this.handleError));
+      .post(`${this.endpoint}/register`, creds, { responseType: 'text' })
+      .pipe(catchError(this.handleFormError));
   }
 
-  self(): Observable<UserDts> {
-    return this.http
-      .get<UserDts>(`${this.endpoint}/self`)
-      .pipe(catchError(this.handleError));
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.error instanceof ErrorEvent) {
-      console.error(`[Error Angular] ${error.error.message}`);
+  private handleFormError(error: HttpErrorResponse): Observable<never> {
+    const err = error.error;
+    if (err instanceof ErrorEvent) {
+      console.error(`[Error Angular] ${err.message}`);
     } else {
-      console.error(`[Error ${error.status}] ${error.error}`);
+      console.error(`[Error ${error.status}] ${err}`);
     }
-    return throwError(error.error);
+    const serviceError =  err.errors ?? [
+      { field: 'password', defaultMessage: error.status === 404 ? 'Invalid!' : err.message ?? err },
+    ];
+    return throwError(serviceError);
   }
 }

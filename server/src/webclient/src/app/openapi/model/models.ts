@@ -6,6 +6,7 @@ export * from './memberDto';
 export * from './memberModifyPermissionDto';
 export * from './memberUpdateRequest';
 export * from './messageSearchRequest';
+export * from './messageUpsertRequest';
 export * from './permissionDtoReq';
 export * from './permissionDtoRes';
 export * from './registerRequest';

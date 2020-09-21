@@ -14,7 +14,7 @@ import { PermissionDtoRes } from './permissionDtoRes';
 
 export interface MemberDto { 
     convId: number;
-    joinDate: string;
+    joinDate: number;
     permission: PermissionDtoRes;
     userId: number;
     username: string;

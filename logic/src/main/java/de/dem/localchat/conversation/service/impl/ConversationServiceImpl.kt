@@ -56,9 +56,11 @@ class ConversationServiceImpl(
                 } ?: error("Requesting user did not author message $messageId!")
             }
 
-    override fun deleteMessage(conversationId: Long, messageId: Long) {
-        conversationMessageRepository.deleteById(messageId)
-    }
+    override fun deleteMessage(conversationId: Long, messageId: Long) =
+            conversationMessageRepository.findByIdAndConversationId(messageId, conversationId)?.let {
+                conversationMessageRepository.delete(it)
+            } ?: error("Message $messageId not found in conversation $conversationId!");
+
 
     override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int,
                                          olderThan: Instant,
@@ -80,8 +82,9 @@ class ConversationServiceImpl(
                         page = page,
                         pageSize = pageSize,
                         olderThan = olderThan,
-                        last = it.isLast,
-                        messages = it.content
+                        // it should be Pageable<Type> once spring data jdbc supports pageable return values
+                        last = it.size < pageSize,
+                        messages = it
                 )
             }
 

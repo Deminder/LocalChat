@@ -8,6 +8,6 @@ data class MemberDto(
         val username: String,
         val convId: Long,
         val permission: PermissionDto,
-        val joinDate: Instant
+        val joinDate: Long
 )
 

@@ -8,6 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -20,6 +21,7 @@ import { AppComponent } from './app.component';
 import { ConversationComponent } from './conversation/conversation.component';
 import { appreducer } from './store/reducers/app.reducer';
 import { ConversationEffects } from './store/effects/conversation/conversation.effects';
+import { UserEffects } from './store/effects/user/user.effects';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './authorize/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -32,6 +34,7 @@ import { FieldErrorComponent } from './authorize/field-error/field-error.compone
 import { FielderrorPipe } from './shared/fielderror.pipe';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AuthorNamePipe } from './shared/author-name.pipe';
 
 export const metaReducers = [];
 
@@ -46,6 +49,7 @@ export const metaReducers = [];
     FielderrorPipe,
     SidenavComponent,
     SettingsComponent,
+    AuthorNamePipe,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +63,7 @@ export const metaReducers = [];
     MatProgressBarModule,
     MatSidenavModule,
     MatListModule,
+    MatSnackBarModule,
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
@@ -69,7 +74,7 @@ export const metaReducers = [];
       },
       { metaReducers }
     ),
-    EffectsModule.forRoot([ConversationEffects, AuthorizeEffects, ProgressEffects]),
+    EffectsModule.forRoot([ConversationEffects, AuthorizeEffects, ProgressEffects, UserEffects]),
     StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

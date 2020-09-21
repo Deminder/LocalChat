@@ -9,8 +9,9 @@
   <span>Local Chat</span>
   <span class="example-spacer"></span>
 
+  <span>{{ selfName$ | async }}</span>
   <ng-template [ngIf]="isSettingsOpen$ | async">
-    <button mat-icon-button aria-label="Back" routerLink="/">
+    <button mat-icon-button aria-label="Back" (click)="back()">
       <mat-icon>arrow_back</mat-icon>
     </button>
   </ng-template>
