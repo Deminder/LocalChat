@@ -15,7 +15,10 @@ import {
 } from '../store/selectors/conversation.selectors';
 import { delay, filter } from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
-import {selectSelfName, selectSelfUserId} from '../store/selectors/user.selectors';
+import {
+  selectSelfName,
+  selectSelfUserId,
+} from '../store/selectors/user.selectors';
 
 @Component({
   selector: 'app-conversation',
@@ -30,16 +33,18 @@ export class ConversationComponent implements OnInit, OnDestroy {
 
   switcher: Subscription;
 
-
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.switcher = this.conversationId$
-      .pipe(filter((cid) => cid >= 0))
-      .subscribe((cid) => {
-        this.store.dispatch(listMembers({ conversationId: cid }));
-        this.store.dispatch(listNextMessages({ conversationId: cid }));
-      });
+    setTimeout(
+      () =>
+        (this.switcher = this.conversationId$
+          .pipe(filter((cid) => cid >= 0))
+          .subscribe((cid) => {
+            this.store.dispatch(listMembers({ conversationId: cid }));
+            this.store.dispatch(listNextMessages({ conversationId: cid }));
+          }))
+    );
   }
 
   ngOnDestroy(): void {

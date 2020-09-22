@@ -3,14 +3,14 @@ import {Actions, createEffect} from '@ngrx/effects';
 import {filter, map} from 'rxjs/operators';
 import {progressStart, progressStop} from '../../actions/progress.actions';
 
-const startPattern = /^\[.+\/API\](?!.*(Success|Failure))$/;
+const startPattern = /^\[.+\/API\].*$/;
 const stopPattern = /^\[.+\/API\].*(Success|Failure)$/;
 
 @Injectable()
 export class ProgressEffects {
   startProgress$ = createEffect(() =>
     this.actions$.pipe(
-      filter((action) => startPattern.test(action.type)),
+      filter((action) => startPattern.test(action.type) && !stopPattern.test(action.type)),
       map((action) => progressStart({ action: action.type }))
     )
   );

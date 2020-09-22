@@ -38,6 +38,7 @@ import { AuthorNamePipe } from './shared/author-name.pipe';
 import { MessageListComponent } from './conversation/message-list/message-list.component';
 import {registerLocaleData} from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import { AuthorColorPipe } from './shared/author-color.pipe';
 
 registerLocaleData(localeDe);
 
@@ -56,6 +57,7 @@ export const metaReducers = [];
     SettingsComponent,
     AuthorNamePipe,
     MessageListComponent,
+    AuthorColorPipe,
   ],
   imports: [
     BrowserModule,

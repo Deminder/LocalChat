@@ -41,6 +41,15 @@ ul {
 .message-header {
   display: flex;
   flex-flow: row nowrap;
+  font-size: 10px;
+  margin-bottom: .5em;
+  color: black;
+  opacity: 0.6;
+}
+
+.username {
+  font-weight: bold;
+  //text-shadow: .5px .5px .5px black;
   font-size: 12px;
 }
 

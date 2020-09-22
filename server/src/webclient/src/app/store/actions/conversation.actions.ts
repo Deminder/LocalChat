@@ -9,22 +9,22 @@ import {
 // CONVERSATIONS
 
 export const listConversations = createAction(
-  '[Conversation/API] List Conversation'
+  '[Conversation/API] List Conversations'
 );
 
 export const listConversationsSuccess = createAction(
-  '[Conversation/API] List Conversation Success',
+  '[Conversation/API] List Conversations Success',
   props<{ convs: ConversationNameDto[] }>()
 );
 
 export const listConversationsFailure = createAction(
-  '[Conversation/API] List Conversation Failure'
+  '[Conversation/API] List Conversations Failure'
 );
 
 // MEMBERS
 
 export const listMembers = createAction(
-  '[Conversation/API] List Member',
+  '[Conversation/API] List Members',
   props<{ conversationId: number }>()
 );
 

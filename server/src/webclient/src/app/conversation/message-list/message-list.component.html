@@ -4,10 +4,10 @@
       [ngClass]="messageClasses(msg)"
       (click)="selected !== msg.id ? (selected = msg.id) : (selected = -1)"
       (focusout)="selected = -1"
-      [style.background-color]="isOutgoing(msg) ? 'light-grey' : 'grey'"
+      [style.background-color]="msg.authorUserId | authorColor: memberDict"
     >
       <div class="message-header">
-        <span>{{
+        <span class="username">{{
           msg.authorUserId | authorName: memberDict
         }}</span>
         <div class="divider"></div>
