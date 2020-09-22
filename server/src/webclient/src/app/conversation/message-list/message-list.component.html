@@ -1,0 +1,25 @@
+<ul id="messageList">
+  <ng-template ngFor [ngForOf]="messages" let-msg>
+    <li
+      [ngClass]="messageClasses(msg)"
+      (click)="selected !== msg.id ? (selected = msg.id) : (selected = -1)"
+      (focusout)="selected = -1"
+      [style.background-color]="isOutgoing(msg) ? 'light-grey' : 'grey'"
+    >
+      <div class="message-header">
+        <span>{{
+          msg.authorUserId | authorName: memberDict
+        }}</span>
+        <div class="divider"></div>
+        <span>{{
+          msg.authorDate | date:'short'
+        }}</span>
+      </div>
+      <span class="text">{{ msg.text }}</span>
+      <div *ngIf="selected === msg.id">
+        <button mat-button (click)="edit.emit(msg)">Edit</button>
+        <button mat-button (click)="delete.emit(msg)">Delete</button>
+      </div>
+    </li>
+  </ng-template>
+</ul>

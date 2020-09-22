@@ -11,11 +11,12 @@
  */
 
 
-export interface PermissionDto { 
-    administrate: boolean;
-    moderate: boolean;
-    read: boolean;
-    voice: boolean;
-    write: boolean;
+export interface MessageSearchRequestRes { 
+    newerThan: number;
+    olderThan: number;
+    page: number;
+    pageSize: number;
+    regex?: boolean;
+    search?: string;
 }
 

@@ -7,7 +7,7 @@ import {
   MemberDto,
   MemberModifyPermissionDto,
   MemberUpdateRequest,
-  MessageSearchRequest,
+  MessageSearchRequestReq,
   MessageUpsertRequest,
   ConversationMessageDto,
 } from 'src/app/openapi/model/models';
@@ -32,7 +32,7 @@ export class ConversationService {
 
   messages(
     cid: number,
-    request: MessageSearchRequest
+    request: MessageSearchRequestReq
   ): Observable<ConversationMessagePageDto> {
     return this.http.post<ConversationMessagePageDto>(
       `${this.endpoint}/${cid}/messages`,

@@ -67,6 +67,24 @@ export const searchNextMessagesFailure = createAction(
   '[Conversation/API] Search Next Messages Failure'
 );
 
+// single message changes
+export const createMessage = createAction(
+  '[Conversation/Silent] Create Message',
+  props<{text: string}>()
+);
+
+export const deleteMessage = createAction(
+  '[Conversation/Silent] Delete Message',
+  props<{messageId: number}>()
+);
+
+
+export const editMessage = createAction(
+  '[Conversation/Silent] Edit Message',
+  props<{messageId: number, text: string}>()
+);
+
+
 /**
  * EVENTS
  */

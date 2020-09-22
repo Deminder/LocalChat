@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, take } from 'rxjs/operators';
 import {
   listConversations,
   listConversationsFailure,
@@ -48,6 +48,7 @@ export class ConversationEffects {
       ofType(listNextMessages),
       switchMap((a) =>
         this.store.select(selectNextMessagePageRequest).pipe(
+          take(1),
           mergeMap((nextPageReq) =>
             this.conversationService
               .messages(a.conversationId, nextPageReq)

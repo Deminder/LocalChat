@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,6 +35,11 @@ import { FielderrorPipe } from './shared/fielderror.pipe';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AuthorNamePipe } from './shared/author-name.pipe';
+import { MessageListComponent } from './conversation/message-list/message-list.component';
+import {registerLocaleData} from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+
+registerLocaleData(localeDe);
 
 export const metaReducers = [];
 
@@ -50,6 +55,7 @@ export const metaReducers = [];
     SidenavComponent,
     SettingsComponent,
     AuthorNamePipe,
+    MessageListComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,7 +87,7 @@ export const metaReducers = [];
       logOnly: !environment.production,
     }),
   ],
-  providers: [],
+  providers: [{provide: LOCALE_ID, useValue: 'de'}],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

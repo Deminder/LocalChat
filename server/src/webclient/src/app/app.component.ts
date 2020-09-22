@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store';
 import { isProgressActive } from './store/selectors/progress.selectors';
 import { isSettingsOpen } from './store/reducers/router.reducer';
 import { selectSelfName } from './store/selectors/user.selectors';
-import {getSelf} from './store/actions/user.actions';
-import {listConversations} from './store/actions/conversation.actions';
+import { getSelf } from './store/actions/user.actions';
+import { listConversations } from './store/actions/conversation.actions';
 
 @Component({
   selector: 'app-root',
@@ -19,12 +19,11 @@ export class AppComponent implements OnInit {
   isProgressActive$ = this.store.select(isProgressActive);
   isSettingsOpen$ = this.store.select(isSettingsOpen);
 
-
   constructor(private store: Store, private location: Location) {}
 
   ngOnInit(): void {
     this.store.dispatch(getSelf());
-    this.store.dispatch(listConversations());
+    this.selfName$.subscribe(() => this.store.dispatch(listConversations()));
   }
 
   back(): void {

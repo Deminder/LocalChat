@@ -7,6 +7,6 @@ import { MemberDto } from '../openapi/model/models';
 })
 export class AuthorNamePipe implements PipeTransform {
   transform(authorId: number, memberEntites: Dictionary<MemberDto>): string {
-    return memberEntites[authorId].username;
+    return memberEntites[authorId]?.username ?? `[User#${authorId}]`;
   }
 }

@@ -1,0 +1,53 @@
+ul {
+  list-style-type: none;
+}
+
+#messageList {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
+}
+
+.incoming {
+  align-self: flex-start;
+}
+
+.outgoing {
+  align-self: flex-end;
+}
+
+.chatmessage {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  min-width: 10%;
+  max-width: 75%;
+  min-height: 1em;
+  font-size: 16px;
+  padding: .5em 1.5em .5em 1.5em;
+  border-radius: .5em;
+  margin: .3em;
+}
+
+@media screen and (max-width: 40.5em) {
+	.chatmessage {
+		min-width:25%;
+		max-width:90%;
+	}
+}
+
+.message-header {
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 12px;
+}
+
+.divider {
+  flex: 1 1 auto;
+}
+
+.text {
+  word-wrap: break-word;
+}

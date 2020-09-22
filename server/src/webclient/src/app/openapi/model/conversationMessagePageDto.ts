@@ -10,17 +10,13 @@
  * Do not edit the class manually.
  */
 import { ConversationMessageDto } from './conversationMessageDto';
+import { MessageSearchRequestRes } from './messageSearchRequestRes';
 
 
 export interface ConversationMessagePageDto { 
     convId: number;
     last: boolean;
     messages: Array<ConversationMessageDto>;
-    newerThan?: number;
-    olderThan?: number;
-    page: number;
-    pageSize: number;
-    regex?: boolean;
-    search?: string;
+    request: MessageSearchRequestRes;
 }
 

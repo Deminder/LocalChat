@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService
 class SseEmitterController(
         @Autowired val requestThreadPool: ExecutorService
 ) {
-    @GetMapping("/sse")
+    @GetMapping("/api/events")
     fun handleSse(): SseEmitter? {
         val emitter = SseEmitter()
         requestThreadPool.execute {

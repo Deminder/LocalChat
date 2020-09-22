@@ -9,7 +9,7 @@ import {
   selectMemberEntites,
 } from '../reducers/conversation.reducer';
 import { selectedConversationId } from '../reducers/router.reducer';
-import { MessageSearchRequest } from 'src/app/openapi/model/models';
+import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
 
 const selectConversation = createFeatureSelector<ConversationState>(
   conversationKey
@@ -54,9 +54,9 @@ export const selectPreviousMessagePage = createSelector(
 export const selectNextMessagePageRequest = createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
-  (cid, prevPage): MessageSearchRequest => {
-    return prevPage && prevPage.convId === cid
-      ? { ...prevPage, page: prevPage.page + 1 }
+  (cid, prevPage): MessageSearchRequestReq => {
+    return prevPage && prevPage.convId === cid && prevPage.request.search === null
+      ? { ...prevPage, page: prevPage.request.page + 1 }
       : { page: 0, pageSize: 10 };
   }
 );

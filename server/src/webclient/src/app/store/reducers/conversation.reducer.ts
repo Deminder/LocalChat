@@ -21,7 +21,6 @@ import {
   ConversationMessageDto,
   PermissionDtoRes,
   ConversationMessagePageDto,
-  MessageSearchRequest,
 } from 'src/app/openapi/model/models';
 import { EntityState, createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 
@@ -93,19 +92,24 @@ export const {
 } = namesAdapter.getSelectors();
 
 const addMessagePage = (
-  page: ConversationMessagePageDto,
+  pageResponse: ConversationMessagePageDto,
   adapter: EntityAdapter<ConversationMessageDto>,
   state: ChatMessagesState
 ) => {
   const pagingContinues =
-    state.previousPage === { ...page, page: page.page + 1, messages: [] };
+    state.previousPage ===
+    {
+      ...pageResponse,
+      request: { ...pageResponse.request, page: pageResponse.request.page - 1 },
+      messages: [],
+    };
   const nextPageState = {
     ...state,
-    prevPageReq: {...page, messages: []},
+    previousPage: { ...pageResponse, messages: [] },
   };
   return pagingContinues
-    ? adapter.addMany(page.messages, nextPageState)
-    : adapter.setAll(page.messages, nextPageState);
+    ? adapter.addMany(pageResponse.messages, nextPageState)
+    : adapter.setAll(pageResponse.messages, nextPageState);
 };
 
 export const conversationReducer = createReducer(

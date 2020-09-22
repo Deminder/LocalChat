@@ -11,7 +11,7 @@
  */
 
 
-export interface MessageSearchRequest { 
+export interface MessageSearchRequestReq { 
     newerThan?: number;
     olderThan?: number;
     page?: number;
