@@ -1,5 +1,6 @@
 package de.dem.localchat.conversation.model
 
-class ConversationEvent {
-
-}
+data class ConversationEvent(
+        val subject: String,
+        val message: Any
+)

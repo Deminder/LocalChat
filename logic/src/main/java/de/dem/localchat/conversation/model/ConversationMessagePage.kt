@@ -9,8 +9,8 @@ data class ConversationMessagePage(
         val pageSize: Int,
         val last: Boolean,
         val messages: List<ConversationMessage>,
-        val olderThan: Instant? = null,
-        val newerThan: Instant? = null,
+        val olderThan: Instant,
+        val newerThan: Instant,
         val search: String? = null,
         val regex: Boolean? = null,
 )

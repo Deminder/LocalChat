@@ -8,7 +8,7 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 
 @Controller
-class SseEmitterController(
+class ConversationEventsController(
         @Autowired val requestThreadPool: ExecutorService
 ) {
     @GetMapping("/api/events")

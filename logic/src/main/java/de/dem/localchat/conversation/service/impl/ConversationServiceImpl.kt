@@ -66,12 +66,12 @@ class ConversationServiceImpl(
                                          olderThan: Instant,
                                          newerThan: Instant,
                                          search: String?,
-                                         regex: Boolean) =
+                                         regex: Boolean?) =
             descDate(page, pageSize).let { pageRequest ->
                 if (search == null)
                     conversationMessageRepository.findAllByConversationIdBetween(
                             conversationId, olderThan, newerThan, pageRequest)
-                else (if (regex)
+                else (if (regex == true)
                     conversationMessageRepository::findAllMessagesByPattern
                 else conversationMessageRepository::findAllMessagesByString)
                         .invoke(conversationId, olderThan, newerThan, search, pageRequest)
@@ -82,9 +82,12 @@ class ConversationServiceImpl(
                         page = page,
                         pageSize = pageSize,
                         olderThan = olderThan,
+                        newerThan = newerThan,
                         // it should be Pageable<Type> once spring data jdbc supports pageable return values
                         last = it.size < pageSize,
-                        messages = it
+                        messages = it,
+                        search = search,
+                        regex = regex
                 )
             }
 

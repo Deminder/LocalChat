@@ -5,6 +5,7 @@ import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
+import de.dem.localchat.dtos.requests.MessageSearchRequest
 import de.dem.localchat.security.entity.User
 import java.time.Instant
 
@@ -17,13 +18,15 @@ fun Conversation.toConversationNameDto() = ConversationNameDto(
 
 fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessagePageDto(
         convId = conversationId,
-        page = page,
-        pageSize = pageSize,
+        request = MessageSearchRequest(
+                page = page,
+                pageSize = pageSize,
+                olderThan = olderThan.toEpochMilli(),
+                newerThan = newerThan.toEpochMilli(),
+                search = search,
+                regex = regex,
+        ),
         last = last,
-        olderThan = olderThan?.toEpochMilli(),
-        newerThan = newerThan?.toEpochMilli(),
-        search = search,
-        regex = regex,
         messages = messages.map { message -> message.toConversationMessageDto() }
 )
 

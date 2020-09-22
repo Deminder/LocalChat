@@ -24,7 +24,7 @@ interface ConversationService {
             olderThan: Instant,
             newerThan: Instant,
             search: String?,
-            regex: Boolean): ConversationMessagePage
+            regex: Boolean?): ConversationMessagePage
 
 
     fun createConversation(conversationName: String, memberNames: Set<String>): Conversation

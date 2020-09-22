@@ -12,5 +12,5 @@ data class MessageSearchRequest(
         val olderThan: Long = Instant.now().toEpochMilli(),
         val newerThan: Long = 0,
         val search: String? = null,
-        val regex: Boolean = false
+        val regex: Boolean? = null
 )
