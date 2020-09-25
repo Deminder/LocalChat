@@ -13,9 +13,12 @@ import {
   listNextMessages,
   listNextMessagesSuccess,
   listNextMessagesFailure,
+  createMessage,
+  messageUpserted,
 } from '../../actions/conversation.actions';
 import { selectNextMessagePageRequest } from '../../selectors/conversation.selectors';
 import { ConversationService } from './conversation.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class ConversationEffects {
@@ -62,9 +65,27 @@ export class ConversationEffects {
     )
   );
 
+  createMesage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(createMessage),
+      mergeMap((a) =>
+        this.conversationService
+          .upsertMessage(a.conversationId, { text: a.text })
+          .pipe(
+            map((message) => messageUpserted({message})),
+            catchError((error) => {
+              this.snackbar.open(error, '', { duration: 3000 });
+              return of({type: 'nope'});
+            })
+          )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private conversationService: ConversationService,
+    private snackbar: MatSnackBar,
     private store: Store
   ) {}
 }

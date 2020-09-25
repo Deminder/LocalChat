@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import { selectConversations } from '../store/selectors/conversation.selectors';
@@ -9,12 +9,20 @@ import { selectConversations } from '../store/selectors/conversation.selectors';
   styleUrls: ['./sidenav.component.scss'],
 })
 export class SidenavComponent implements OnInit {
-  conversations$ = this.store.select(selectConversations);
-  conversationId$ = this.store.select(selectedConversationId);
 
+  @Input()
+  conversations = [];
+
+  @Input()
+  conversationId = -1;
+
+  @Input()
   opened: boolean;
 
-  constructor(private store: Store) {}
+  @Output()
+  openedChange = new EventEmitter<boolean>();
+
+  constructor() {}
 
   ngOnInit(): void {}
 

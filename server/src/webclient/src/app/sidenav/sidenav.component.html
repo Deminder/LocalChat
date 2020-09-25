@@ -4,9 +4,9 @@
       <mat-card-content>Conversation List</mat-card-content>
     </mat-card>
     <mat-selection-list [multiple]="false">
-      <ng-template ngFor let-conv [ngForOf]="conversations$ | async">
+      <ng-template ngFor let-conv [ngForOf]="conversations">
       <mat-list-option
-        [selected]="(conversationId$ | async) === conv.id"
+        [selected]="conversationId === conv.id"
         [routerLink]="'/chat/' + conv.id"
         [value]="conv.id"
       >

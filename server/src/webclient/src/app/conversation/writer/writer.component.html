@@ -1,0 +1,10 @@
+<mat-form-field>
+<textarea
+  #writer="ngModel"
+  matInput
+  name="message"
+  [(ngModel)]="text"
+  (keyup)="keyup($event)"
+  placeholder="Write message..."
+></textarea>
+</mat-form-field>

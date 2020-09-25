@@ -7,7 +7,7 @@ import { MemberDto } from '../openapi/model/models';
 })
 export class AuthorColorPipe implements PipeTransform {
   transform(authorId: number, memberEntites: Dictionary<MemberDto>): unknown {
-    const i = (memberEntites[authorId]?.joinDate % 8) * 8 + 144;
+    const i = (memberEntites[authorId]?.joinDate % 8) * 8 + 32;
     return `rgb(${i},${i},${i})`;
   }
 }

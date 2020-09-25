@@ -24,7 +24,7 @@ import { ConversationEffects } from './store/effects/conversation/conversation.e
 import { UserEffects } from './store/effects/user/user.effects';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './authorize/login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthorizeComponent } from './authorize/authorize.component';
 import { RegisterComponent } from './authorize/register/register.component';
 import { AuthorizeEffects } from './store/effects/authorize/authorize.effects';
@@ -39,6 +39,8 @@ import { MessageListComponent } from './conversation/message-list/message-list.c
 import {registerLocaleData} from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import { AuthorColorPipe } from './shared/author-color.pipe';
+import { WriterComponent } from './conversation/writer/writer.component';
+import { DisplayTextPipe } from './shared/display-text.pipe';
 
 registerLocaleData(localeDe);
 
@@ -58,6 +60,8 @@ export const metaReducers = [];
     AuthorNamePipe,
     MessageListComponent,
     AuthorColorPipe,
+    WriterComponent,
+    DisplayTextPipe,
   ],
   imports: [
     BrowserModule,
@@ -73,6 +77,7 @@ export const metaReducers = [];
     MatListModule,
     MatSnackBarModule,
     HttpClientModule,
+    FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
     StoreModule.forRoot(

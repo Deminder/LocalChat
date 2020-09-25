@@ -1,8 +1,10 @@
-<p>Conversation {{ conversationId$ | async }}</p>
-<app-message-list
-  [messages]="conversationMessages$ | async"
-  [selfUserId]="selfUserId$ | async"
-  [memberDict]="memberEntites$ | async"
-  (delete)="deleteMessage($event)"
-  (edit)="editMessage($event)"
-></app-message-list>
+<div class="main-column">
+  <app-message-list class="list"
+    [messages]="conversationMessages$ | async"
+    [selfUserId]="selfUserId$ | async"
+    [memberDict]="memberEntites$ | async"
+    (delete)="deleteMessage($event)"
+    (edit)="editMessage($event)"
+  ></app-message-list>
+  <app-writer class="writer shaded-background" (send)="sendMessage($event)"></app-writer>
+</div>

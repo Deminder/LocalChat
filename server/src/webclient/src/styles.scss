@@ -9,21 +9,61 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$candy-app-primary: mat-palette($mat-indigo);
-$candy-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$candy-app-primary: mat-palette($mat-grey);
+$candy-app-accent:  mat-palette($mat-blue-grey, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$candy-app-warn:    mat-palette($mat-red);
+$candy-app-warn:    mat-palette($mat-orange);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as `color` or `typography`.
-$candy-app-theme: mat-light-theme((
+$candy-app-theme: mat-dark-theme((
   color: (
     primary: $candy-app-primary,
     accent: $candy-app-accent,
     warn: $candy-app-warn,  
   )
 ));
+
+.shaded-background {
+  background: mat-color($candy-app-primary, 800);
+}
+
+a:visited {
+  color: mat-color($candy-app-primary, 300);
+}
+a:visited:hover {
+  color: mat-color($candy-app-primary, 100);
+}
+
+a:link {
+  color: mat-color($candy-app-warn, 500);
+}
+
+a:link:hover {
+  color: mat-color($candy-app-warn, 300);
+}
+
+ /* width */
+::-webkit-scrollbar {
+  width: .5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: mat-color($candy-app-primary, 800);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: mat-color($candy-app-primary, 600);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: mat-color($candy-app-primary, 500);
+} 
+
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component

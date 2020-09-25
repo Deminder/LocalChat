@@ -70,7 +70,7 @@ export const searchNextMessagesFailure = createAction(
 // single message changes
 export const createMessage = createAction(
   '[Conversation/Silent] Create Message',
-  props<{text: string}>()
+  props<{conversationId: number; text: string}>()
 );
 
 export const deleteMessage = createAction(

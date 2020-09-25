@@ -1,0 +1,16 @@
+
+
+.main-column {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+}
+
+.list {
+  flex: 5 1 0;
+  overflow-y: scroll;
+}
+
+.writer {
+  flex: 1 1 0.5em;
+}

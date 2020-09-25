@@ -7,13 +7,14 @@ import {
   listNextMessages,
   deleteMessage,
   editMessage,
+  createMessage,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
   selectConversationMemberEntities,
   selectConversationMessages,
 } from '../store/selectors/conversation.selectors';
-import { delay, filter } from 'rxjs/operators';
+import { delay, filter, take } from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
 import {
   selectSelfName,
@@ -61,5 +62,13 @@ export class ConversationComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       editMessage({ messageId: msg.id, text: msg.text + ' Edited text!' })
     );
+  }
+
+  sendMessage(text: string): void {
+    this.conversationId$
+      .pipe(take(1))
+      .subscribe((conversationId) =>
+        this.store.dispatch(createMessage({ conversationId, text }))
+      );
   }
 }

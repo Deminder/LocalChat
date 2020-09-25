@@ -6,7 +6,7 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
-  <span>Local Chat</span>
+  <span>{{ toolbarTitle$ | async }}</span>
   <span class="example-spacer"></span>
 
   <span>{{ selfName$ | async }}</span>
@@ -22,7 +22,12 @@
   </ng-template>
 </mat-toolbar>
 
-<app-sidenav #sidenav>
+<app-sidenav
+  #sidenav
+  [(opened)]="sidenavOpen"
+  [conversationId]="conversationId$ | async"
+  [conversations]="conversations$ | async"
+>
   <mat-progress-bar
     *ngIf="isProgressActive$ | async"
     mode="query"

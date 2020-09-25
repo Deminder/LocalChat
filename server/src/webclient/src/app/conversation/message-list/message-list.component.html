@@ -2,24 +2,41 @@
   <ng-template ngFor [ngForOf]="messages" let-msg>
     <li
       [ngClass]="messageClasses(msg)"
-      (click)="selected !== msg.id ? (selected = msg.id) : (selected = -1)"
-      (focusout)="selected = -1"
+      (dblclick)="selected !== msg.id ? (selected = msg.id) : (selected = -1)"
+      (blur)="selected = -1"
       [style.background-color]="msg.authorUserId | authorColor: memberDict"
     >
+      <div *ngIf="selected === msg.id" class="tools-row">
+        <button mat-icon-button (click)="edit.emit(msg)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="delete.emit(msg)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button (click)="selected = -1" aria-label="Hide">
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+      </div>
       <div class="message-header">
         <span class="username">{{
           msg.authorUserId | authorName: memberDict
         }}</span>
         <div class="divider"></div>
-        <span>{{
-          msg.authorDate | date:'short'
-        }}</span>
+        <span>{{ msg.authorDate | date: "short" }}</span>
       </div>
-      <span class="text">{{ msg.text }}</span>
-      <div *ngIf="selected === msg.id">
-        <button mat-button (click)="edit.emit(msg)">Edit</button>
-        <button mat-button (click)="delete.emit(msg)">Delete</button>
-      </div>
+      <span class="text">
+        <ng-template ngFor [ngForOf]="msg.text | displayText" let-seg>
+          <ng-template [ngIf]="seg.link" [ngIfElse]="textblock">
+            <a [href]="seg.text">{{ seg.text }}</a>
+          </ng-template>
+          <ng-template #textblock>
+            {{ seg.text }}
+          </ng-template>
+          <ng-container *ngIf="seg.newline">
+          <br/>
+          </ng-container>
+        </ng-template>
+      </span>
     </li>
   </ng-template>
 </ul>
