@@ -13,12 +13,16 @@ interface MemberRepository : CrudRepository<Member, Long> {
     fun findByIdAndUsername(conversationId: Long,
                             username: String): Member?
 
-    @Query("SELECT m.* FROM member m, \"user\" u WHERE " +
-            "m.conversation_id = :conversationId AND u.id = :userId")
+    @Query("SELECT m.* FROM member m WHERE " +
+            "m.conversation_id = :conversationId AND m.user_id = :userId")
     fun findByConvIdAndUserId(conversationId: Long, userId: Long): Member?
 
     @Query("SELECT m.* FROM member m WHERE " +
             "m.conversation_id = :conversationId " +
             "ORDER BY m.join_date")
     fun findByConversationId(conversationId: Long): List<Member>
+
+    @Query("SELECT COUNT(m.id) FROM member m WHERE " +
+            "m.conversation_id = :conversationId" )
+    fun countByConversationId(conversationId: Long): Int
 }

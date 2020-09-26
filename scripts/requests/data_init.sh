@@ -15,6 +15,8 @@ CID2=$(./init_conv.sh conv_karl '["user456", "user123"]')
 ./msg/create.sh "$CID2" 'me is user456 bot [hello to you back!]'
 ./users/invalidate.sh
 ./users/login.sh user123
-./msg/create.sh "$CID2" 'me is user123 bot [hello to you back!]'
+for i in {1..300}; do
+    ./msg/create.sh "$CID2" "Hello again...\nThis is my $i th message http://localhost:4200 :)"
+done
 
 

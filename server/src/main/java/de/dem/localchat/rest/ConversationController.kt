@@ -3,10 +3,7 @@ package de.dem.localchat.rest
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.dtos.*
-import de.dem.localchat.dtos.requests.ConversationCreateRequest
-import de.dem.localchat.dtos.requests.MemberUpdateRequest
-import de.dem.localchat.dtos.requests.MessageSearchRequest
-import de.dem.localchat.dtos.requests.MessageUpsertRequest
+import de.dem.localchat.dtos.requests.*
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import javax.validation.Valid
@@ -27,8 +24,14 @@ class ConversationController(
     @PostMapping
     fun createConversation(@RequestBody @Valid createRequest: ConversationCreateRequest): ConversationNameDto {
         return conversationService.createConversation(
-                createRequest.conversationName, createRequest.memberNames).toConversationNameDto()
+                createRequest.name, createRequest.memberNames).toConversationNameDto()
     }
+
+    @PostMapping("/rename")
+    fun renameConversation(@RequestBody @Valid req: ConversationRenameRequest): ConversationNameDto {
+        return conversationService.changeConversationName(req.conversationId, req.conversationName).toConversationNameDto()
+    }
+
 
     @PutMapping("/{cid}/messages")
     fun upsertMessage(@PathVariable("cid") cid: Long,
@@ -52,7 +55,7 @@ class ConversationController(
     @GetMapping("/{cid}/members")
     fun listMembers(@PathVariable("cid") cid: Long): List<MemberDto> {
         return conversationService.membersOfConversation(cid).map {
-            it.toMemberDto(memberService.memberName(cid, it.userId))
+            it.toMemberDto(memberService.memberName(cid, it.userId), allowedModification(cid, it.userId))
         }
     }
 
@@ -63,7 +66,7 @@ class ConversationController(
             @Valid @RequestBody updateRequest: MemberUpdateRequest): MemberDto =
             updateRequest.permission?.let {
                 memberService.upsertMember(cid, uid, it.toPermission()).let { member ->
-                    member.toMemberDto(memberService.memberName(cid, member.userId))
+                    member.toMemberDto(memberService.memberName(cid, member.userId), allowedModification(cid, uid))
                 }
             } ?: error("Permission not specified. Color change not yet implemented!")
 
@@ -76,7 +79,7 @@ class ConversationController(
     }
 
     @GetMapping("/{cid}/members/{uid}/allowed-modification")
-    fun deleteMemberPermission(
+    fun allowedModification(
             @PathVariable("cid") cid: Long,
             @PathVariable("uid") uid: Long): MemberModifyPermissionDto {
         return MemberModifyPermissionDto(

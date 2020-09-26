@@ -1,6 +1,5 @@
 package de.dem.localchat.dtos
 
-import java.time.Instant
 
 
 data class MemberDto(
@@ -8,6 +7,7 @@ data class MemberDto(
         val username: String,
         val convId: Long,
         val permission: PermissionDto,
+        val modifiablePermission: MemberModifyPermissionDto,
         val joinDate: Long
 )
 

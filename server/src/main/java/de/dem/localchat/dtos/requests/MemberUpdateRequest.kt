@@ -9,6 +9,4 @@ data class MemberUpdateRequest(
 
         @field:Valid
         val permission: PermissionDto?,
-) {
-
-}
+)

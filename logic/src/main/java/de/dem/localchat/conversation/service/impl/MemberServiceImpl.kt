@@ -1,6 +1,7 @@
 package de.dem.localchat.conversation.service.impl
 
 import de.dem.localchat.conversation.dataaccess.ConversationMessageRepository
+import de.dem.localchat.conversation.dataaccess.ConversationRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
@@ -18,6 +19,7 @@ class MemberServiceImpl(
         @Autowired private val memberRepository: MemberRepository,
         @Autowired private val conversationMessageRepository: ConversationMessageRepository,
         @Autowired private val userRepository: UserRepository,
+        @Autowired private val conversationRepository: ConversationRepository,
 ) : MemberService {
     override fun isMember(conversationId: Long, username: String, vararg authority: String): Boolean =
             memberRepository.findByIdAndUsername(conversationId, username)
@@ -83,11 +85,18 @@ class MemberServiceImpl(
                                 subject.permission, newPermission, author.permission))
                         .let {
                             if (it.permission == newPermission)
-                                memberRepository.save(it)
+                                if (adminMembersOf(conversationId).minus(subject).isNotEmpty())
+                                    memberRepository.save(it)
+                                else error("Choose next admin before removing the current!")
                             else error("Permission change failed due to lacking modification permission! " +
                                     "Expected $newPermission got ${it.permission}")
                         }
             }
+
+    private fun adminMembersOf(conversationId: Long): Set<Member> =
+            memberRepository.findByConversationId(conversationId).filter {
+                it.permission.administrate
+            }.toSet()
 
 
     override fun allowedPermissionChange(conversationId: Long, userId: Long) =
@@ -142,7 +151,15 @@ class MemberServiceImpl(
     override fun removeMember(conversationId: Long, userId: Long) {
         subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
             if (removePermission(subject.id == author.id, subject.permission, author.permission)) {
-                memberRepository.delete(subject)
+                if (adminMembersOf(conversationId).minus(subject).isNotEmpty()
+                        || memberRepository.countByConversationId(conversationId) == 1)
+                    memberRepository.delete(subject)
+                else error("Remove all members before removing the admin!")
+            }
+        }.run {
+            // clean up conversation if no members left
+            if (memberRepository.countByConversationId(conversationId) == 0) {
+                conversationRepository.deleteById(conversationId)
             }
         }
     }

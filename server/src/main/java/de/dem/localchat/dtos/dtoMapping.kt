@@ -7,7 +7,6 @@ import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.dtos.requests.MessageSearchRequest
 import de.dem.localchat.security.entity.User
-import java.time.Instant
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
         id = id ?: -1,
@@ -39,17 +38,18 @@ fun ConversationMessage.toConversationMessageDto() = ConversationMessageDto(
 )
 
 
-fun Member.toMemberDto(memberName: String) = MemberDto(
+fun Member.toMemberDto(memberName: String, modifyPermissionDto: MemberModifyPermissionDto) = MemberDto(
         userId = userId,
         username = memberName,
         convId = conversationId,
+        modifiablePermission = modifyPermissionDto,
         permission = permission.toPermissionDto(),
         joinDate = joinDate.toEpochMilli()
 )
 
 fun Permission.toPermissionDto() = PermissionDto(
         read = read,
-        write = read,
+        write = write,
         voice = voice,
         moderate = moderate,
         administrate = administrate
@@ -57,7 +57,7 @@ fun Permission.toPermissionDto() = PermissionDto(
 
 fun PermissionDto.toPermission() = Permission(
         read = read,
-        write = read,
+        write = write,
         voice = voice,
         moderate = moderate,
         administrate = administrate

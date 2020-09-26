@@ -36,6 +36,6 @@ interface ConversationService {
     fun upsertMessage(@Param("cid") conversationId: Long, messageId: Long?, text: String): ConversationMessage
 
     @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'MOD') || " +
-            "@memberServiceImpl.wroteMessage(#cid, authentication.name, messageId)")
-    fun deleteMessage(@Param("cid") conversationId: Long, messageId: Long)
+            "@memberServiceImpl.wroteMessage(#cid, authentication.name, #mid)")
+    fun deleteMessage(@Param("cid") conversationId: Long, @Param("mid") messageId: Long)
 }

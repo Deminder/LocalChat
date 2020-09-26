@@ -36,9 +36,9 @@ CREATE TABLE conversation_message (
     constraint fk_msg_author
               foreign key(author_id)
         	  references "user"(id)
-        	  on delete cascade,
+        	  on delete set null,
     constraint fk_msg_conversation
           foreign key(conversation_id)
-    	  references member(id)
+    	  references conversation(id)
     	  on delete cascade
 );
