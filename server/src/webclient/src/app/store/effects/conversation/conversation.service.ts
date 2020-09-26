@@ -34,6 +34,14 @@ export class ConversationService {
       .pipe(catchError(this.handleAPIError));
   }
 
+  rename(cid: number, name: string): Observable<ConversationNameDto> {
+    return this.http
+      .post<ConversationNameDto>(`${this.endpoint}/rename`, {
+        conversationId: cid, conversationName: name
+      })
+      .pipe(catchError(this.handleAPIError));
+  }
+
   messages(
     cid: number,
     request: MessageSearchRequestReq
@@ -55,11 +63,9 @@ export class ConversationService {
       .pipe(catchError(this.handleAPIError));
   }
 
-  deleteMessage(cid: number, messageId: number): Observable<string> {
+  deleteMessage(cid: number, messageId: number): Observable<any> {
     return this.http
-      .delete(`${this.endpoint}/${cid}/messages/${messageId}`, {
-        responseType: 'text',
-      })
+      .delete(`${this.endpoint}/${cid}/messages/${messageId}`)
       .pipe(catchError(this.handleAPIError));
   }
 

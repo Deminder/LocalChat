@@ -4,6 +4,7 @@ import {
   ConversationMessageDto,
   MemberDto,
   ConversationMessagePageDto,
+  MemberUpdateRequest,
 } from 'src/app/openapi/model/models';
 
 // CONVERSATIONS
@@ -20,12 +21,24 @@ export const listConversationsSuccess = createAction(
 export const listConversationsFailure = createAction(
   '[Conversation/API] List Conversations Failure'
 );
+// single conversation actions
+export type ConvRef = { conversationId: number };
+export const addConversation = createAction(
+  '[Conversation/Silent] Add Conversation',
+  props<{name: string}>()
+);
+
+export const renameConversation = createAction(
+  '[Conversation/Silent] Rename Conversation',
+  props<ConvRef & {name: string}>()
+);
+
 
 // MEMBERS
 
 export const listMembers = createAction(
   '[Conversation/API] List Members',
-  props<{ conversationId: number }>()
+  props<ConvRef>()
 );
 
 export const listMembersSuccess = createAction(
@@ -37,11 +50,31 @@ export const listMembersFailure = createAction(
   '[Conversation/API] List Members Failure'
 );
 
+// single member actions
+
+export type UserRef = { userId: number };
+export type MemberRef = ConvRef & UserRef;
+
+export const addMember = createAction(
+  '[Conversation/Silent] Add Member',
+  props<MemberRef>()
+);
+
+export const editMember = createAction(
+  '[Conversation/Silent] Change Member',
+  props<MemberRef & MemberUpdateRequest>()
+);
+
+export const removeMember = createAction(
+  '[Conversation/Silent] Remove Member',
+  props<MemberRef>()
+);
+
 // MESSAGES
 
 export const listNextMessages = createAction(
   '[Conversation/API] List Next Messages',
-  props<{ conversationId: number }>()
+  props<ConvRef>()
 );
 
 export const listNextMessagesSuccess = createAction(
@@ -55,7 +88,7 @@ export const listNextMessagesFailure = createAction(
 
 export const searchNextMessages = createAction(
   '[Conversation/API] Search Next Messages',
-  props<{ conversationId: number; search: string; regex: boolean }>()
+  props<ConvRef & {search: string; regex: boolean }>()
 );
 
 export const searchNextMessagesSuccess = createAction(
@@ -68,45 +101,45 @@ export const searchNextMessagesFailure = createAction(
 );
 
 // single message changes
+export type MessageRef = ConvRef & { messageId: number };
+
 export const createMessage = createAction(
   '[Conversation/Silent] Create Message',
-  props<{conversationId: number; text: string}>()
+  props<ConvRef & { text: string }>()
 );
 
 export const deleteMessage = createAction(
   '[Conversation/Silent] Delete Message',
-  props<{messageId: number}>()
+  props<MessageRef>()
 );
-
 
 export const editMessage = createAction(
   '[Conversation/Silent] Edit Message',
-  props<{messageId: number, text: string}>()
+  props<MessageRef & { text: string }>()
 );
-
 
 /**
  * EVENTS
  */
-
 export const conversationDeleted = createAction(
   '[Conversation/Event] Delete Conversation',
-  props<{ converstionId: number }>()
+  props<ConvRef>()
 );
 
-export const conversationAdded = createAction(
-  '[Conversation/Event] Add Conversation',
+export const conversationUpserted = createAction(
+  '[Conversation/Event] Upsert Conversation',
   props<{ conv: ConversationNameDto }>()
 );
 
+
 export const messageUpserted = createAction(
   '[Conversation/Event] Upsert Message',
-  props<{ message: ConversationMessageDto }>()
+  props<ConvRef & { message: ConversationMessageDto }>()
 );
 
 export const messageDeleted = createAction(
   '[Conversation/Event] Delete Message',
-  props<{ messageId: number }>()
+  props<MessageRef>()
 );
 export const memberUpserted = createAction(
   '[Conversation/Event] Upsert Member',
@@ -115,5 +148,5 @@ export const memberUpserted = createAction(
 
 export const memberDeleted = createAction(
   '[Conversation/Event] Delete Member',
-  props<{ userId: number }>()
+  props<MemberRef>()
 );

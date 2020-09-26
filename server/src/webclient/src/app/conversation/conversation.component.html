@@ -1,10 +1,10 @@
-<div class="main-column">
+<div class="main-column" *ngIf="(conversationId$ | async) as cid">
   <app-message-list class="list"
     [messages]="conversationMessages$ | async"
     [selfUserId]="selfUserId$ | async"
     [memberDict]="memberEntites$ | async"
-    (delete)="deleteMessage($event)"
-    (edit)="editMessage($event)"
+    (delete)="deleteMessage(cid, $event)"
+    (edit)="editMessage(cid, $event)"
   ></app-message-list>
-  <app-writer class="writer shaded-background" (send)="sendMessage($event)"></app-writer>
+  <app-writer class="writer shaded-background" (send)="sendMessage(cid, $event)"></app-writer>
 </div>

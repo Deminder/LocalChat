@@ -8,10 +8,18 @@ import {
 } from './store/reducers/router.reducer';
 import { selectSelfName } from './store/selectors/user.selectors';
 import { getSelf } from './store/actions/user.actions';
-import { listConversations } from './store/actions/conversation.actions';
-import { selectConversations, selectActiveConversation } from './store/selectors/conversation.selectors';
-import {Title} from '@angular/platform-browser';
-import {map, tap} from 'rxjs/operators';
+import {
+  listConversations,
+  addConversation,
+} from './store/actions/conversation.actions';
+import {
+  selectConversations,
+  selectActiveConversation,
+} from './store/selectors/conversation.selectors';
+import { Title } from '@angular/platform-browser';
+import { map, tap, take } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +42,12 @@ export class AppComponent implements OnInit {
     tap((t) => this.title.setTitle(t))
   );
 
-  constructor(private store: Store, private location: Location, private title: Title) {}
+  constructor(
+    private store: Store,
+    private location: Location,
+    private title: Title,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     setTimeout(() => this.store.dispatch(getSelf()));
@@ -43,5 +56,18 @@ export class AppComponent implements OnInit {
 
   back(): void {
     this.location.back();
+  }
+
+  addConversation(): void {
+    this.selfName$.pipe(take(1)).subscribe((selfName) =>
+      this.dialog
+        .open(AddConversationComponent, { data: { name: `Chat of ${selfName}`  } })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.store.dispatch(addConversation({ name: result }));
+          }
+        })
+    );
   }
 }

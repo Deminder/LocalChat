@@ -1,9 +1,18 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { EMPTY, ObservedValueOf, of, OperatorFunction } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, take } from 'rxjs/operators';
+import { MemberUpdateRequest } from 'src/app/openapi/model/models';
 import {
+  addConversation,
+  addMember,
+  conversationUpserted,
+  createMessage,
+  deleteMessage,
+  editMember,
+  editMessage,
   listConversations,
   listConversationsFailure,
   listConversationsSuccess,
@@ -11,14 +20,19 @@ import {
   listMembersFailure,
   listMembersSuccess,
   listNextMessages,
-  listNextMessagesSuccess,
   listNextMessagesFailure,
-  createMessage,
+  listNextMessagesSuccess,
+  memberDeleted,
+  MemberRef,
+  memberUpserted,
+  messageDeleted,
+  MessageRef,
   messageUpserted,
+  removeMember,
+  renameConversation,
 } from '../../actions/conversation.actions';
 import { selectNextMessagePageRequest } from '../../selectors/conversation.selectors';
 import { ConversationService } from './conversation.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class ConversationEffects {
@@ -65,22 +79,110 @@ export class ConversationEffects {
     )
   );
 
-  createMesage$ = createEffect(() =>
+  deleteMessage$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(createMessage),
+      ofType(deleteMessage),
       mergeMap((a) =>
         this.conversationService
-          .upsertMessage(a.conversationId, { text: a.text })
+          .deleteMessage(a.conversationId, a.messageId)
           .pipe(
-            map((message) => messageUpserted({message})),
-            catchError((error) => {
-              this.snackbar.open(error, '', { duration: 3000 });
-              return of({type: 'nope'});
-            })
+            map(() =>
+              messageDeleted({
+                conversationId: a.conversationId,
+                messageId: a.messageId,
+              })
+            ),
+            this.catchActionError()
           )
       )
     )
   );
+
+  upsertMessage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(editMessage, createMessage),
+      mergeMap((a) =>
+        this.conversationService
+          .upsertMessage(a.conversationId, {
+            messageId: (a as MessageRef)?.messageId,
+            text: a.text,
+          })
+          .pipe(
+            map((message) =>
+              messageUpserted({ conversationId: a.conversationId, message })
+            ),
+            this.catchActionError()
+          )
+      )
+    )
+  );
+
+  removeMember$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(removeMember),
+      mergeMap((a) =>
+        this.conversationService.deleteMember(a.conversationId, a.userId).pipe(
+          map(() => memberDeleted(a as MemberRef)),
+          this.catchActionError()
+        )
+      )
+    )
+  );
+
+  upsertMember$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(editMember, addMember),
+      mergeMap((a) =>
+        this.conversationService
+          .upsertMember(a.conversationId, a.userId, {
+            ...a,
+            permission: (a as MemberUpdateRequest).permission ?? {
+              read: true,
+              write: true,
+              voice: true,
+            },
+          })
+          .pipe(
+            map((member) => memberUpserted({ member })),
+            this.catchActionError()
+          )
+      )
+    )
+  );
+
+  addConversation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addConversation),
+      mergeMap((a) =>
+        this.conversationService.create(a.name, []).pipe(
+          map((conv) => conversationUpserted({ conv })),
+          this.catchActionError()
+        )
+      )
+    )
+  );
+
+  renameConversation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(renameConversation),
+      mergeMap((a) =>
+        this.conversationService.rename(a.conversationId, a.name).pipe(
+          map((conv) => conversationUpserted({ conv })),
+          this.catchActionError()
+        )
+      )
+    )
+  );
+
+  private catchActionError<T, O>(): OperatorFunction<
+    T,
+    T | ObservedValueOf<O>
+  > {
+    return catchError((error) => {
+      this.snackbar.open(error, '', { duration: 3000 });
+      return EMPTY;
+    });
+  }
 
   constructor(
     private actions$: Actions,

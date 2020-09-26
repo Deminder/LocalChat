@@ -1,28 +1,28 @@
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import {
-  listConversationsSuccess,
-  listConversationsFailure,
-  conversationDeleted,
-  conversationAdded,
-  listMembersSuccess,
-  listMembersFailure,
-  listNextMessagesSuccess,
-  listNextMessagesFailure,
-  searchNextMessagesSuccess,
-  searchNextMessagesFailure,
-  memberUpserted,
-  memberDeleted,
-  messageUpserted,
-  messageDeleted,
-} from '../actions/conversation.actions';
-import {
+  ConversationMessageDto,
+  ConversationMessagePageDto,
   ConversationNameDto,
   MemberDto,
-  ConversationMessageDto,
   PermissionDtoRes,
-  ConversationMessagePageDto,
 } from 'src/app/openapi/model/models';
-import { EntityState, createEntityAdapter, EntityAdapter } from '@ngrx/entity';
+import {
+  conversationDeleted,
+  listConversationsFailure,
+  listConversationsSuccess,
+  listMembersFailure,
+  listMembersSuccess,
+  listNextMessagesFailure,
+  listNextMessagesSuccess,
+  memberDeleted,
+  memberUpserted,
+  messageDeleted,
+  messageUpserted,
+  searchNextMessagesFailure,
+  searchNextMessagesSuccess,
+  conversationUpserted,
+} from '../actions/conversation.actions';
 
 export const conversationKey = 'conversation';
 
@@ -46,7 +46,7 @@ export interface ChatMessagesState extends EntityState<ConversationMessageDto> {
 }
 
 export const namesAdapter = createEntityAdapter<ConversationNameDto>({
-  sortComparer: (c1, c2) => datecompare(c1.lastUpdate, c2.lastUpdate),
+  sortComparer: (c1, c2) => -datecompare(c1.lastUpdate, c2.lastUpdate),
 });
 // {sortComparer: (c1,c2) => c.lastUpdate
 export const membersAdapter = createEntityAdapter<MemberDto>({
@@ -126,11 +126,11 @@ export const conversationReducer = createReducer(
   // events
   on(conversationDeleted, (state, action) => ({
     ...state,
-    names: namesAdapter.removeOne(action.converstionId, state.names),
+    names: namesAdapter.removeOne(action.conversationId, state.names),
   })),
-  on(conversationAdded, (state, action) => ({
+  on(conversationUpserted, (state, action) => ({
     ...state,
-    names: namesAdapter.addOne(action.conv, state.names),
+    names: namesAdapter.setOne(action.conv, state.names),
   })),
   // MEMBERS
   on(listMembersSuccess, (state, action) => ({

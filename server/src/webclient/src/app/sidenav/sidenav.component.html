@@ -1,19 +1,28 @@
 <mat-sidenav-container class="example-container">
   <mat-sidenav #sidenav mode="side" [(opened)]="opened">
     <mat-card>
-      <mat-card-content>Conversation List</mat-card-content>
+      <mat-card-header>
+        <div mat-card-avatar class="localchat-image"></div>
+        <mat-card-title>Local Chat</mat-card-title>
+        <mat-card-subtitle>Conversations</mat-card-subtitle>
+      </mat-card-header>
     </mat-card>
     <mat-selection-list [multiple]="false">
       <ng-template ngFor let-conv [ngForOf]="conversations">
-      <mat-list-option
-        [selected]="conversationId === conv.id"
-        [routerLink]="'/chat/' + conv.id"
-        [value]="conv.id"
-      >
-        {{ conv.name }}
-      </mat-list-option>
-      <mat-divider></mat-divider>
+        <mat-list-option
+          [selected]="conversationId === conv.id"
+          [routerLink]="'/chat/' + conv.id"
+          [value]="conv.id"
+        >
+          {{ conv.name }}
+        </mat-list-option>
+        <mat-divider></mat-divider>
       </ng-template>
+      <mat-list-option (click)="createConv.emit()">
+        <span style="text-align: center; font-weight: bold;"
+          ><mat-icon>add</mat-icon></span
+        >
+      </mat-list-option>
     </mat-selection-list>
   </mat-sidenav>
 

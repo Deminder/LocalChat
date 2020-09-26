@@ -1,0 +1,19 @@
+<span mat-dialog-title>Create New Conversation</span>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Conversation Name</mat-label>
+    <input
+      matInput
+      type="text"
+      [formControl]="nameControl"
+    />
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [disabled]="!nameControl.valid" type="submit" (click)="confirm()">
+    Add
+  </button>
+  <button mat-button mat-dialog-close>
+    Cancel
+  </button>
+</div>

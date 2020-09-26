@@ -1,7 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { selectedConversationId } from '../store/reducers/router.reducer';
-import { selectConversations } from '../store/selectors/conversation.selectors';
 
 @Component({
   selector: 'app-sidenav',
@@ -21,6 +18,9 @@ export class SidenavComponent implements OnInit {
 
   @Output()
   openedChange = new EventEmitter<boolean>();
+
+  @Output()
+  createConv = new EventEmitter<void>();
 
   constructor() {}
 

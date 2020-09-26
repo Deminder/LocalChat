@@ -6,6 +6,7 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
+  <span class="example-spacer"></span>
   <span>{{ toolbarTitle$ | async }}</span>
   <span class="example-spacer"></span>
 
@@ -25,6 +26,7 @@
 <app-sidenav
   #sidenav
   [(opened)]="sidenavOpen"
+  (createConv)="addConversation()"
   [conversationId]="conversationId$ | async"
   [conversations]="conversations$ | async"
 >

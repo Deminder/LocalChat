@@ -7,10 +7,18 @@
       [style.background-color]="msg.authorUserId | authorColor: memberDict"
     >
       <div *ngIf="selected === msg.id" class="tools-row">
-        <button mat-icon-button (click)="edit.emit(msg)">
+        <button
+          mat-icon-button
+          (click)="edit.emit(msg)"
+          [disabled]="!editPermission(msg.authorUserId)"
+        >
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="delete.emit(msg)">
+        <button
+          mat-icon-button
+          (click)="delete.emit(msg)"
+          [disabled]="!deletePermission(msg.authorUserId)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
         <button mat-icon-button (click)="selected = -1" aria-label="Hide">
@@ -33,7 +41,7 @@
             {{ seg.text }}
           </ng-template>
           <ng-container *ngIf="seg.newline">
-          <br/>
+            <br />
           </ng-container>
         </ng-template>
       </span>

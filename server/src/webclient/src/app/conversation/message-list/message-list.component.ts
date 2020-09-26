@@ -39,4 +39,12 @@ export class MessageListComponent implements OnInit {
   messageClasses(msg: ConversationMessageDto): string[] {
     return ['chatmessage', this.isOutgoing(msg) ? 'outgoing' : 'incoming'];
   }
+
+  editPermission(userId: number): boolean {
+    return userId === this.selfUserId;
+  }
+
+  deletePermission(userId: number): boolean {
+    return userId === this.selfUserId || this.memberDict[this.selfUserId].permission.moderate;
+  }
 }

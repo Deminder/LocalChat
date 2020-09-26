@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -41,6 +42,7 @@ import localeDe from '@angular/common/locales/de';
 import { AuthorColorPipe } from './shared/author-color.pipe';
 import { WriterComponent } from './conversation/writer/writer.component';
 import { DisplayTextPipe } from './shared/display-text.pipe';
+import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
 
 registerLocaleData(localeDe);
 
@@ -62,6 +64,7 @@ export const metaReducers = [];
     AuthorColorPipe,
     WriterComponent,
     DisplayTextPipe,
+    AddConversationComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,6 +79,7 @@ export const metaReducers = [];
     MatSidenavModule,
     MatListModule,
     MatSnackBarModule,
+    MatDialogModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,

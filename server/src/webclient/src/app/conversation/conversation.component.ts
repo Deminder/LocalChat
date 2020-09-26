@@ -37,38 +37,33 @@ export class ConversationComponent implements OnInit, OnDestroy {
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    setTimeout(
-      () =>
-        (this.switcher = this.conversationId$
-          .pipe(filter((cid) => cid >= 0))
-          .subscribe((cid) => {
-            this.store.dispatch(listMembers({ conversationId: cid }));
-            this.store.dispatch(listNextMessages({ conversationId: cid }));
-          }))
-    );
+    setTimeout(() => {
+      this.switcher = this.conversationId$
+        .pipe(filter((cid) => cid >= 0))
+        .subscribe((cid) => {
+          this.store.dispatch(listMembers({ conversationId: cid }));
+          this.store.dispatch(listNextMessages({ conversationId: cid }));
+        });
+    });
   }
 
   ngOnDestroy(): void {
     this.switcher.unsubscribe();
   }
 
-  deleteMessage(msg: ConversationMessageDto): void {
+  deleteMessage(conversationId: number, msg: ConversationMessageDto): void {
     // TODO open confirm popup
-    this.store.dispatch(deleteMessage({ messageId: msg.id }));
+    this.store.dispatch(deleteMessage({ conversationId, messageId: msg.id }));
   }
 
-  editMessage(msg: ConversationMessageDto): void {
+  editMessage(conversationId: number, msg: ConversationMessageDto): void {
     // TODO edit dialog
     this.store.dispatch(
-      editMessage({ messageId: msg.id, text: msg.text + ' Edited text!' })
+      editMessage({ conversationId,  messageId: msg.id, text: msg.text + ' Edited text!' })
     );
   }
 
-  sendMessage(text: string): void {
-    this.conversationId$
-      .pipe(take(1))
-      .subscribe((conversationId) =>
-        this.store.dispatch(createMessage({ conversationId, text }))
-      );
+  sendMessage(conversationId: number, text: string): void {
+    this.store.dispatch(createMessage({ conversationId, text }))
   }
 }
