@@ -1,4 +1,4 @@
-<span mat-dialog-title>Create New Conversation</span>
+<span mat-dialog-title>{{ title }}</span>
 <div mat-dialog-content>
   <mat-form-field>
     <mat-label>Conversation Name</mat-label>
@@ -11,7 +11,7 @@
 </div>
 <div mat-dialog-actions>
   <button mat-button [disabled]="!nameControl.valid" type="submit" (click)="confirm()">
-    Add
+    {{ submitText }}
   </button>
   <button mat-button mat-dialog-close>
     Cancel

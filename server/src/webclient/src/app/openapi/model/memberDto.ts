@@ -9,12 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MemberModifyPermissionDto } from './memberModifyPermissionDto';
 import { PermissionDtoRes } from './permissionDtoRes';
 
 
 export interface MemberDto { 
     convId: number;
     joinDate: number;
+    modifiablePermission: MemberModifyPermissionDto;
     permission: PermissionDtoRes;
     userId: number;
     username: string;

@@ -11,8 +11,7 @@
  */
 
 
-export interface ConversationCreateRequest { 
-    memberNames: Set<string>;
-    name: string;
+export interface UserGetResponse { 
+    id: number;
 }
 

@@ -61,5 +61,8 @@ class UserServiceImpl(
 
     override fun userByName(username: String) = userRepository.findByUsername(username)
 
+    override fun searchVisibleUsers(username: String, search: String) =
+        userRepository.findVisibleUsersOf(username, search)
+
     private fun enc(password: String) = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password)
 }

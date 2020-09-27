@@ -1,0 +1,45 @@
+<div *ngIf="activeConversation$ | async as conv">
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let member of members$ | async">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ member.username }}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{ member.joinDate | date: "short" }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <section class="control-section">
+        <ng-template ngFor [ngForOf]="member.permission | keyvalue" let-p>
+          <mat-checkbox
+            [disabled]="!member.modifiablePermission.modify[p.key]"
+            [ngModel]="p.value"
+            (ngModelChange)="changePermission(member, p.key, $event)"
+            >{{ p.key | titlecase }}</mat-checkbox
+          >
+        </ng-template>
+        <button
+          mat-icon-button
+          [disabled]="!member.modifiablePermission.remove"
+          (click)="deleteMember(member)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </section>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <button
+    mat-icon-button
+    [disabled]="!(selfMember$ | async)?.permission.moderate"
+    (click)="addMember(conv)"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+  <button
+    mat-button
+    [disabled]="!(selfMember$ | async)?.permission.administrate"
+    (click)="renameConversation(conv)"
+  >
+    Rename Conversation
+  </button>
+</div>

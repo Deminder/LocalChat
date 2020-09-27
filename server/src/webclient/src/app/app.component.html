@@ -6,14 +6,24 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
+  <span>{{ selfName$ | async }}</span>
   <span class="example-spacer"></span>
   <span>{{ toolbarTitle$ | async }}</span>
   <span class="example-spacer"></span>
 
-  <span>{{ selfName$ | async }}</span>
-  <ng-template [ngIf]="isSettingsOpen$ | async">
+  <ng-template [ngIf]="(isSettingsOpen$ | async) || (isMembersOpen$ | async)">
     <button mat-icon-button aria-label="Back" (click)="back()">
       <mat-icon>arrow_back</mat-icon>
+    </button>
+  </ng-template>
+  <ng-template [ngIf]="!(isSettingsOpen$ | async) && !(isMembersOpen$ | async)">
+    <button
+      [disabled]="(conversationId$ | async) === -1"
+      mat-icon-button
+      aria-label="Open Conversation Menu"
+      [routerLink]="'/members/' + (conversationId$ | async)"
+    >
+      <mat-icon>list</mat-icon>
     </button>
   </ng-template>
   <ng-template [ngIf]="!(isSettingsOpen$ | async)">

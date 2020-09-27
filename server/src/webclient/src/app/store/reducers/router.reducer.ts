@@ -34,3 +34,8 @@ export const isSettingsOpen = createSelector(
   selectUrl,
   (data) => data === '/settings'
 );
+
+export const isMembersOpen = createSelector(
+  selectUrl,
+  (data) => data && data.startsWith('/members/')
+);

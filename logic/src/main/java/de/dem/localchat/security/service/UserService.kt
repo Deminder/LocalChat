@@ -15,4 +15,5 @@ interface UserService {
     fun initAdmin()
     fun isRegistered(name: String): Boolean
     fun userByName(username: String): User?
+    fun searchVisibleUsers(username: String, search: String): List<User>
 }

@@ -1,11 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
-import { UserDts } from '../../openapi/model/models';
+import { UserDto } from '../../openapi/model/models';
 import { getSelfSuccess } from '../actions/user.actions';
 
 export const userKey = 'user';
 
 export interface UserState {
-  selfUser: UserDts;
+  selfUser: UserDto;
 }
 
 export const initialUserState: UserState = {

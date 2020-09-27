@@ -63,7 +63,7 @@ fun PermissionDto.toPermission() = Permission(
         administrate = administrate
 )
 
-fun User.toUserDts() = UserDts(
+fun User.toUserDts() = UserDto(
         id = id ?: -1,
         username = username,
         registerDate = registerDate.toEpochMilli()

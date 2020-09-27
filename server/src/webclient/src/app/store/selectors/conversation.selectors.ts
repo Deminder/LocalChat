@@ -1,4 +1,4 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import * as store from '@ngrx/store';
 import {
   conversationKey,
   ConversationState,
@@ -10,50 +10,57 @@ import {
 } from '../reducers/conversation.reducer';
 import { selectedConversationId } from '../reducers/router.reducer';
 import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
+import {selectSelfUserId} from './user.selectors';
 
-const selectConversation = createFeatureSelector<ConversationState>(
+const selectConversation = store.createFeatureSelector<ConversationState>(
   conversationKey
 );
 
-const selectConversationNames = createSelector(
+const selectConversationNames = store.createSelector(
   selectConversation,
   (state) => state.names
 );
 
 
-export const selectConversations = createSelector(
+export const selectConversations = store.createSelector(
   selectConversationNames,
   (state) => selectAllConvs(state)
 );
 
 
-export const selectActiveConversation = createSelector(
+export const selectActiveConversation = store.createSelector(
   selectConversation,
   selectedConversationId,
   (state, cid) => selectConvEntites(state.names)[cid]
 );
 
-export const selectConversationMembers = createSelector(
+export const selectConversationMembers = store.createSelector(
   selectConversation,
   (state) => selectAllMembers(state.members)
 );
 
-export const selectConversationMemberEntities = createSelector(
+export const selectConversationMemberEntities = store.createSelector(
   selectConversation,
   (state) => selectMemberEntites(state.members)
 );
 
-export const selectConversationMessages = createSelector(
+export const selectSelfMember = store.createSelector(
+  selectConversationMemberEntities,
+  selectSelfUserId,
+  (membs, uid) => membs[uid]
+);
+
+export const selectConversationMessages = store.createSelector(
   selectConversation,
   (state) => selectAllMessages(state.messages)
 );
 
-export const selectPreviousMessagePage = createSelector(
+export const selectPreviousMessagePage = store.createSelector(
   selectConversation,
   (state) => state.messages.previousPage
 );
 
-export const selectNextMessagePageRequest = createSelector(
+export const selectNextMessagePageRequest = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   (cid, prevPage): MessageSearchRequestReq => {

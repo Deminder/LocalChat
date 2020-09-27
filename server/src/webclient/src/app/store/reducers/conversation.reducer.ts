@@ -33,7 +33,7 @@ const permcompare = (
   m1: { permission: PermissionDtoRes },
   m2: { permission: PermissionDtoRes },
   permMap: (m: PermissionDtoRes) => boolean
-) => Number(permMap(m1.permission)) - Number(permMap(m2.permission));
+) =>  Number(permMap(m2.permission)) - Number(permMap(m1.permission));
 
 export interface ConversationState {
   names: EntityState<ConversationNameDto>;

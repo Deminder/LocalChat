@@ -1,25 +1,21 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { ConversationMessageDto } from '../openapi/model/models';
 import {
-  listConversations,
-  listMembers,
-  listNextMessages,
+  createMessage,
   deleteMessage,
   editMessage,
-  createMessage,
+  listMembers,
+  listNextMessages,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
   selectConversationMemberEntities,
   selectConversationMessages,
 } from '../store/selectors/conversation.selectors';
-import { delay, filter, take } from 'rxjs/operators';
-import { ConversationMessageDto } from '../openapi/model/models';
-import {
-  selectSelfName,
-  selectSelfUserId,
-} from '../store/selectors/user.selectors';
+import { selectSelfUserId } from '../store/selectors/user.selectors';
 
 @Component({
   selector: 'app-conversation',
@@ -59,11 +55,15 @@ export class ConversationComponent implements OnInit, OnDestroy {
   editMessage(conversationId: number, msg: ConversationMessageDto): void {
     // TODO edit dialog
     this.store.dispatch(
-      editMessage({ conversationId,  messageId: msg.id, text: msg.text + ' Edited text!' })
+      editMessage({
+        conversationId,
+        messageId: msg.id,
+        text: msg.text + ' Edited text!',
+      })
     );
   }
 
   sendMessage(conversationId: number, text: string): void {
-    this.store.dispatch(createMessage({ conversationId, text }))
+    this.store.dispatch(createMessage({ conversationId, text }));
   }
 }

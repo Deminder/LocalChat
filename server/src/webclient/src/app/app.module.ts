@@ -10,6 +10,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -43,6 +46,8 @@ import { AuthorColorPipe } from './shared/author-color.pipe';
 import { WriterComponent } from './conversation/writer/writer.component';
 import { DisplayTextPipe } from './shared/display-text.pipe';
 import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
+import { MembersComponent } from './members/members.component';
+import { AddMemberComponent } from './shared/dialogs/add-member/add-member.component';
 
 registerLocaleData(localeDe);
 
@@ -65,6 +70,8 @@ export const metaReducers = [];
     WriterComponent,
     DisplayTextPipe,
     AddConversationComponent,
+    MembersComponent,
+    AddMemberComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +87,9 @@ export const metaReducers = [];
     MatListModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatAutocompleteModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,

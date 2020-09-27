@@ -10,10 +10,16 @@ import { FormControl, Validators } from '@angular/forms';
 export class AddConversationComponent implements OnInit {
   nameControl = new FormControl('', Validators.required);
 
+  title: string;
+  submitText: string;
+
   constructor(
     public dialogRef: MatDialogRef<AddConversationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { name: string }
+    @Inject(MAT_DIALOG_DATA) public data: { name: string, title?: string, submitText?: string }
   ) {
+    this.title = data.title ?? 'Create New Conversation';
+    this.submitText = data.submitText ?? 'Add';
+
     this.nameControl.setValue(data.name);
   }
 

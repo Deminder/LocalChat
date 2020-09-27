@@ -98,9 +98,10 @@ class ConversationServiceImpl(
                         name = conversationName
                                 .ifBlank {
                                     "$adminName ↹ ${memberNames.joinToString(",")}"
-                                })
+                                }
+                )
                         .let {
-                            conversationRepository.save(it)
+                            conversationRepository.save(it).copy(lastUpdate = Instant.now())
                         }.also {
                             memberNames
                                     .plus(adminName)

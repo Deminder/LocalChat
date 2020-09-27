@@ -1,25 +1,23 @@
-import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { isProgressActive } from './store/selectors/progress.selectors';
+import { map, take, tap } from 'rxjs/operators';
+import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
+import { addConversation } from './store/actions/conversation.actions';
+import { getSelf } from './store/actions/user.actions';
 import {
+  isMembersOpen,
   isSettingsOpen,
   selectedConversationId,
 } from './store/reducers/router.reducer';
-import { selectSelfName } from './store/selectors/user.selectors';
-import { getSelf } from './store/actions/user.actions';
 import {
-  listConversations,
-  addConversation,
-} from './store/actions/conversation.actions';
-import {
-  selectConversations,
   selectActiveConversation,
+  selectConversations,
 } from './store/selectors/conversation.selectors';
-import { Title } from '@angular/platform-browser';
-import { map, tap, take } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
+import { isProgressActive } from './store/selectors/progress.selectors';
+import { selectSelfName } from './store/selectors/user.selectors';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +31,7 @@ export class AppComponent implements OnInit {
   selfName$ = this.store.select(selectSelfName);
   isProgressActive$ = this.store.select(isProgressActive);
   isSettingsOpen$ = this.store.select(isSettingsOpen);
+  isMembersOpen$ = this.store.select(isMembersOpen);
 
   conversations$ = this.store.select(selectConversations);
   conversationId$ = this.store.select(selectedConversationId);
@@ -51,7 +50,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     setTimeout(() => this.store.dispatch(getSelf()));
-    this.selfName$.subscribe(() => this.store.dispatch(listConversations()));
   }
 
   back(): void {
@@ -61,7 +59,9 @@ export class AppComponent implements OnInit {
   addConversation(): void {
     this.selfName$.pipe(take(1)).subscribe((selfName) =>
       this.dialog
-        .open(AddConversationComponent, { data: { name: `Chat of ${selfName}`  } })
+        .open(AddConversationComponent, {
+          data: { name: `Chat of ${selfName}` },
+        })
         .afterClosed()
         .subscribe((result) => {
           if (result) {

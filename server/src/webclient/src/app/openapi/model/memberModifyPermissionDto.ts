@@ -13,7 +13,7 @@ import { PermissionDtoRes } from './permissionDtoRes';
 
 
 export interface MemberModifyPermissionDto { 
-    _delete: boolean;
     modify: PermissionDtoRes;
+    remove: boolean;
 }
 

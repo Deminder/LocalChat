@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, mergeMap, switchMap } from 'rxjs/operators';
+import { listConversations } from '../../actions/conversation.actions';
 import {
   getSelf,
   getSelfFailure,
   getSelfSuccess,
 } from '../../actions/user.actions';
 import { UserService } from './user.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable()
 export class UserEffects {
@@ -18,10 +19,10 @@ export class UserEffects {
       ofType(getSelf),
       switchMap(() =>
         this.userService.getSelf().pipe(
-          map((s) => getSelfSuccess({ user: s })),
+          mergeMap((s) => of(getSelfSuccess({ user: s }), listConversations())),
           catchError((message) => {
             this.router.navigate(['/authorize']);
-            this.snackbar.open(message, '', {duration: 3000});
+            this.snackbar.open(message, '', { duration: 3000 });
             return of(getSelfFailure());
           })
         )

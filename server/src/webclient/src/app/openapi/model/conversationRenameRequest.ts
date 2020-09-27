@@ -11,9 +11,8 @@
  */
 
 
-export interface UserDts { 
-    id: number;
-    registerDate: number;
-    username: string;
+export interface ConversationRenameRequest { 
+    conversationId?: number;
+    conversationName: string;
 }
 

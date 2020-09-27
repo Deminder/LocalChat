@@ -1,8 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { UserDts } from '../../../openapi/model/models';
+import { catchError } from 'rxjs/operators';
 import { Credentials } from '../../actions/authorize.actions';
 
 @Injectable({
@@ -42,8 +41,11 @@ export class AuthorizeService {
     } else {
       console.error(`[Error ${error.status}] ${err}`);
     }
-    const serviceError =  err.errors ?? [
-      { field: 'password', defaultMessage: error.status === 404 ? 'Invalid!' : err.message ?? err },
+    const serviceError = err.errors ?? [
+      {
+        field: 'password',
+        defaultMessage: error.status === 404 ? 'Invalid!' : err.message ?? err,
+      },
     ];
     return throwError(serviceError);
   }
