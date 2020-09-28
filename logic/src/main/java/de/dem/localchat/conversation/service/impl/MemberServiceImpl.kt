@@ -16,10 +16,10 @@ import java.util.Collections.max
 
 @Service
 class MemberServiceImpl(
-        @Autowired private val memberRepository: MemberRepository,
-        @Autowired private val conversationMessageRepository: ConversationMessageRepository,
-        @Autowired private val userRepository: UserRepository,
-        @Autowired private val conversationRepository: ConversationRepository,
+        @Autowired val memberRepository: MemberRepository,
+        @Autowired val conversationMessageRepository: ConversationMessageRepository,
+        @Autowired val userRepository: UserRepository,
+        @Autowired val conversationRepository: ConversationRepository,
 ) : MemberService {
     override fun isMember(conversationId: Long, username: String, vararg authority: String): Boolean =
             memberRepository.findByIdAndUsername(conversationId, username)

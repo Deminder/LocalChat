@@ -20,10 +20,10 @@ import java.time.Instant
 
 @Service
 class ConversationServiceImpl(
-        @Autowired private val conversationRepository: ConversationRepository,
-        @Autowired private val memberRepository: MemberRepository,
-        @Autowired private val userRepository: UserRepository,
-        @Autowired private val conversationMessageRepository: ConversationMessageRepository
+        @Autowired val conversationRepository: ConversationRepository,
+        @Autowired val memberRepository: MemberRepository,
+        @Autowired val userRepository: UserRepository,
+        @Autowired val conversationMessageRepository: ConversationMessageRepository
 ) : ConversationService {
 
     override fun listConversations(): List<Conversation> =
@@ -59,7 +59,7 @@ class ConversationServiceImpl(
     override fun deleteMessage(conversationId: Long, messageId: Long) =
             conversationMessageRepository.findByIdAndConversationId(messageId, conversationId)?.let {
                 conversationMessageRepository.delete(it)
-            } ?: error("Message $messageId not found in conversation $conversationId!");
+            } ?: error("Message $messageId not found in conversation $conversationId!")
 
 
     override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int,
@@ -99,27 +99,25 @@ class ConversationServiceImpl(
                                 .ifBlank {
                                     "$adminName ↹ ${memberNames.joinToString(",")}"
                                 }
-                )
-                        .let {
-                            conversationRepository.save(it).copy(lastUpdate = Instant.now())
-                        }.also {
-                            memberNames
-                                    .plus(adminName)
-                                    .mapNotNull { memberName ->
-                                        userRepository.findByUsername(memberName)?.let { user ->
-                                            Member(
-                                                    conversationId = it.id!!,
-                                                    userId = user.id!!,
-                                                    permission = Permission(
-                                                            read = true, write = true, voice = true,
-                                                            moderate = memberName == adminName,
-                                                            administrate = memberName == adminName)
-                                            )
-                                        }
-                                    }.let {
-                                        memberRepository.saveAll(it)
-                                    }
-                        }
+                ).let {
+                    conversationRepository.save(it).copy(lastUpdate = Instant.now())
+                }.also {
+                    memberNames.plus(adminName)
+                            .mapNotNull { memberName ->
+                                userRepository.findByUsername(memberName)?.let { user ->
+                                    Member(
+                                            conversationId = it.id!!,
+                                            userId = user.id!!,
+                                            permission = Permission(
+                                                    read = true, write = true, voice = true,
+                                                    moderate = memberName == adminName,
+                                                    administrate = memberName == adminName)
+                                    )
+                                }
+                            }.let {
+                                memberRepository.saveAll(it)
+                            }
+                }
             }
 
     private fun username() = SecurityContextHolder.getContext().authentication?.name

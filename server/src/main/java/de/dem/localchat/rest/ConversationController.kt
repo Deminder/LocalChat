@@ -1,9 +1,13 @@
 package de.dem.localchat.rest
 
+import de.dem.localchat.conversation.model.ConversationEvent
 import de.dem.localchat.conversation.service.ConversationService
+import de.dem.localchat.conversation.service.EventSubscriptionService
 import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.dtos.*
 import de.dem.localchat.dtos.requests.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import javax.validation.Valid
@@ -12,8 +16,9 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/conversations")
 class ConversationController(
-        private val conversationService: ConversationService,
-        private val memberService: MemberService) {
+        @Autowired val conversationService: ConversationService,
+        @Autowired val memberService: MemberService,
+        @Autowired val eventSubscriptionService: EventSubscriptionService) {
 
     @GetMapping
     fun allConversationsOfUser(): List<ConversationNameDto> {
@@ -23,20 +28,31 @@ class ConversationController(
 
     @PostMapping
     fun createConversation(@RequestBody @Valid createRequest: ConversationCreateRequest): ConversationNameDto {
-        return conversationService.createConversation(
-                createRequest.name, createRequest.memberNames).toConversationNameDto()
+        return conversationService.createConversation(createRequest.name, createRequest.memberNames)
+                .toConversationNameDto().also {
+                    eventSubscriptionService.notifyMembers(
+                            ConversationEvent("upsert-conv", it), it.id, username())
+                }
     }
 
     @PostMapping("/rename")
     fun renameConversation(@RequestBody @Valid req: ConversationRenameRequest): ConversationNameDto {
-        return conversationService.changeConversationName(req.conversationId, req.conversationName).toConversationNameDto()
+        return conversationService.changeConversationName(req.conversationId, req.conversationName)
+                .toConversationNameDto().also {
+                    eventSubscriptionService.notifyMembers(
+                            ConversationEvent("upsert-conv", it), it.id, username())
+                }
     }
 
 
     @PutMapping("/{cid}/messages")
     fun upsertMessage(@PathVariable("cid") cid: Long,
                       @RequestBody r: MessageUpsertRequest): ConversationMessageDto {
-        return conversationService.upsertMessage(cid, r.messageId, r.text).toConversationMessageDto()
+        return conversationService.upsertMessage(cid, r.messageId, r.text)
+                .toConversationMessageDto().also {
+                    eventSubscriptionService.notifyMembers(
+                            ConversationEvent("upsert-message", it), cid, username())
+                }
     }
 
     @PostMapping("/{cid}/messages")
@@ -49,7 +65,11 @@ class ConversationController(
 
     @DeleteMapping("/{cid}/messages/{mid}")
     fun deleteMessage(@PathVariable("cid") cid: Long, @PathVariable("mid") messageId: Long) {
-        return conversationService.deleteMessage(cid, messageId)
+        conversationService.deleteMessage(cid, messageId).also {
+            eventSubscriptionService.notifyMembers(
+                    ConversationEvent("delete-message",
+                            mapOf("conversationId" to cid, "messageId" to messageId)), cid, username())
+        }
     }
 
     @GetMapping("/{cid}/members")
@@ -67,6 +87,9 @@ class ConversationController(
             updateRequest.permission?.let {
                 memberService.upsertMember(cid, uid, it.toPermission()).let { member ->
                     member.toMemberDto(memberService.memberName(cid, member.userId), allowedModification(cid, uid))
+                }.also { member ->
+                    eventSubscriptionService.notifyMembers(
+                            ConversationEvent("upsert-member", member), cid, username())
                 }
             } ?: error("Permission not specified. Color change not yet implemented!")
 
@@ -75,7 +98,11 @@ class ConversationController(
     fun deleteMember(
             @PathVariable("cid") cid: Long,
             @PathVariable("uid") uid: Long) {
-        return memberService.removeMember(cid, uid)
+        return memberService.removeMember(cid, uid).also {
+            eventSubscriptionService.notifyMembers(
+                    ConversationEvent("delete-member",
+                            mapOf("conversationId" to cid, "userId" to uid)), cid, username())
+        }
     }
 
     @GetMapping("/{cid}/members/{uid}/allowed-modification")
@@ -88,4 +115,6 @@ class ConversationController(
         )
     }
 
+    private fun username() = SecurityContextHolder.getContext().authentication?.name
+            ?: error("Not logged in!")
 }

@@ -1,6 +1,5 @@
 package de.dem.localchat.conversation.service
 
-import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 
