@@ -51,7 +51,8 @@ class ConversationController(
         return conversationService.upsertMessage(cid, r.messageId, r.text)
                 .toConversationMessageDto().also {
                     eventSubscriptionService.notifyMembers(
-                            ConversationEvent("upsert-message", it), cid, username())
+                            ConversationEvent("upsert-message",
+                                    mapOf("conversationId" to cid, "message" to it)), cid, username())
                 }
     }
 

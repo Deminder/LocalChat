@@ -3,6 +3,8 @@ import { UserDto } from '../../openapi/model/models';
 
 export type Credentials = { username: string; password: string };
 
+export const listenForEvents = createAction('[User] Listen for Events');
+
 export const getSelf = createAction('[User] Get Self');
 
 export const getSelfSuccess = createAction(

@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpSession
@@ -25,9 +26,10 @@ class ConversationEventsController(
             try {
                 val queue = eventSubscriptionService.subscribeFor(username, sessionId)
                 while (true) {
-                    val event = queue.poll(1, TimeUnit.MINUTES)
+                    val event = queue.poll(29, TimeUnit.SECONDS)
                     if (event == null) {
-                        emitter.send(ConversationEvent("food", "banana"))
+                        // FUTURE use id to resend lost events
+                        emitter.send(event().reconnectTime(0))
                     } else {
                         emitter.send(event)
                     }

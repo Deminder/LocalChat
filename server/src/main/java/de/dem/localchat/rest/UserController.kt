@@ -19,12 +19,15 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/register")
     fun registerUser(@RequestBody @Valid registerRequest: RegisterRequest) {
+        if (registerRequest.username == username()) {
+            error("This username is taken by the anonymous spring user!")
+        }
         userService.registerUser(registerRequest.username, registerRequest.password)
     }
 
     @GetMapping("/self")
     fun selfUser(): UserDto =
-            userService.userByName(username())?.toUserDts() ?: error("Registration error!")
+            userService.userByName(username())?.toUserDts() ?: error("You are not logged in!")
 
 
     @PostMapping("/search")

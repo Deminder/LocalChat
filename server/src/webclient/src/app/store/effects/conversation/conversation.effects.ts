@@ -30,9 +30,11 @@ import {
   messageUpserted,
   removeMember,
   renameConversation,
+  conversationDeleted,
 } from '../../actions/conversation.actions';
 import { selectNextMessagePageRequest } from '../../selectors/conversation.selectors';
 import { ConversationService } from './conversation.service';
+import { selectSelfUserId } from '../../selectors/user.selectors';
 
 @Injectable()
 export class ConversationEffects {
@@ -124,6 +126,36 @@ export class ConversationEffects {
         this.conversationService.deleteMember(a.conversationId, a.userId).pipe(
           map(() => memberDeleted(a as MemberRef)),
           this.catchActionError()
+        )
+      )
+    )
+  );
+
+  addedSelfMember$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(memberUpserted),
+      mergeMap((a) =>
+        this.store.select(selectSelfUserId).pipe(
+          mergeMap((userId) =>
+            userId === a.member.userId
+              ? of(listConversations())
+              : EMPTY
+          ),
+        )
+      )
+    )
+  );
+
+  removedSelfMember$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(memberDeleted),
+      mergeMap((a) =>
+        this.store.select(selectSelfUserId).pipe(
+          mergeMap((userId) =>
+            userId === a.userId
+              ? of(conversationDeleted({ conversationId: a.conversationId }))
+              : EMPTY
+          ),
         )
       )
     )
