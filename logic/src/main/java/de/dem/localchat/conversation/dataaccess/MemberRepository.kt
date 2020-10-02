@@ -20,7 +20,7 @@ interface MemberRepository : CrudRepository<Member, Long> {
     @Query("SELECT m.* FROM member m WHERE " +
             "m.conversation_id = :conversationId " +
             "ORDER BY m.join_date")
-    fun findByConversationId(conversationId: Long): List<Member>
+    fun findAllByConversationId(conversationId: Long): List<Member>
 
     @Query("SELECT COUNT(m.id) FROM member m WHERE " +
             "m.conversation_id = :conversationId" )

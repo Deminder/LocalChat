@@ -81,20 +81,17 @@ class MemberServiceImpl(
     override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission): Member =
             subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
                 subject.copy(
-                        permission = writeNewPermission(subject.id == author.id,
+                        permission = authorizedPermissionModify(subject.id == author.id,
                                 subject.permission, newPermission, author.permission))
                         .let {
-                            if (it.permission == newPermission)
-                                if (adminMembersOf(conversationId).minus(subject).isNotEmpty())
-                                    memberRepository.save(it)
-                                else error("Choose next admin before removing the current!")
-                            else error("Permission change failed due to lacking modification permission! " +
-                                    "Expected $newPermission got ${it.permission}")
+                            if (adminMembersOf(conversationId).minus(subject).isNotEmpty())
+                                memberRepository.save(it)
+                            else error("Choose next admin before removing the current!")
                         }
             }
 
     private fun adminMembersOf(conversationId: Long): Set<Member> =
-            memberRepository.findByConversationId(conversationId).filter {
+            memberRepository.findAllByConversationId(conversationId).filter {
                 it.permission.administrate
             }.toSet()
 
@@ -117,16 +114,17 @@ class MemberServiceImpl(
                 }
             }
 
-    private fun writeNewPermission(ss: Boolean,
-                                   op: Permission,
-                                   np: Permission,
-                                   ap: Permission) = modificationPermission(ss, op, ap).let { cp ->
+    private fun authorizedPermissionModify(ss: Boolean,
+                                           op: Permission,
+                                           np: Permission,
+                                           ap: Permission) = modificationPermission(ss, op, ap).let { cp ->
         Permission(
-                read = (cp.read && np.read) || op.read,
-                write = (cp.write && np.write) || op.write,
-                voice = (cp.voice && np.voice) || op.voice,
-                moderate = (cp.moderate && np.moderate) || op.moderate,
-                administrate = (cp.administrate && np.administrate) || op.administrate)
+                read = if (cp.read) np.read else error("Not allowed to change read permission!"),
+                write = if (cp.write) np.write else error("Not allowed to change write permission!"),
+                voice = if (cp.voice) np.voice else error("Not allowed to change voice permission!"),
+                moderate = if (cp.moderate) np.moderate else error("Not allowed to change moderate permission!"),
+                administrate = if (cp.administrate) np.administrate else error("Not allowed to administrate permission!")
+        )
     }
 
 

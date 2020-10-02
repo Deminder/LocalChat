@@ -31,7 +31,7 @@ class ConversationServiceImpl(
 
 
     override fun membersOfConversation(conversationId: Long): List<Member> =
-            memberRepository.findByConversationId(conversationId)
+            memberRepository.findAllByConversationId(conversationId)
 
 
     override fun changeConversationName(conversationId: Long, newName: String) =
@@ -49,11 +49,12 @@ class ConversationServiceImpl(
                 (if (messageId == null)
                     ConversationMessage(authorId = authorId, conversationId = conversationId)
                 // only author can edit message
-                else conversationMessageRepository.findByIdAndAuthorId(messageId, authorId))?.let {
-                    conversationMessageRepository.save(it.copy(
-                            text = text
-                    ))
-                } ?: error("Requesting user did not author message $messageId!")
+                else conversationMessageRepository.findByIdAndAuthorId(messageId, authorId)
+                        )?.let {
+                            conversationMessageRepository.save(it.copy(
+                                    text = text
+                            ))
+                        } ?: error("Requesting user did not author message $messageId!")
             }
 
     override fun deleteMessage(conversationId: Long, messageId: Long) =
