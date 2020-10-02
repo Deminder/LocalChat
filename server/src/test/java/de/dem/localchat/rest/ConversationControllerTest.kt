@@ -7,6 +7,7 @@ import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.model.ConversationEvent
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.conversation.service.EventSubscriptionService
+import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.dtos.requests.ConversationCreateRequest
 import de.dem.localchat.dtos.requests.ConversationRenameRequest
 import de.dem.localchat.dtos.requests.MessageUpsertRequest
@@ -43,13 +44,18 @@ internal class ConversationControllerTest(
 
     @Configuration
     @Import(ConversationController::class)
-    class ContextConfiguration
+    class ContextConfiguration {
+
+    }
 
     @MockkBean
     private lateinit var conversationService: ConversationService
 
     @MockkBean
     private lateinit var eventSubscriptionService: EventSubscriptionService
+
+    @MockkBean
+    private lateinit var memberService: MemberService
 
     private lateinit var mockMvc: MockMvc
 

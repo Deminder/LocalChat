@@ -77,6 +77,7 @@ configure(subprojects.filter { it.name != "webclient" }) {
         }
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.6.2")
         testImplementation("org.springframework.security:spring-security-test")
+        testImplementation("io.zonky.test:embedded-database-spring-test:1.5.5")
     }
 
     tasks.test {
