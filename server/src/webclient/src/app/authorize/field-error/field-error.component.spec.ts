@@ -1,20 +1,21 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { FormfieldComponent } from './formfield.component';
+import { FieldErrorComponent } from './field-error.component';
 
 describe('FormfieldComponent', () => {
-  let component: FormfieldComponent;
-  let fixture: ComponentFixture<FormfieldComponent>;
+  let component: FieldErrorComponent;
+  let fixture: ComponentFixture<FieldErrorComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ FormfieldComponent ]
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [FieldErrorComponent],
+      }).compileComponents();
     })
-    .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormfieldComponent);
+    fixture = TestBed.createComponent(FieldErrorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
