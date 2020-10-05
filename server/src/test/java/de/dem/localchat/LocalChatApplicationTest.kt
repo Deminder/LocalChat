@@ -2,6 +2,7 @@ package de.dem.localchat
 
 import de.dem.localchat.security.dataacess.UserRepository
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
+import org.flywaydb.test.annotation.FlywayTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.hasItems
