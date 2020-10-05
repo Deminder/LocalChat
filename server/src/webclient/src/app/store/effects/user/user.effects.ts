@@ -39,7 +39,7 @@ export class UserEffects {
   $eventListen = createEffect(() =>
     this.actions$.pipe(
       ofType(listenForEvents),
-      switchMap(() => this.sseEventSerivce.receiveEvents()),
+      switchMap(() => this.sseEventService.receiveEvents()),
       mergeMap((event) => {
         switch (event.subject) {
           case 'upsert-conv':
@@ -70,6 +70,6 @@ export class UserEffects {
     private router: Router,
     private snackbar: MatSnackBar,
     private userService: UserService,
-    private sseEventSerivce: SseEventService
+    private sseEventService: SseEventService
   ) {}
 }

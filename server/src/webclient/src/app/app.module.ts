@@ -1,18 +1,4 @@
 import { NgModule, LOCALE_ID } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatCardModule } from '@angular/material/card';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -48,6 +34,7 @@ import { DisplayTextPipe } from './shared/display-text.pipe';
 import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
 import { MembersComponent } from './members/members.component';
 import { AddMemberComponent } from './shared/dialogs/add-member/add-member.component';
+import { MaterialModule } from './material/material.module';
 
 registerLocaleData(localeDe);
 
@@ -76,23 +63,10 @@ export const metaReducers = [];
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatInputModule,
-    MatTabsModule,
-    MatCardModule,
-    MatProgressBarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatExpansionModule,
-    MatCheckboxModule,
-    MatAutocompleteModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    MaterialModule,
     AppRoutingModule,
     StoreModule.forRoot(
       {

@@ -1,47 +1,51 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
+import { login } from '../store/actions/authorize.actions';
 import { AuthorizeComponent } from './authorize.component';
-import { MatTabsModule } from '@angular/material/tabs';
-import {
-  MockRender,
-  MockBuilder,
-  MockedComponentFixture,
-  ngMocks,
-} from 'ng-mocks';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { AppModule } from '../app.module';
-import { Store } from '@ngrx/store';
-import { login } from '../store/actions/authorize.actions';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { FieldErrorComponent } from './field-error/field-error.component';
+import { MaterialModule } from '../material/material.module';
 
 describe('AuthorizeComponent', () => {
-  const storeStub = jasmine.createSpyObj('store', ['dispatch']);
+  let fixture: ComponentFixture<AuthorizeComponent>;
+  let component: AuthorizeComponent;
+  let store: MockStore;
+  const initialState = {};
 
-  beforeEach(() =>
-    MockBuilder(AuthorizeComponent, AppModule)
-      .keep(MatTabsModule)
-      .keep(LoginComponent)
-      .keep(RegisterComponent)
-      .mock(Store, storeStub)
-      .build()
+  beforeEach(
+    waitForAsync(() =>
+      TestBed.configureTestingModule({
+        imports: [MaterialModule, NoopAnimationsModule],
+        declarations: [
+          MockComponent(LoginComponent),
+          MockComponent(RegisterComponent),
+          MockComponent(FieldErrorComponent),
+          AuthorizeComponent,
+        ],
+        providers: [provideMockStore({ initialState })],
+      })
+    )
   );
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AuthorizeComponent);
+    component = fixture.componentInstance;
+    store = TestBed.inject(MockStore);
+    fixture.detectChanges();
+  });
+
   it('should create', () => {
-    const fixture = MockRender(AuthorizeComponent);
-    const component = fixture.point.componentInstance;
     expect(component).toBeTruthy();
   });
 
   it('should login on submit', () => {
-    const fixture = MockRender(AuthorizeComponent);
-
-    fixture.detectChanges();
-    const loginComponent = ngMocks.find(fixture.debugElement, LoginComponent)
-      .componentInstance;
     const creds = { username: 'abc', password: 'pwd' };
-    loginComponent.login.emit(creds);
+    spyOn(store, 'dispatch');
+    component.onLogin(creds);
 
-    fixture.detectChanges();
-
-    expect(storeStub.dispatch).toHaveBeenCalledWith(login({ creds }));
+    expect(store.dispatch).toHaveBeenCalledWith(login({ creds }));
   });
 });

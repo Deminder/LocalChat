@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material/material.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MockComponent } from 'ng-mocks';
+import { FieldErrorComponent } from '../field-error/field-error.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -8,7 +13,8 @@ describe('LoginComponent', () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [LoginComponent],
+        imports: [ReactiveFormsModule, MaterialModule, NoopAnimationsModule],
+        declarations: [LoginComponent, MockComponent(FieldErrorComponent)],
       }).compileComponents();
     })
   );
