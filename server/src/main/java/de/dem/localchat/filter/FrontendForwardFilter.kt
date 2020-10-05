@@ -14,16 +14,13 @@ import javax.servlet.http.HttpServletRequest
 @Order(1)
 class FrontendForwardFilter : Filter {
     private val frontendPattern = Pattern.compile(
-            "^/(?!api/|v2/|null/|webjars/|swagger-resources|csrf)[^.]+$"
+            "^/(?!api/|v2/|null/|webjars/|swagger-resources|csrf)[^.]*$"
     )
 
     override fun doFilter(req: ServletRequest, resp: ServletResponse, chain: FilterChain) =
-            when (frontendPattern.matcher(
-                    (req as HttpServletRequest).requestURI
-            ).matches()) {
-                true -> req.getRequestDispatcher("/")
-                        .forward(req, resp)
-                else -> chain.doFilter(req, resp)
-            }
+            if (frontendPattern.matcher((req as HttpServletRequest).requestURI).matches())
+                req.getRequestDispatcher("/index.html").forward(req, resp)
+            else chain.doFilter(req, resp)
+
 
 }

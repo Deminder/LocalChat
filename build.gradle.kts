@@ -69,7 +69,6 @@ configure(subprojects.filter { it.name != "webclient" }) {
         implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
         implementation("org.springframework:spring-context-support:5.2.6.RELEASE")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
-        runtimeOnly("com.h2database:h2")
         runtimeOnly("org.postgresql:postgresql")
         testImplementation("com.ninja-squad:springmockk:2.0.2")
         testImplementation("org.springframework.boot:spring-boot-starter-test") {

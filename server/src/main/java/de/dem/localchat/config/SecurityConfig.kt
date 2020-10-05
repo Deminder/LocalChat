@@ -2,6 +2,7 @@ package de.dem.localchat.config
 
 import de.dem.localchat.security.service.impl.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -39,6 +40,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/api/manage/**").hasRole("MANAGER")
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/api/**").authenticated()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
