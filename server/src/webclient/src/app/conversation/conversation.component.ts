@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
 import {
   createMessage,
@@ -14,8 +14,12 @@ import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
   selectConversationMemberEntities,
   selectConversationMessages,
+  selectPreviousMessagePage,
+  isFirstPage,
+  isLastPage,
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
+import { MessageListComponent } from './message-list/message-list.component';
 
 @Component({
   selector: 'app-conversation',
@@ -27,14 +31,17 @@ export class ConversationComponent implements OnInit, OnDestroy {
   selfUserId$ = this.store.select(selectSelfUserId);
   conversationMessages$ = this.store.select(selectConversationMessages);
   memberEntites$ = this.store.select(selectConversationMemberEntities);
+  isFirstPage$ = this.store.select(isFirstPage);
+  isLastPage$ = this.store.select(isLastPage);
 
-  switcher: Subscription;
+  sub: Subscription;
+  sub2: Subscription;
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.switcher = this.conversationId$
+      this.sub = this.conversationId$
         .pipe(filter((cid) => cid >= 0))
         .subscribe((cid) => {
           this.store.dispatch(listMembers({ conversationId: cid }));
@@ -44,7 +51,18 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.switcher.unsubscribe();
+    this.sub.unsubscribe();
+  }
+
+  loadMoreMessages(conversationId: number): void {
+    this.isLastPage$
+      .pipe(
+        take(1),
+        filter((v) => !v)
+      )
+      .subscribe(() => {
+        this.store.dispatch(listNextMessages({ conversationId }));
+      });
   }
 
   deleteMessage(conversationId: number, msg: ConversationMessageDto): void {

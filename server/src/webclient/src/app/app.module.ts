@@ -1,40 +1,42 @@
-import { NgModule, LOCALE_ID } from '@angular/core';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { registerLocaleData } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import localeDe from '@angular/common/locales/de';
+import { LOCALE_ID, NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EffectsModule } from '@ngrx/effects';
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
-import { EffectsModule } from '@ngrx/effects';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ConversationComponent } from './conversation/conversation.component';
-import { appreducer } from './store/reducers/app.reducer';
-import { ConversationEffects } from './store/effects/conversation/conversation.effects';
-import { UserEffects } from './store/effects/user/user.effects';
-import { HttpClientModule } from '@angular/common/http';
-import { LoginComponent } from './authorize/login/login.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthorizeComponent } from './authorize/authorize.component';
-import { RegisterComponent } from './authorize/register/register.component';
-import { AuthorizeEffects } from './store/effects/authorize/authorize.effects';
-import { ProgressEffects } from './store/effects/progress/progress.effects';
-import { routerKey } from './store/reducers/router.reducer';
 import { FieldErrorComponent } from './authorize/field-error/field-error.component';
+import { LoginComponent } from './authorize/login/login.component';
+import { RegisterComponent } from './authorize/register/register.component';
+import { ConversationComponent } from './conversation/conversation.component';
+import { MessageListComponent } from './conversation/message-list/message-list.component';
+import { WriterComponent } from './conversation/writer/writer.component';
+import { MaterialModule } from './material/material.module';
+import { MembersComponent } from './members/members.component';
+import { SettingsComponent } from './settings/settings.component';
+import { AuthorColorPipe } from './shared/author-color.pipe';
+import { AuthorNamePipe } from './shared/author-name.pipe';
+import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
+import { AddMemberComponent } from './shared/dialogs/add-member/add-member.component';
+import { DisplayTextPipe } from './shared/display-text.pipe';
 import { FielderrorPipe } from './shared/fielderror.pipe';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { SettingsComponent } from './settings/settings.component';
-import { AuthorNamePipe } from './shared/author-name.pipe';
-import { MessageListComponent } from './conversation/message-list/message-list.component';
-import {registerLocaleData} from '@angular/common';
-import localeDe from '@angular/common/locales/de';
-import { AuthorColorPipe } from './shared/author-color.pipe';
-import { WriterComponent } from './conversation/writer/writer.component';
-import { DisplayTextPipe } from './shared/display-text.pipe';
-import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
-import { MembersComponent } from './members/members.component';
-import { AddMemberComponent } from './shared/dialogs/add-member/add-member.component';
-import { MaterialModule } from './material/material.module';
+import { AuthorizeEffects } from './store/effects/authorize/authorize.effects';
+import { ConversationEffects } from './store/effects/conversation/conversation.effects';
+import { ProgressEffects } from './store/effects/progress/progress.effects';
+import { UserEffects } from './store/effects/user/user.effects';
+import { appreducer } from './store/reducers/app.reducer';
+import { routerKey } from './store/reducers/router.reducer';
+import { ScrollableDirective } from './shared/directives/scrollable.directive';
 
 registerLocaleData(localeDe);
 
@@ -59,6 +61,7 @@ export const metaReducers = [];
     AddConversationComponent,
     MembersComponent,
     AddMemberComponent,
+    ScrollableDirective,
   ],
   imports: [
     BrowserModule,
@@ -75,14 +78,19 @@ export const metaReducers = [];
       },
       { metaReducers }
     ),
-    EffectsModule.forRoot([ConversationEffects, AuthorizeEffects, ProgressEffects, UserEffects]),
+    EffectsModule.forRoot([
+      ConversationEffects,
+      AuthorizeEffects,
+      ProgressEffects,
+      UserEffects,
+    ]),
     StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: !environment.production,
     }),
   ],
-  providers: [{provide: LOCALE_ID, useValue: 'de'}],
+  providers: [{ provide: LOCALE_ID, useValue: 'de' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

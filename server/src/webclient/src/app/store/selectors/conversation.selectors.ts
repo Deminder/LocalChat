@@ -10,7 +10,7 @@ import {
 } from '../reducers/conversation.reducer';
 import { selectedConversationId } from '../reducers/router.reducer';
 import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
-import {selectSelfUserId} from './user.selectors';
+import { selectSelfUserId } from './user.selectors';
 
 const selectConversation = store.createFeatureSelector<ConversationState>(
   conversationKey
@@ -21,12 +21,10 @@ const selectConversationNames = store.createSelector(
   (state) => state.names
 );
 
-
 export const selectConversations = store.createSelector(
   selectConversationNames,
   (state) => selectAllConvs(state)
 );
-
 
 export const selectActiveConversation = store.createSelector(
   selectConversation,
@@ -60,11 +58,27 @@ export const selectPreviousMessagePage = store.createSelector(
   (state) => state.messages.previousPage
 );
 
+export const isFirstPage = store.createSelector(
+  selectedConversationId,
+  selectPreviousMessagePage,
+  (cid, prevPage) =>
+    prevPage && prevPage.convId === cid && prevPage.request.page === 0
+);
+
+export const isLastPage = store.createSelector(
+  selectedConversationId,
+  selectPreviousMessagePage,
+  (cid, prevPage) =>
+    prevPage && prevPage.convId === cid && prevPage.last
+);
+
 export const selectNextMessagePageRequest = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   (cid, prevPage): MessageSearchRequestReq => {
-    return prevPage && prevPage.convId === cid && prevPage.request.search === null
+    return prevPage &&
+      prevPage.convId === cid &&
+      prevPage.request.search === null
       ? { ...prevPage, page: prevPage.request.page + 1 }
       : { page: 0, pageSize: 10 };
   }

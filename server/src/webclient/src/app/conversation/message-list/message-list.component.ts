@@ -1,4 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+  HostBinding,
+} from '@angular/core';
 import {
   ConversationMessageDto,
   MemberDto,
@@ -28,9 +36,11 @@ export class MessageListComponent implements OnInit {
   @Output()
   edit = new EventEmitter<{ messageId: number }>();
 
+
   constructor() {}
 
   ngOnInit(): void {}
+
 
   isOutgoing(msg: ConversationMessageDto): boolean {
     return this.selfUserId === msg.authorUserId;
@@ -45,6 +55,9 @@ export class MessageListComponent implements OnInit {
   }
 
   deletePermission(userId: number): boolean {
-    return userId === this.selfUserId || this.memberDict[this.selfUserId].permission.moderate;
+    return (
+      userId === this.selfUserId ||
+      this.memberDict[this.selfUserId].permission.moderate
+    );
   }
 }

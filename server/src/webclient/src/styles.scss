@@ -21,7 +21,7 @@ $candy-app-theme: mat-dark-theme((
   color: (
     primary: $candy-app-primary,
     accent: $candy-app-accent,
-    warn: $candy-app-warn,  
+    warn: $candy-app-warn,
   )
 ));
 
@@ -62,7 +62,7 @@ a:link:hover {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: mat-color($candy-app-primary, 500);
-} 
+}
 
 
 // Include theme styles for core and each component used in your app.

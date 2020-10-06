@@ -25,11 +25,11 @@ class ConversationEventsController(
         requestThreadPool.execute {
             try {
                 val queue = eventSubscriptionService.subscribeFor(username, sessionId)
+                emitter.send(event().reconnectTime(1000))
                 while (true) {
                     val event = queue.poll(29, TimeUnit.SECONDS)
                     if (event == null) {
                         // FUTURE use id to resend lost events
-                        emitter.send(event().reconnectTime(0))
                     } else {
                         emitter.send(event)
                     }

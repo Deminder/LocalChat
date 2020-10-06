@@ -1,10 +1,13 @@
 <div class="main-column" *ngIf="(conversationId$ | async) as cid">
   <app-message-list class="list"
+    appScrollable
     [messages]="conversationMessages$ | async"
     [selfUserId]="selfUserId$ | async"
     [memberDict]="memberEntites$ | async"
     (delete)="deleteMessage(cid, $event)"
     (edit)="editMessage(cid, $event)"
+    (atTop)="loadMoreMessages(cid)"
+    [scrollDown]="isFirstPage$ | async"
   ></app-message-list>
   <app-writer class="writer shaded-background" (send)="sendMessage(cid, $event)"></app-writer>
 </div>
