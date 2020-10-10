@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { EMPTY, ObservedValueOf, of, OperatorFunction, zip } from 'rxjs';
+import { EMPTY, ObservedValueOf, of, OperatorFunction } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, take } from 'rxjs/operators';
 import { MemberUpdateRequest } from 'src/app/openapi/model/models';
 import {
   addConversation,
   addMember,
+  conversationDeleted,
   conversationUpserted,
   createMessage,
   deleteMessage,
@@ -30,17 +31,14 @@ import {
   messageUpserted,
   removeMember,
   renameConversation,
-  conversationDeleted,
 } from '../../actions/conversation.actions';
-import {
-  selectNextMessagePageRequest,
-  selectPreviousMessagePage,
-} from '../../selectors/conversation.selectors';
-import { ConversationService } from './conversation.service';
+import { selectNextMessagePageRequest } from '../../selectors/conversation.selectors';
 import { selectSelfUserId } from '../../selectors/user.selectors';
+import { ConversationService } from './conversation.service';
 
 @Injectable()
 export class ConversationEffects {
+
   loadConversations$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listConversations),

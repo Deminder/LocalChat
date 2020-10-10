@@ -9,5 +9,5 @@
     (atTop)="loadMoreMessages(cid)"
     [scrollDown]="isFirstPage$ | async"
   ></app-message-list>
-  <app-writer class="writer shaded-background" (send)="sendMessage(cid, $event)"></app-writer>
+  <app-writer *ngIf="(selfMember$ | async)?.permission.write" class="writer shaded-background" (send)="sendMessage(cid, $event)"></app-writer>
 </div>

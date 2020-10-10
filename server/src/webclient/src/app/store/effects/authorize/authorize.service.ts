@@ -12,19 +12,15 @@ export class AuthorizeService {
 
   constructor(private http: HttpClient) {}
 
-  login(creds: Credentials): Observable<string> {
+  login(creds: Credentials): Observable<void> {
     return this.http
-      .post(
-        `${this.endpoint}/login`,
-        {},
-        { params: creds, responseType: 'text' }
-      )
+      .post<void>( `${this.endpoint}/login`, creds)
       .pipe(catchError(this.handleFormError));
   }
 
-  logout(): Observable<string> {
+  logout(): Observable<void> {
     return this.http
-      .post(`${this.endpoint}/remove-tokens`, {}, { responseType: 'text' })
+      .post<void>(`${this.endpoint}/logout`, {})
       .pipe(catchError(this.handleFormError));
   }
 

@@ -11,8 +11,6 @@ import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.security.dataacess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -40,10 +38,6 @@ class ConversationServiceImpl(
             } ?: error("No such conversation!")
 
 
-    private fun descDate(page: Int, pageSize: Int) =
-            PageRequest.of(page, pageSize, Sort.by("authorDate").descending())
-
-
     override fun upsertMessage(conversationId: Long, messageId: Long?, text: String): ConversationMessage =
             userRepository.findByUsername(username())?.id!!.let { authorId ->
                 (if (messageId == null)
@@ -68,29 +62,27 @@ class ConversationServiceImpl(
                                          newerThan: Instant,
                                          search: String?,
                                          regex: Boolean?) =
-            descDate(page, pageSize).let { pageRequest ->
-                if (search == null)
-                    conversationMessageRepository.findAllByConversationIdBetween(
-                            conversationId, olderThan, newerThan, pageRequest)
-                else (if (regex == true)
-                    conversationMessageRepository::findAllMessagesByPattern
-                else conversationMessageRepository::findAllMessagesByString)
-                        .invoke(conversationId, olderThan, newerThan, search, pageRequest)
+            (if (search == null)
+                conversationMessageRepository.findAllByConversationIdBetween(
+                        conversationId, olderThan, newerThan, pageSize, page)
+            else (if (regex == true)
+                conversationMessageRepository::findAllMessagesByPattern
+            else conversationMessageRepository::findAllMessagesByString)
+                    .invoke(conversationId, olderThan, newerThan, search, pageSize, page)
 
-            }.let {
-                ConversationMessagePage(
-                        conversationId = conversationId,
-                        page = page,
-                        pageSize = pageSize,
-                        olderThan = olderThan,
-                        newerThan = newerThan,
-                        // it should be Pageable<Type> once spring data jdbc supports pageable return values
-                        last = it.size < pageSize,
-                        messages = it,
-                        search = search,
-                        regex = regex
-                )
-            }
+                    ).let {
+                        ConversationMessagePage(
+                                conversationId = conversationId,
+                                page = page,
+                                pageSize = pageSize,
+                                olderThan = olderThan,
+                                newerThan = newerThan,
+                                last = it.size < pageSize,
+                                messages = it,
+                                search = search,
+                                regex = regex
+                        )
+                    }
 
     override fun createConversation(conversationName: String,
                                     memberNames: Set<String>): Conversation =

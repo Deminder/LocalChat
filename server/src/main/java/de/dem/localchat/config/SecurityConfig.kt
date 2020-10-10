@@ -1,36 +1,30 @@
 package de.dem.localchat.config
 
-import de.dem.localchat.security.service.impl.UserDetailsServiceImpl
+import de.dem.localchat.filter.SecurityTokenFilter
+import de.dem.localchat.security.service.impl.TokenAuthProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
-import org.springframework.context.annotation.Bean
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
-    @Bean
-    fun persistentTokenRepository() = JdbcTokenRepositoryImpl().apply {
-        jdbcTemplate = providedJdbcTemplate
-    }
+    @Autowired
+    private lateinit var tokenAuthProvider: TokenAuthProvider
 
     @Autowired
-    private lateinit var providedJdbcTemplate: JdbcTemplate
-
-    @Autowired
-    private lateinit var userDetailsService: UserDetailsServiceImpl
+    private lateinit var securityTokenFilter: SecurityTokenFilter
 
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService)
+        auth.authenticationProvider(tokenAuthProvider)
     }
 
     @Throws(Exception::class)
@@ -43,17 +37,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin()
-                .loginPage("/authorize")
-                .loginProcessingUrl("/api/user/login")
-                .and()
-                .rememberMe()
-                .alwaysRemember(true)
-                .tokenRepository(persistentTokenRepository())
-                .tokenValiditySeconds(60 * 60 * 24 * 30) // 30 days
-                .and()
-                .logout()
-                .logoutUrl("/api/user/remove-tokens")
+                .addFilterAt(securityTokenFilter, RememberMeAuthenticationFilter::class.java)
     }
 
 }

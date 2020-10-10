@@ -1,15 +1,14 @@
 package de.dem.localchat.rest
 
-import de.dem.localchat.dtos.UserDto
-import de.dem.localchat.dtos.UserGetResponse
-import de.dem.localchat.dtos.UserSearchResponse
+import de.dem.localchat.dtos.*
+import de.dem.localchat.dtos.requests.LoginRequest
 import de.dem.localchat.dtos.requests.RegisterRequest
 import de.dem.localchat.dtos.requests.UserGetRequest
 import de.dem.localchat.dtos.requests.UserSearchRequest
-import de.dem.localchat.dtos.toUserDts
 import de.dem.localchat.security.service.UserService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @RestController
@@ -39,6 +38,18 @@ class UserController(private val userService: UserService) {
     @PostMapping("/one")
     fun getOne(@RequestBody @Valid req: UserGetRequest): UserGetResponse =
             UserGetResponse(userService.userByName(req.username)?.id ?: -1)
+
+    @PostMapping("/login")
+    fun login(@RequestBody @Valid req: LoginRequest, httpReq: HttpServletRequest) {
+        userService.login(req.username, req.password,
+                "[${httpReq.remoteAddr}] ${httpReq.getHeader("User-Agent")}")
+    }
+
+    @PostMapping("/logout")
+    fun logout() {
+        userService.logout()
+    }
+
 
     private fun username() = SecurityContextHolder.getContext().authentication?.name ?: error("Not logged in user!")
 

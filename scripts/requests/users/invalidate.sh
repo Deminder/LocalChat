@@ -1,3 +1,2 @@
 #!/bin/bash
-
-./ccurl.sh -X POST http://localhost:9432/api/user/remove-tokens
+./ccurl.sh -X POST http://localhost:9432/api/user/logout

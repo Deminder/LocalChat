@@ -62,14 +62,13 @@ export const isFirstPage = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   (cid, prevPage) =>
-    prevPage && prevPage.convId === cid && prevPage.request.page === 0
+    prevPage && prevPage.convId === cid && !prevPage.request.olderThan
 );
 
 export const isLastPage = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
-  (cid, prevPage) =>
-    prevPage && prevPage.convId === cid && prevPage.last
+  (cid, prevPage) => prevPage && prevPage.convId === cid && prevPage.last
 );
 
 export const selectNextMessagePageRequest = store.createSelector(
@@ -79,7 +78,12 @@ export const selectNextMessagePageRequest = store.createSelector(
     return prevPage &&
       prevPage.convId === cid &&
       prevPage.request.search === null
-      ? { ...prevPage, page: prevPage.request.page + 1 }
-      : { page: 0, pageSize: 10 };
+      ? {
+          pageSize: 10,
+          olderThan: prevPage.messages
+            .map((m) => m.authorDate)
+            .reduce((pv, cv) => Math.min(pv, cv), Date.now()),
+        }
+      : { pageSize: 20 };
   }
 );

@@ -6,7 +6,7 @@ if [[ "$USERNAME" = "admin" ]]; then
 fi
 
 ./ccurl.sh -X POST -j \
-	-F "username=$USERNAME" -F "password=$PASSWORD" \
+	-H "Content-Type: application/json" \
+	--data '{"username":"'$USERNAME'", "password":"'$PASSWORD'"}' \
 	http://localhost:9432/api/user/login
-#	-H "Content-Type: application/json" \
 

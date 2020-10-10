@@ -49,7 +49,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    setTimeout(() => this.store.dispatch(getSelf()));
   }
 
   back(): void {

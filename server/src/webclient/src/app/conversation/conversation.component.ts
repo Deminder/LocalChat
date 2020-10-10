@@ -1,25 +1,23 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
-import { ConversationMessageDto } from '../openapi/model/models';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Store} from '@ngrx/store';
+import {Subscription, combineLatest} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
+import {ConversationMessageDto} from '../openapi/model/models';
 import {
   createMessage,
   deleteMessage,
   editMessage,
   listMembers,
-  listNextMessages,
+  listNextMessages
 } from '../store/actions/conversation.actions';
-import { selectedConversationId } from '../store/reducers/router.reducer';
+import {selectedConversationId} from '../store/reducers/router.reducer';
 import {
-  selectConversationMemberEntities,
-  selectConversationMessages,
-  selectPreviousMessagePage,
   isFirstPage,
-  isLastPage,
+  isLastPage, selectConversationMemberEntities,
+  selectConversationMessages,
+  selectSelfMember
 } from '../store/selectors/conversation.selectors';
-import { selectSelfUserId } from '../store/selectors/user.selectors';
-import { MessageListComponent } from './message-list/message-list.component';
+import {selectSelfUserId} from '../store/selectors/user.selectors';
 
 @Component({
   selector: 'app-conversation',
@@ -33,25 +31,14 @@ export class ConversationComponent implements OnInit, OnDestroy {
   memberEntites$ = this.store.select(selectConversationMemberEntities);
   isFirstPage$ = this.store.select(isFirstPage);
   isLastPage$ = this.store.select(isLastPage);
-
-  sub: Subscription;
-  sub2: Subscription;
+  selfMember$ = this.store.select(selectSelfMember);
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.sub = this.conversationId$
-        .pipe(filter((cid) => cid >= 0))
-        .subscribe((cid) => {
-          this.store.dispatch(listMembers({ conversationId: cid }));
-          this.store.dispatch(listNextMessages({ conversationId: cid }));
-        });
-    });
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
   }
 
   loadMoreMessages(conversationId: number): void {
@@ -84,4 +71,5 @@ export class ConversationComponent implements OnInit, OnDestroy {
   sendMessage(conversationId: number, text: string): void {
     this.store.dispatch(createMessage({ conversationId, text }));
   }
+
 }

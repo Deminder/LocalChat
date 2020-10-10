@@ -23,6 +23,7 @@ import {
   searchNextMessagesSuccess,
   conversationUpserted,
 } from '../actions/conversation.actions';
+import { logout } from '../actions/authorize.actions';
 
 export const conversationKey = 'conversation';
 
@@ -33,7 +34,7 @@ const permcompare = (
   m1: { permission: PermissionDtoRes },
   m2: { permission: PermissionDtoRes },
   permMap: (m: PermissionDtoRes) => boolean
-) =>  Number(permMap(m2.permission)) - Number(permMap(m1.permission));
+) => Number(permMap(m2.permission)) - Number(permMap(m1.permission));
 
 export interface ConversationState {
   names: EntityState<ConversationNameDto>;
@@ -96,24 +97,19 @@ const addMessagePage = (
   adapter: EntityAdapter<ConversationMessageDto>,
   state: ChatMessagesState
 ) => {
-  const pagingContinues =
-    state.previousPage ===
-    {
-      ...pageResponse,
-      request: { ...pageResponse.request, page: pageResponse.request.page - 1 },
-      messages: [],
-    };
   const nextPageState = {
     ...state,
-    previousPage: { ...pageResponse, messages: [] },
+    previousPage: { ...pageResponse },
   };
-  return pagingContinues
+  return state.previousPage?.convId === pageResponse.convId &&
+    state.previousPage?.request.search === pageResponse.request.search
     ? adapter.addMany(pageResponse.messages, nextPageState)
     : adapter.setAll(pageResponse.messages, nextPageState);
 };
 
 export const conversationReducer = createReducer(
   initialConversationState,
+  on(logout, () => ({ ...initialConversationState })),
   // CONVERSATIONS
   on(listConversationsSuccess, (state, action) => ({
     ...state,

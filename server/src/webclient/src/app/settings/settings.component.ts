@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {Store} from '@ngrx/store';
+import {logout} from '../store/actions/authorize.actions';
 
 @Component({
   selector: 'app-settings',
@@ -7,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
+  }
+
+  doLogout() {
+    this.store.dispatch(logout())
   }
 
 }

@@ -27,7 +27,7 @@ export const selectRegisteredUsername = selectQueryParam('registered');
 
 export const selectedConversationId = createSelector(
   selectRouteParam('conversationId'),
-  (id) => Number(id) >= 0 ? Number(id) : -1
+  (id) => id !== '' && Number(id) >= 0 ? Number(id) : -1
 );
 
 export const isSettingsOpen = createSelector(

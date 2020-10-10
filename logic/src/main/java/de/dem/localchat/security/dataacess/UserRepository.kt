@@ -19,4 +19,5 @@ interface UserRepository : CrudRepository<User, Long> {
     @Query("SELECT u.* FROM \"user\" u JOIN member m ON m.user_id = u.id " +
             "WHERE m.conversation_id = :conversationId")
     fun findByConversationId(conversationId: Long): List<User>
+
 }

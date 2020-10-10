@@ -6,31 +6,41 @@ import {
   FunctionWithParametersType,
   TypedAction,
 } from '@ngrx/store/src/models';
-import { Observable, of } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { login, logout, register } from '../../actions/authorize.actions';
 import { progressStart, progressStop } from '../../actions/progress.actions';
 import { AuthorizeService } from './authorize.service';
-import { getSelf } from '../../actions/user.actions';
 
 @Injectable()
 export class AuthorizeEffects {
-  logout$ = this.createAuthEffect(
-    logout,
-    this.authorizeService.logout,
-    () => this.router.navigate(['/authorize']),
-    'logout-errors'
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(logout),
+        switchMap(() => this.authorizeService.logout()),
+        tap(() => this.router.navigate(['/authorize']))
+      ),
+    { dispatch: false }
   );
 
-  login$ = this.createAuthEffect(
-    login,
-    (a) => this.authorizeService.login(a.creds),
-    () => {
-      this.store.dispatch(getSelf());
-      this.router.navigate(['/']);
-    },
-    'login-errors'
+  login$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(login),
+        tap(() => this.notifyService.publish('login-errors', null)),
+        switchMap((a) =>
+          this.authorizeService.login(a.creds).pipe(
+            tap(() => this.router.navigate(['/'])),
+            catchError((errors) => {
+              this.notifyService.publish('login-errors', errors);
+              return EMPTY;
+            })
+          )
+        )
+      ),
+    { dispatch: false }
   );
 
   register$ = this.createAuthEffect(
