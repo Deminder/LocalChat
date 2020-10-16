@@ -1,4 +1,5 @@
 <ul id="messageList">
+  <li *ngIf="showSpinner" class="progress-item"><mat-spinner></mat-spinner></li>
   <ng-template ngFor [ngForOf]="messages" let-msg>
     <li
       [ngClass]="messageClasses(msg)"

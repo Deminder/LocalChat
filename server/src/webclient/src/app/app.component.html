@@ -41,7 +41,7 @@
   [conversations]="conversations$ | async"
 >
   <mat-progress-bar
-    *ngIf="isProgressActive$ | async"
+    *ngIf="isGlobalLoading$ | async"
     mode="query"
   ></mat-progress-bar>
   <router-outlet></router-outlet>

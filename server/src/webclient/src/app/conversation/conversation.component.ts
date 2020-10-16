@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Subscription, combineLatest} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, debounceTime, tap} from 'rxjs/operators';
 import {ConversationMessageDto} from '../openapi/model/models';
 import {
   createMessage,
@@ -18,6 +18,7 @@ import {
   selectSelfMember
 } from '../store/selectors/conversation.selectors';
 import {selectSelfUserId} from '../store/selectors/user.selectors';
+import {isLoadingMoreMessages} from '../store/selectors/progress.selectors';
 
 @Component({
   selector: 'app-conversation',
@@ -32,6 +33,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   isFirstPage$ = this.store.select(isFirstPage);
   isLastPage$ = this.store.select(isLastPage);
   selfMember$ = this.store.select(selectSelfMember);
+  loadingMoreMessages$ = this.store.select(isLoadingMoreMessages);
 
   constructor(private store: Store) {}
 

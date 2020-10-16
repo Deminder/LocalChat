@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, ObservedValueOf, of, OperatorFunction } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, take } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, concatMap, take } from 'rxjs/operators';
 import { MemberUpdateRequest } from 'src/app/openapi/model/models';
 import {
   addConversation,
@@ -66,8 +66,7 @@ export class ConversationEffects {
   loadMessages$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listNextMessages),
-
-      switchMap((a) =>
+      concatMap((a) =>
         this.store.select(selectNextMessagePageRequest).pipe(
           take(1),
           mergeMap((nextPageReq) =>

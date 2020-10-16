@@ -16,7 +16,7 @@ import {
   selectActiveConversation,
   selectConversations,
 } from './store/selectors/conversation.selectors';
-import { isProgressActive } from './store/selectors/progress.selectors';
+import { isGlobalLoading } from './store/selectors/progress.selectors';
 import { selectSelfName } from './store/selectors/user.selectors';
 
 @Component({
@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
   sidenavOpen = false;
 
   selfName$ = this.store.select(selectSelfName);
-  isProgressActive$ = this.store.select(isProgressActive);
+  isGlobalLoading$ = this.store.select(isGlobalLoading);
   isSettingsOpen$ = this.store.select(isSettingsOpen);
   isMembersOpen$ = this.store.select(isMembersOpen);
 

@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 import { AuthorizeEffects } from './authorize.effects';
 import { login, Credentials } from '../../actions/authorize.actions';
-import { progressStop } from '../../actions/progress.actions';
+import { progressStopAll } from '../../actions/progress.actions';
 import { hot, cold } from 'jasmine-marbles';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthorizeService } from './authorize.service';
@@ -58,7 +58,7 @@ describe('AuthEffects', () => {
     });
 
     const expected = hot('-a-', {
-      a: progressStop({ action: login.type }),
+      a: progressStopAll({ action: login.type }),
     });
 
     expect(effects.login$).toBeObservable(expected);

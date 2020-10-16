@@ -5,6 +5,11 @@ export const progressStart = createAction(
   props<{ action: string }>()
 );
 
+export const progressStopAll = createAction(
+  '[Progress] Stop All',
+  props<{ action: string }>()
+);
+
 export const progressStop = createAction(
   '[Progress] Stop',
   props<{ action: string }>()

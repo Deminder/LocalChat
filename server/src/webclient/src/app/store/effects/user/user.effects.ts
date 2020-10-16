@@ -50,8 +50,7 @@ export class UserEffects {
             )
           ),
           catchError((message) => {
-            this.router.navigate(['/authorize']);
-            this.snackbar.open(message, '', { duration: 3000 });
+            this.snackbar.open(message || 'Username unavailable!', '', { duration: 3000 });
             return of(getSelfFailure());
           })
         )
@@ -82,7 +81,6 @@ export class UserEffects {
             }
           }),
           catchError((error: ErrorEvent) => {
-            this.router.navigate(['/authorize']);
             this.snackbar.open(error.message || 'Event source error!', '', {
               duration: 3000,
             });

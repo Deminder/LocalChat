@@ -23,6 +23,9 @@ export class MessageListComponent implements OnInit {
   messages: ConversationMessageDto[];
 
   @Input()
+  showSpinner: boolean;
+
+  @Input()
   selfUserId: number;
 
   selected = -1;

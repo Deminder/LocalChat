@@ -2,6 +2,11 @@
   flex: 1 1 auto;
 }
 
+
+:host ::ng-deep .mat-drawer-content {
+  overflow: hidden;
+}
+
 :host {
   display: flex;
   height: 100%;

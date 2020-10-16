@@ -10,7 +10,7 @@ import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { login, logout, register } from '../../actions/authorize.actions';
-import { progressStart, progressStop } from '../../actions/progress.actions';
+import { progressStart, progressStopAll } from '../../actions/progress.actions';
 import { AuthorizeService } from './authorize.service';
 
 @Injectable()
@@ -77,7 +77,7 @@ export class AuthorizeEffects {
             catchError((errors) =>
               of(this.notifyService.publish(notifyLabel, errors))
             ),
-            map(() => progressStop({ action: a.type }))
+            map(() => progressStopAll({ action: a.type }))
           )
         )
       )
