@@ -6,8 +6,10 @@ import de.dem.localchat.dtos.requests.RegisterRequest
 import de.dem.localchat.dtos.requests.UserGetRequest
 import de.dem.localchat.dtos.requests.UserSearchRequest
 import de.dem.localchat.security.service.UserService
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
@@ -26,7 +28,8 @@ class UserController(private val userService: UserService) {
 
     @GetMapping("/self")
     fun selfUser(): UserDto =
-            userService.userByName(username())?.toUserDts() ?: error("You are not logged in!")
+            userService.userByName(username())?.toUserDts()
+                    ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You are not logged in!")
 
 
     @PostMapping("/search")
@@ -51,6 +54,7 @@ class UserController(private val userService: UserService) {
     }
 
 
-    private fun username() = SecurityContextHolder.getContext().authentication?.name ?: error("Not logged in user!")
+    private fun username() = SecurityContextHolder.getContext().authentication?.name
+            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not logged in user!")
 
 }

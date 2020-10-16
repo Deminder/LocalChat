@@ -42,7 +42,7 @@ class SecurityTokenFilter(
                     if (auth is TokenRefToken) auth.token.token else "x"
             ).apply {
                 isHttpOnly = true
-                secure = false
+                secure = false // TODO https -> set to true
                 path = "/api"
                 maxAge = if (addC && auth is TokenRefToken) auth.maxAge else 0
             })

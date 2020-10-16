@@ -7,8 +7,10 @@ import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.dtos.*
 import de.dem.localchat.dtos.requests.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 import javax.validation.Valid
 
@@ -117,5 +119,5 @@ class ConversationController(
     }
 
     private fun username() = SecurityContextHolder.getContext().authentication?.name
-            ?: error("Not logged in!")
+            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not logged in user!")
 }
