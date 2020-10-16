@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { map, take, tap } from 'rxjs/operators';
 import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
 import { addConversation } from './store/actions/conversation.actions';
-import { getSelf } from './store/actions/user.actions';
+import { routeBackToChat } from './store/actions/router.actions';
 import {
   isMembersOpen,
   isSettingsOpen,
@@ -48,11 +48,18 @@ export class AppComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
+
+  backToChat(): void {}
 
   back(): void {
-    this.location.back();
+    this.isMembersOpen$.pipe(take(1)).subscribe((memberOpen) => {
+      if (memberOpen) {
+        this.store.dispatch(routeBackToChat());
+      } else {
+        this.location.back();
+      }
+    });
   }
 
   addConversation(): void {

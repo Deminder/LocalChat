@@ -214,7 +214,7 @@ export class ConversationEffects {
     T | ObservedValueOf<O>
   > {
     return catchError((error) => {
-      this.snackbar.open(error, '', { duration: 3000 });
+      this.snackbar.open(error || 'Action Failed!', '', { duration: 3000 });
       return EMPTY;
     });
   }

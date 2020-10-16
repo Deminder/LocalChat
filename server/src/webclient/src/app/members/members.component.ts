@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
@@ -10,16 +10,13 @@ import {
   editMember,
   removeMember,
   renameConversation,
-  listMembers,
 } from '../store/actions/conversation.actions';
+import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
   selectActiveConversation,
   selectConversationMembers,
   selectSelfMember,
 } from '../store/selectors/conversation.selectors';
-import { Subscription, zip } from 'rxjs';
-import { Router } from '@angular/router';
-import { selectedConversationId } from '../store/reducers/router.reducer';
 
 @Component({
   selector: 'app-members',
@@ -32,33 +29,11 @@ export class MembersComponent implements OnInit, OnDestroy {
   conversationId$ = this.store.select(selectedConversationId);
   selfMember$ = this.store.select(selectSelfMember);
 
-  constructor(
-    private store: Store,
-    private dialog: MatDialog,
-    private router: Router
-  ) {}
+  constructor(private store: Store, private dialog: MatDialog) {}
 
-  switcher: Subscription;
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-    setTimeout(() => {
-      this.switcher = zip(this.members$, this.conversationId$).subscribe(
-        ([members, cid]) => {
-          if (cid >= 0) {
-            if (members.length === 0) {
-              this.store.dispatch(listMembers({ conversationId: cid }));
-            }
-          } else {
-            this.router.navigate(['/chat']);
-          }
-        }
-      );
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.switcher.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 
   changePermission(member: MemberDto, permLabel: string, value: boolean): void {
     this.store.dispatch(

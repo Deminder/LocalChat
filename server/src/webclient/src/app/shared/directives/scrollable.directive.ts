@@ -36,7 +36,8 @@ export class ScrollableDirective implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(): void {
     if (this.scrollDown) {
       const e = this.ele();
-      e.scrollTop = e.scrollHeight;
+      const topMax = (e as any).scrollTopMax;
+      e.scrollTop = topMax !== undefined ? topMax : e.scrollHeight;
     }
   }
 
@@ -47,7 +48,8 @@ export class ScrollableDirective implements OnInit, OnDestroy, OnChanges {
   @HostListener('scroll', ['$event'])
   onScroll(): void {
     const e = this.ele();
-    if (e.scrollTop < 1.5 * e.clientHeight) {
+    const t = (e as any).scrollTopMax !== undefined ? e.scrollHeight + e.scrollTop : e.scrollTop;
+    if (t < 1.5 * e.clientHeight) {
       this.atTop$.next();
     }
   }

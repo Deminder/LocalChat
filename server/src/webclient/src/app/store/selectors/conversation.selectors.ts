@@ -7,8 +7,13 @@ import {
   selectAllMembers,
   selectAllMessages,
   selectMemberEntites,
+  selectMemberIds,
 } from '../reducers/conversation.reducer';
-import { selectedConversationId } from '../reducers/router.reducer';
+import {
+  selectedConversationId,
+  isChatOpen,
+  isMembersOpen,
+} from '../reducers/router.reducer';
 import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
 import { selectSelfUserId } from './user.selectors';
 
@@ -56,6 +61,21 @@ export const selectConversationMessages = store.createSelector(
 export const selectPreviousMessagePage = store.createSelector(
   selectConversation,
   (state) => state.messages.previousPage
+);
+
+export const isFirstPageNeeded = store.createSelector(
+  selectedConversationId,
+  selectPreviousMessagePage,
+  isChatOpen,
+  (cid, prevPage, isOpen) =>
+    isOpen && cid >= 0 && (!prevPage || prevPage.convId !== cid)
+);
+
+export const areMembersNeeded = store.createSelector(
+  selectedConversationId,
+  selectConversationMembers,
+  (cid, members) =>
+    cid >= 0 && (members.length === 0 || members[0].convId !== cid)
 );
 
 export const isFirstPage = store.createSelector(

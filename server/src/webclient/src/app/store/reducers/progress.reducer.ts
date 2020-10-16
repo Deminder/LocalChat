@@ -1,5 +1,9 @@
-import {createReducer, on} from '@ngrx/store';
-import {progressStart, progressStopAll, progressStop} from '../actions/progress.actions';
+import { createReducer, on } from '@ngrx/store';
+import {
+  progressStart,
+  progressStopAll,
+  progressStop,
+} from '../actions/progress.actions';
 
 export const progressKey = 'progress';
 
@@ -11,8 +15,9 @@ export const initialProgressState: ProgressState = {
   activeActions: [],
 };
 
-function removeOne<T>(array: T[], predicate: (v: T) => boolean): T[]{
-  return array.splice(array.findIndex(predicate), 1);
+function removeOne<T>(array: T[], predicate: (v: T) => boolean): T[] {
+  const i = array.findIndex(predicate);
+  return i === -1 ? [...array] : array.slice(0, i).concat(array.slice(i + 1, array.length));
 }
 
 export const progressReducer = createReducer(
@@ -27,6 +32,9 @@ export const progressReducer = createReducer(
   })),
   on(progressStop, (state, a) => ({
     ...state,
-    activeActions: removeOne(state.activeActions, (action) => action !== a.action)
+    activeActions: removeOne(
+      state.activeActions,
+      (action) => action === a.action
+    ),
   }))
 );

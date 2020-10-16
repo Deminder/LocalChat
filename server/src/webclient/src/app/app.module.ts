@@ -1,6 +1,5 @@
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { registerLocaleData } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import localeDe from '@angular/common/locales/de';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -34,9 +33,11 @@ import { AuthorizeEffects } from './store/effects/authorize/authorize.effects';
 import { ConversationEffects } from './store/effects/conversation/conversation.effects';
 import { ProgressEffects } from './store/effects/progress/progress.effects';
 import { UserEffects } from './store/effects/user/user.effects';
+import { RouterEffects } from './store/effects/router/router.effects';
 import { appreducer } from './store/reducers/app.reducer';
 import { routerKey } from './store/reducers/router.reducer';
 import { ScrollableDirective } from './shared/directives/scrollable.directive';
+import { AuthInterceptor } from './http-interceptors/auth.interceptor';
 
 registerLocaleData(localeDe);
 
@@ -83,6 +84,7 @@ export const metaReducers = [];
       AuthorizeEffects,
       ProgressEffects,
       UserEffects,
+      RouterEffects,
     ]),
     StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({
@@ -90,7 +92,10 @@ export const metaReducers = [];
       logOnly: !environment.production,
     }),
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'de' }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'de' },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -12,3 +12,4 @@ export const selectSelfUserId = createSelector(
   selectUser,
   (state) => state.selfUser.id
 );
+

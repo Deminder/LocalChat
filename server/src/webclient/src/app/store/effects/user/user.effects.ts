@@ -2,25 +2,17 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of, EMPTY } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { EMPTY, of } from 'rxjs';
+import { catchError, mergeMap, switchMap } from 'rxjs/operators';
+import { SseEventService } from '../../../shared/services/sse-event.service';
 import {
-  catchError,
-  mergeMap,
-  switchMap,
-  map,
-  take,
-  concatMap,
-  withLatestFrom,
-} from 'rxjs/operators';
-import {
-  listConversations,
-  memberUpserted,
   conversationUpserted,
-  messageUpserted,
-  messageDeleted,
+  listConversations,
   memberDeleted,
-  listMembers,
-  listNextMessages,
+  memberUpserted,
+  messageDeleted,
+  messageUpserted,
 } from '../../actions/conversation.actions';
 import {
   getSelf,
@@ -29,11 +21,6 @@ import {
   listenForEvents,
 } from '../../actions/user.actions';
 import { UserService } from './user.service';
-import { SseEventService } from '../../../shared/services/sse-event.service';
-import { ROUTER_NAVIGATED } from '@ngrx/router-store';
-import { Store } from '@ngrx/store';
-import { selectedConversationId } from '../../reducers/router.reducer';
-import { selectSelfName } from '../../selectors/user.selectors';
 
 @Injectable()
 export class UserEffects {
@@ -50,7 +37,9 @@ export class UserEffects {
             )
           ),
           catchError((message) => {
-            this.snackbar.open(message || 'Username unavailable!', '', { duration: 3000 });
+            this.snackbar.open(message || 'Username unavailable!', '', {
+              duration: 3000,
+            });
             return of(getSelfFailure());
           })
         )
@@ -88,29 +77,6 @@ export class UserEffects {
           })
         )
       )
-    )
-  );
-
-  openedConversationPage$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ROUTER_NAVIGATED),
-      mergeMap(() => this.store.select(selectedConversationId).pipe(take(1))),
-      mergeMap((conversationId) =>
-        conversationId >= 0
-          ? of(
-              listMembers({ conversationId }),
-              listNextMessages({ conversationId })
-            )
-          : EMPTY
-      )
-    )
-  );
-
-  openedAnyPage$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ROUTER_NAVIGATED),
-      mergeMap(() => this.store.select(selectSelfName).pipe(take(1))),
-      mergeMap((selfname) => (!selfname ? of(getSelf()) : EMPTY))
     )
   );
 

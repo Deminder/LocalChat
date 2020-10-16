@@ -39,3 +39,8 @@ export const isMembersOpen = createSelector(
   selectUrl,
   (data) => data && data.startsWith('/members/')
 );
+
+export const isChatOpen = createSelector(
+  selectUrl,
+  (data) => data && data.startsWith('/chat/')
+);
