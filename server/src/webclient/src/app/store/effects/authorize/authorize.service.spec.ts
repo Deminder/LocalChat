@@ -24,27 +24,28 @@ describe('AuthorizeService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should give login error message', waitForAsync(() => {
-    const creds = { username: 'user1', password: 'pwd' };
+  it(
+    'should give login error message',
+    waitForAsync(() => {
+      const creds = { username: 'user1', password: 'pwd' };
 
-    service
-      .login(creds)
-      .pipe(
-        catchError((err) => {
-          expect(err[0]).toBeTruthy();
-          expect(err[0].defaultMessage).toBeTruthy();
-          expect(err[0].defaultMessage).toEqual('Invalid!');
-          return 'ok';
-        })
-      )
-      .subscribe();
+      service
+        .login(creds)
+        .pipe(
+          catchError((err) => {
+            expect(err[0]).toBeTruthy();
+            expect(err[0].defaultMessage).toEqual('Invalid!');
+            return 'ok';
+          })
+        )
+        .subscribe();
 
-    const mockReq = http.expectOne(
-      `${service.endpoint}/login?username=${creds.username}&password=${creds.password}`
-    );
-    expect(mockReq.cancelled).toBeFalsy();
-    mockReq.error(new ErrorEvent('mocked error'), { status: 404 });
+      const mockReq = http.expectOne(`${service.endpoint}/login`);
+      expect(mockReq.cancelled).toBeFalsy();
+      expect(mockReq.request.body).toEqual(creds);
+      mockReq.error(new ErrorEvent('mocked error'), { status: 404 });
 
-    http.verify();
-  }));
+      http.verify();
+    })
+  );
 });

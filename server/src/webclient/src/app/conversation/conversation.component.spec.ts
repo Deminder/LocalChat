@@ -13,9 +13,13 @@ import { MemberDto, ConversationMessageDto } from '../openapi/model/models';
 import {
   selectConversationMessages,
   selectConversationMemberEntities,
+  isFirstPage,
+  isLastPage,
+  selectSelfMember,
 } from '../store/selectors/conversation.selectors';
-import {MaterialModule} from '../material/material.module';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { MaterialModule } from '../material/material.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { isLoadingMoreMessages } from '../store/selectors/progress.selectors';
 
 describe('ConversationComponent', () => {
   let component: ConversationComponent;
@@ -31,6 +35,10 @@ describe('ConversationComponent', () => {
     AppState,
     Dictionary<MemberDto>
   >;
+  let mockIsFirstPageSelector: MemoizedSelector<AppState, boolean>;
+  let mockIsLastPageSelector: MemoizedSelector<AppState, boolean>;
+  let mockSelfMemberSelector: MemoizedSelector<AppState, MemberDto>;
+  let mockIsLoadingMoreMessagesSelector: MemoizedSelector<AppState, boolean>;
 
   beforeEach(
     waitForAsync(() => {
@@ -60,6 +68,36 @@ describe('ConversationComponent', () => {
     mockConversationMemberEntitiesSelector = store.overrideSelector(
       selectConversationMemberEntities,
       {}
+    );
+    mockIsFirstPageSelector = store.overrideSelector(isFirstPage, true);
+    mockIsLastPageSelector = store.overrideSelector(isLastPage, true);
+    mockSelfMemberSelector = store.overrideSelector(selectSelfMember, {
+      userId: 1,
+      convId: 1,
+      username: 'user1',
+      joinDate: 0,
+      permission: {
+        read: true,
+        write: true,
+        voice: true,
+        administrate: false,
+        moderate: true,
+      },
+      modifiablePermission: {
+        remove: true,
+        modify: {
+          read: false,
+          write: false,
+          voice: false,
+          moderate: false,
+          administrate: false,
+        },
+      },
+    });
+
+    mockIsLoadingMoreMessagesSelector = store.overrideSelector(
+      isLoadingMoreMessages,
+      false
     );
 
     // component

@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import {UserService} from './user.service';
 import {SseEventService} from 'src/app/shared/services/sse-event.service';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {provideMockStore} from '@ngrx/store/testing';
 
 describe('UserEffects', () => {
   let actions$: Observable<any>;
@@ -28,6 +29,7 @@ describe('UserEffects', () => {
       providers: [
         UserEffects,
         provideMockActions(() => actions$),
+        provideMockStore(),
         { provide: Router, useValue: routerSpy },
         { provide: UserService, useValue: userServiceSpy },
         { provide: SseEventService, useValue: sseEventServiceSpy },

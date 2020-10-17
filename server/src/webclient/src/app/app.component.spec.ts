@@ -23,7 +23,7 @@ import {
   selectConversationMessages,
   selectConversations,
 } from './store/selectors/conversation.selectors';
-import { isProgressActive } from './store/selectors/progress.selectors';
+import { isProgressActive, isGlobalLoading } from './store/selectors/progress.selectors';
 import { selectSelfName } from './store/selectors/user.selectors';
 import { MaterialModule } from './material/material.module';
 import { MockComponent } from 'ng-mocks';
@@ -63,7 +63,7 @@ describe('AppComponent', () => {
     AppState,
     ConversationNameDto
   >;
-  let mockProgessSelector: MemoizedSelector<AppState, boolean>;
+  let mockGlobalLoadingSelector: MemoizedSelector<AppState, boolean>;
   let mockSettingsOpenSelector: MemoizedSelector<AppState, boolean>;
   let mockMembersOpenSelector: MemoizedSelector<AppState, boolean>;
   let titleSpy: jasmine.SpyObj<Title>;
@@ -103,7 +103,7 @@ describe('AppComponent', () => {
         selectActiveConversation,
         convSamples[0]
       );
-      mockProgessSelector = store.overrideSelector(isProgressActive, false);
+      mockGlobalLoadingSelector = store.overrideSelector(isGlobalLoading, false);
       mockSettingsOpenSelector = store.overrideSelector(isSettingsOpen, false);
       mockMembersOpenSelector = store.overrideSelector(isMembersOpen, false);
 

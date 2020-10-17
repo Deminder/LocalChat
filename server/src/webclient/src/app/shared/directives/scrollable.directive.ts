@@ -9,8 +9,8 @@ import {
   Output,
   ViewContainerRef,
 } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Subject, Subscription, asyncScheduler } from 'rxjs';
+import { debounceTime, auditTime } from 'rxjs/operators';
 
 @Directive({
   selector: '[appScrollable]',
@@ -27,9 +27,10 @@ export class ScrollableDirective implements OnInit, OnDestroy, OnChanges {
   sub: Subscription;
 
   constructor(private ref: ViewContainerRef) {}
+
   ngOnInit(): void {
     this.sub = this.atTop$
-      .pipe(debounceTime(100))
+      .pipe(auditTime(200, asyncScheduler))
       .subscribe(() => this.atTop.emit());
   }
 
@@ -48,7 +49,10 @@ export class ScrollableDirective implements OnInit, OnDestroy, OnChanges {
   @HostListener('scroll', ['$event'])
   onScroll(): void {
     const e = this.ele();
-    const t = (e as any).scrollTopMax !== undefined ? e.scrollHeight + e.scrollTop : e.scrollTop;
+    const t =
+      (e as any).scrollTopMax !== undefined
+        ? e.scrollHeight + e.scrollTop
+        : e.scrollTop;
     if (t < 1.5 * e.clientHeight) {
       this.atTop$.next();
     }

@@ -1,1 +1,3 @@
-<button mat-raised-button (click)="doLogout()">Logout</button>
+<ng-template ngIf="selfName$ | async">
+  <button id="logoutButton" mat-raised-button (click)="doLogout()">Logout</button>
+</ng-template>

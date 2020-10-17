@@ -25,22 +25,21 @@ export class AuthorizeEffects {
     { dispatch: false }
   );
 
-  login$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(login),
-        tap(() => this.notifyService.publish('login-errors', null)),
-        switchMap((a) =>
-          this.authorizeService.login(a.creds).pipe(
-            tap(() => this.router.navigate(['/'])),
-            catchError((errors) => {
-              this.notifyService.publish('login-errors', errors);
-              return EMPTY;
-            })
-          )
+  login$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(login),
+      tap((a) => this.store.dispatch(progressStart({ action: a.type }))),
+      tap(() => this.notifyService.publish('login-errors', null)),
+      switchMap((a) =>
+        this.authorizeService.login(a.creds).pipe(
+          tap(() => this.router.navigate(['/'])),
+          catchError((errors) =>
+            of(this.notifyService.publish('login-errors', errors))
+          ),
+          map(() => progressStopAll({ action: a.type }))
         )
-      ),
-    { dispatch: false }
+      )
+    )
   );
 
   register$ = this.createAuthEffect(

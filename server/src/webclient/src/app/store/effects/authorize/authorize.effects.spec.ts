@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, of } from 'rxjs';
+import { Observable, of, EMPTY } from 'rxjs';
 
 import { AuthorizeEffects } from './authorize.effects';
 import { login, Credentials } from '../../actions/authorize.actions';
-import { progressStopAll } from '../../actions/progress.actions';
+import { progressStopAll, progressStart } from '../../actions/progress.actions';
 import { hot, cold } from 'jasmine-marbles';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthorizeService } from './authorize.service';
@@ -52,18 +52,21 @@ describe('AuthEffects', () => {
 
   it('should reroute after login success', () => {
     const creds = { username: 'user1', password: 'pwd' } as Credentials;
-    authorizeServiceSpy.login.and.returnValue(of('login success'));
-    actions$ = hot('-a-', {
+    authorizeServiceSpy.login.and.returnValue(of(null));
+    actions$ = hot('--a-', {
       a: login({ creds }),
     });
 
-    const expected = hot('-a-', {
-      a: progressStopAll({ action: login.type }),
+    const expected = hot('--b-', {
+      b: progressStopAll({ action: login.type }),
     });
 
     expect(effects.login$).toBeObservable(expected);
 
-    expect(store.dispatch).toHaveBeenCalled();
+    expect(store.dispatch).toHaveBeenCalledWith(
+      progressStart({ action: login.type })
+    );
+    expect(store.dispatch).toHaveBeenCalledTimes(1);
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
 });
