@@ -1,24 +1,23 @@
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
   EventEmitter,
-  HostListener,
-  HostBinding,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
 } from '@angular/core';
+import { Dictionary } from '@ngrx/entity';
 import {
   ConversationMessageDto,
   MemberDto,
 } from 'src/app/openapi/model/models';
-import { Dictionary } from '@ngrx/entity';
 
 @Component({
   selector: 'app-message-list',
   templateUrl: './message-list.component.html',
   styleUrls: ['./message-list.component.scss'],
 })
-export class MessageListComponent implements OnInit {
+export class MessageListComponent implements OnInit, OnChanges {
   @Input()
   messages: ConversationMessageDto[];
 
@@ -28,10 +27,11 @@ export class MessageListComponent implements OnInit {
   @Input()
   selfUserId: number;
 
-  selected = -1;
-
   @Input()
   memberDict: Dictionary<MemberDto>;
+
+  @Input()
+  scrollDown: boolean;
 
   @Output()
   delete = new EventEmitter<{ messageId: number }>();
@@ -39,11 +39,16 @@ export class MessageListComponent implements OnInit {
   @Output()
   edit = new EventEmitter<{ messageId: number }>();
 
+  @Output()
+  atTop = new EventEmitter<void>();
+
+  selected = -1;
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnChanges(): void {}
 
+  ngOnInit(): void {}
 
   isOutgoing(msg: ConversationMessageDto): boolean {
     return this.selfUserId === msg.authorUserId;

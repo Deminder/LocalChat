@@ -1,7 +1,16 @@
-<ul id="messageList">
-  <li *ngIf="showSpinner" class="progress-item"><mat-spinner></mat-spinner></li>
-  <ng-template ngFor [ngForOf]="messages" let-msg>
-    <li
+<cdk-virtual-scroll-viewport
+  appDynamicScroll
+  [scrollDown]="scrollDown"
+  (atTop)="atTop.emit()"
+  class="message-viewport"
+>
+  <div class="msg-item">
+    <div *ngIf="showSpinner" class="progress-item">
+      <mat-spinner></mat-spinner>
+    </div>
+  </div>
+  <div *cdkVirtualFor="let msg of messages" class="msg-item">
+    <div
       [ngClass]="messageClasses(msg)"
       (dblclick)="selected !== msg.id ? (selected = msg.id) : (selected = -1)"
       (blur)="selected = -1"
@@ -46,6 +55,6 @@
           </ng-container>
         </ng-template>
       </span>
-    </li>
-  </ng-template>
-</ul>
+    </div>
+  </div>
+</cdk-virtual-scroll-viewport>

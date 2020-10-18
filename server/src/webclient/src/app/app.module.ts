@@ -36,8 +36,9 @@ import { UserEffects } from './store/effects/user/user.effects';
 import { RouterEffects } from './store/effects/router/router.effects';
 import { appreducer } from './store/reducers/app.reducer';
 import { routerKey } from './store/reducers/router.reducer';
-import { ScrollableDirective } from './shared/directives/scrollable.directive';
+import { DynamicScrollDirective } from './shared/directives/scrollable.directive';
 import { AuthInterceptor } from './http-interceptors/auth.interceptor';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 registerLocaleData(localeDe);
 
@@ -62,7 +63,7 @@ export const metaReducers = [];
     AddConversationComponent,
     MembersComponent,
     AddMemberComponent,
-    ScrollableDirective,
+    DynamicScrollDirective,
   ],
   imports: [
     BrowserModule,
@@ -71,6 +72,7 @@ export const metaReducers = [];
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    ScrollingModule,
     AppRoutingModule,
     StoreModule.forRoot(
       {

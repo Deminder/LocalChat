@@ -1,19 +1,18 @@
 :host {
   display: flex;
-  flex-flow: column-reverse;
+  flex-direction: column;
 }
 
-ul {
-  list-style-type: none;
+
+.message-viewport {
+  flex: auto;
 }
 
-#messageList {
+.msg-item {
   display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-end;
-  padding: 0;
-  margin: 0;
+  flex-flow: column;
 }
+
 
 .incoming {
   align-self: flex-start;

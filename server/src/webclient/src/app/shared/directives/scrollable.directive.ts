@@ -8,14 +8,28 @@ import {
   OnInit,
   Output,
   ViewContainerRef,
+  forwardRef,
 } from '@angular/core';
 import { Subject, Subscription, asyncScheduler } from 'rxjs';
-import { debounceTime, auditTime } from 'rxjs/operators';
+import { auditTime, distinctUntilChanged } from 'rxjs/operators';
+import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
+import { DynamicScrollStrategy } from '../dynamic-scroll-strategy';
+
+export const dynamicScrollStrategyFactory = (dir: DynamicScrollDirective) => {
+  return dir.dynamicStrategy;
+};
 
 @Directive({
-  selector: '[appScrollable]',
+  selector: 'cdk-virtual-scroll-viewport[appDynamicScroll]',
+  providers: [
+    {
+      provide: VIRTUAL_SCROLL_STRATEGY,
+      useFactory: dynamicScrollStrategyFactory,
+      deps: [forwardRef(() => DynamicScrollDirective)],
+    },
+  ],
 })
-export class ScrollableDirective implements OnInit, OnDestroy, OnChanges {
+export class DynamicScrollDirective implements OnInit, OnDestroy, OnChanges {
   @Output()
   atTop = new EventEmitter<void>();
 
@@ -24,41 +38,37 @@ export class ScrollableDirective implements OnInit, OnDestroy, OnChanges {
 
   atTop$ = new Subject<void>();
 
+  dynamicStrategy = new DynamicScrollStrategy();
   sub: Subscription;
+  sub2: Subscription;
 
-  constructor(private ref: ViewContainerRef) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.sub = this.atTop$
+    this.sub = this.dynamicStrategy.endOffset
+      .subscribe((endOffset) => {
+        if (endOffset === 0) {
+          this.dynamicStrategy.scrollToEnd();
+        }
+      });
+
+    this.sub2 = this.dynamicStrategy.startOffset
       .pipe(auditTime(200, asyncScheduler))
-      .subscribe(() => this.atTop.emit());
+      .subscribe((startOffset) => {
+        if (startOffset < 1.5 * this.dynamicStrategy.getViewportSize()) {
+          this.atTop.emit();
+        }
+      });
   }
 
   ngOnChanges(): void {
     if (this.scrollDown) {
-      const e = this.ele();
-      const topMax = (e as any).scrollTopMax;
-      e.scrollTop = topMax !== undefined ? topMax : e.scrollHeight;
+      this.dynamicStrategy.scheduleScrollToEnd();
     }
   }
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
-  }
-
-  @HostListener('scroll', ['$event'])
-  onScroll(): void {
-    const e = this.ele();
-    const t =
-      (e as any).scrollTopMax !== undefined
-        ? e.scrollHeight + e.scrollTop
-        : e.scrollTop;
-    if (t < 1.5 * e.clientHeight) {
-      this.atTop$.next();
-    }
-  }
-
-  ele(): Element {
-    return this.ref.element.nativeElement;
+    this.sub2.unsubscribe();
   }
 }

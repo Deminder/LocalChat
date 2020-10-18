@@ -6,7 +6,7 @@ import {
   ViewContainerRef,
   ViewRef,
 } from '@angular/core';
-import { ScrollableDirective } from './scrollable.directive';
+import { DynamicScrollDirective } from './scrollable.directive';
 
 class ViewContainerRefMock extends ViewContainerRef {
   constructor(private eelement: Element) {
@@ -56,11 +56,11 @@ class ViewContainerRefMock extends ViewContainerRef {
 
 describe('ScrollableDirective', () => {
   let element: Element;
-  let directive: ScrollableDirective;
+  let directive: DynamicScrollDirective;
 
   beforeEach(() => {
     element = document.createElement('div');
-    directive = new ScrollableDirective(new ViewContainerRefMock(element));
+    directive = new DynamicScrollDirective(new ViewContainerRefMock(element));
     directive.ngOnInit();
   });
 

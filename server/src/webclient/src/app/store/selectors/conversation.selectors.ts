@@ -81,8 +81,11 @@ export const areMembersNeeded = store.createSelector(
 export const isFirstPage = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
-  (cid, prevPage) =>
-    prevPage && prevPage.convId === cid && !prevPage.request.olderThan
+  selectConversationMessages,
+  (cid, prevPage, messages) =>
+    prevPage &&
+    prevPage.convId === cid &&
+    prevPage.request.olderThan > messages[messages.length - 1].authorDate
 );
 
 export const isLastPage = store.createSelector(
@@ -101,9 +104,9 @@ export const selectNextMessagePageRequest = store.createSelector(
       ? {
           pageSize: 10,
           olderThan: prevPage.messages
-            .map((m) => m.authorDate)
-            .reduce((pv, cv) => Math.min(pv, cv), Date.now()),
+            ? prevPage.messages[prevPage.messages.length - 1].authorDate
+            : Date.now(),
         }
-      : { pageSize: 20 };
+      : { pageSize: 40 };
   }
 );
