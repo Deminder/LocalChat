@@ -10,8 +10,13 @@ import {
   ViewContainerRef,
   forwardRef,
 } from '@angular/core';
-import { Subject, Subscription, asyncScheduler } from 'rxjs';
-import { auditTime, distinctUntilChanged } from 'rxjs/operators';
+import {
+  Subject,
+  Subscription,
+  asyncScheduler,
+  animationFrameScheduler,
+} from 'rxjs';
+import { auditTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { DynamicScrollStrategy } from '../dynamic-scroll-strategy';
 
@@ -31,7 +36,7 @@ export const dynamicScrollStrategyFactory = (dir: DynamicScrollDirective) => {
 })
 export class DynamicScrollDirective implements OnInit, OnDestroy, OnChanges {
   @Output()
-  atTop = new EventEmitter<void>();
+  atTop = new EventEmitter<boolean>();
 
   @Input()
   scrollDown = false;
@@ -45,25 +50,35 @@ export class DynamicScrollDirective implements OnInit, OnDestroy, OnChanges {
   constructor() {}
 
   ngOnInit(): void {
-    this.sub = this.dynamicStrategy.endOffset
-      .subscribe((endOffset) => {
-        if (endOffset === 0) {
-          this.dynamicStrategy.scrollToEnd();
-        }
-      });
+    this.sub = this.dynamicStrategy.bottomPos.subscribe((endOffset) => {
+      if (endOffset === 0) {
+        this.dynamicStrategy.scrollToEnd();
+      }
+    });
 
-    this.sub2 = this.dynamicStrategy.startOffset
-      .pipe(auditTime(200, asyncScheduler))
-      .subscribe((startOffset) => {
-        if (startOffset < 1.5 * this.dynamicStrategy.getViewportSize()) {
-          this.atTop.emit();
-        }
+    this.sub2 = this.dynamicStrategy.topPos
+      .pipe(
+        auditTime(200, asyncScheduler),
+        map(
+          (scrollTop) =>
+            scrollTop < 1.5 * this.dynamicStrategy.getViewportSize()
+        ),
+        distinctUntilChanged()
+      )
+      .subscribe((atTop) => {
+        this.atTop.emit(atTop);
       });
   }
 
   ngOnChanges(): void {
     if (this.scrollDown) {
-      this.dynamicStrategy.scheduleScrollToEnd();
+      setTimeout(
+        () =>
+          window.requestAnimationFrame(() => {
+            this.dynamicStrategy.scrollToEnd();
+          }),
+        1000
+      );
     }
   }
 

@@ -3,7 +3,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, ObservedValueOf, of, OperatorFunction } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, concatMap, take } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  delay,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  take,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { MemberUpdateRequest } from 'src/app/openapi/model/models';
 import {
   addConversation,
@@ -31,14 +41,18 @@ import {
   messageUpserted,
   removeMember,
   renameConversation,
+  startLoadMoreMessages,
 } from '../../actions/conversation.actions';
-import { selectNextMessagePageRequest } from '../../selectors/conversation.selectors';
+import {
+  isLastPage,
+  selectLoadMoreConversationId,
+  selectNextMessagePageRequest,
+} from '../../selectors/conversation.selectors';
 import { selectSelfUserId } from '../../selectors/user.selectors';
 import { ConversationService } from './conversation.service';
 
 @Injectable()
 export class ConversationEffects {
-
   loadConversations$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listConversations),
@@ -60,6 +74,27 @@ export class ConversationEffects {
           catchError(() => of(listMembersFailure()))
         )
       )
+    )
+  );
+
+  loadMoreMessages$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(startLoadMoreMessages),
+      withLatestFrom(this.store.select(isLastPage)),
+      filter(([_, last]) => !last),
+      map(([{ conversationId }]) => listNextMessages({ conversationId }))
+    )
+  );
+
+  continueLoadMoreMessages$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(listNextMessagesSuccess),
+      withLatestFrom(this.store.select(selectLoadMoreConversationId)),
+      filter(
+        ([a, scid]) => !a.messagePage.last && a.messagePage.convId === scid
+      ),
+      delay(100),
+      map(([_, conversationId]) => listNextMessages({ conversationId }))
     )
   );
 

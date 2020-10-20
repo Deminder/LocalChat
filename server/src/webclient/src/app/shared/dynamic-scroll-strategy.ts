@@ -2,12 +2,7 @@ import {
   CdkVirtualScrollViewport,
   VirtualScrollStrategy,
 } from '@angular/cdk/scrolling';
-import {
-  Observable,
-  Subject,
-  animationFrameScheduler,
-  asyncScheduler,
-} from 'rxjs';
+import { Observable, Subject, asyncScheduler } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 function searchInGen<T>(
@@ -28,7 +23,6 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
   private pscrolledIndexChange = new Subject<number>();
 
   private elementCount = 0;
-  private scheduledScrollDown = false;
 
   /* pixel size of mean element size */
   private elementSizeEstimate = 60;
@@ -45,8 +39,8 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
     distinctUntilChanged()
   );
 
-  startOffset = new Subject<number>();
-  endOffset = new Subject<number>();
+  topPos = new Subject<number>();
+  bottomPos = new Subject<number>();
 
   attach(viewport: CdkVirtualScrollViewport): void {
     this.viewport = viewport;
@@ -127,6 +121,7 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
 
       // forward and backward offsets are relative to startOffset
       const startOffset = this.viewport.getOffsetToRenderedContentStart();
+      console.log('offset', startOffset);
 
       const hardStart = Math.max(0, scrollOffset - this.maxBufferPixel);
       const targetStart = Math.max(0, scrollOffset - this.minBufferPixel);
@@ -185,44 +180,50 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
         ([_, offset]) => offset + startOffset + relativeOffset >= scrollOffset
       ) ?? [start];
 
-      const newRange = {
-        start: Math.max(0, start),
-        end: Math.min(this.elementCount, end),
-      };
+      start = Math.max(0, start);
+      end = Math.min(this.elementCount, end);
 
-      this.viewport.setRenderedRange(newRange);
-      this.viewport.setRenderedContentOffset(
-        this.pixelSizeOfRange(0, newRange.start)
-      );
+      if (end - range.end > range.start - start) {
+        // range moved down
+        start = start > range.start ? start : range.start; // keep or shrink old start
+        this.viewport.setRenderedContentOffset(
+          this.pixelSizeOfRange(0, start),
+          'to-start'
+        );
+      } else {
+        // range moved up
+        end = end < range.end ? end : range.end; // keep or shrink old end
+        this.viewport.setRenderedContentOffset(
+          this.pixelSizeOfRange(0, end),
+          'to-end'
+        );
+      }
+
+      this.viewport.setRenderedRange({ start, end });
       this.pscrolledIndexChange.next(firstVisibleIndex);
     }
   }
 
   onContentScrolled(): void {
-    this.endOffset.next(this.viewport.measureScrollOffset('bottom'));
-    this.startOffset.next(this.viewport.measureScrollOffset('top'));
+    this.bottomPos.next(this.viewport.measureScrollOffset('bottom'));
+    this.topPos.next(this.viewport.measureScrollOffset('top'));
+    // measure element sizes
+    if (this.measueCurrentRange()) {
+      this.updateTotalContentSize();
+    }
 
     this.updateRenderRange();
   }
 
   onDataLengthChanged(): void {
-    // all indexes are now invalid
     if (this.viewport) {
+      // all indexes are now invalid
       this.recoredElementSizes = {};
       this.elementCount = this.viewport.getDataLength();
 
-      if (this.scheduledScrollDown) {
-        this.updateTotalContentSize();
-        this.scheduledScrollDown = false;
-        this.scrollToEnd();
-        this.updateRenderRange();
-      } else {
-        animationFrameScheduler.schedule(() => {
-          this.measueCurrentRange();
-          this.updateTotalContentSize();
-          this.updateRenderRange();
-        });
-      }
+      this.measueCurrentRange();
+      this.updateTotalContentSize();
+      this.updateRenderRange();
     }
   }
 
@@ -239,19 +240,12 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
         this.recoredElementSizes[i] = pixelSize;
       }
     }
-    const newStartOffset = this.pixelSizeOfRange(0, renderedRange.start);
-    this.viewport.setRenderedContentOffset(newStartOffset);
+    //const newStartOffset = this.pixelSizeOfRange(0, renderedRange.start);
+    //this.viewport.setRenderedContentOffset(newStartOffset);
     return change;
   }
 
-  onContentRendered(): void {
-    // measure element sizes
-    animationFrameScheduler.schedule(() => {
-      if (this.measueCurrentRange()) {
-        this.updateTotalContentSize();
-      }
-    });
-  }
+  onContentRendered(): void {}
 
   getViewportSize(): number {
     return this.viewport?.getViewportSize() ?? 1;
@@ -267,13 +261,7 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
 
   scrollToEnd(): void {
     if (this.viewport) {
-      animationFrameScheduler.schedule(() => {
-        this.viewport.scrollTo({ bottom: 0 });
-      });
+      this.viewport.scrollTo({ bottom: 0 });
     }
-  }
-
-  scheduleScrollToEnd(): void {
-    this.scheduledScrollDown = true;
   }
 }

@@ -10,7 +10,7 @@
     [scrollDown]="isFirstPage$ | async"
     (delete)="deleteMessage(cid, $event)"
     (edit)="editMessage(cid, $event)"
-    (atTop)="loadMoreMessages(cid)"
+    (atTop)="loadMoreMessages(cid, $event)"
   ></app-message-list>
   <app-writer
     *ngIf="(selfMember$ | async)?.permission.write"

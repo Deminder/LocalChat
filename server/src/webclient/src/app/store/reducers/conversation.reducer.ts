@@ -22,6 +22,9 @@ import {
   searchNextMessagesFailure,
   searchNextMessagesSuccess,
   conversationUpserted,
+  ConvRef,
+  startLoadMoreMessages,
+  stopLoadMoreMessages,
 } from '../actions/conversation.actions';
 import { logout } from '../actions/authorize.actions';
 
@@ -40,6 +43,7 @@ export interface ConversationState {
   names: EntityState<ConversationNameDto>;
   members: EntityState<MemberDto>;
   messages: ChatMessagesState;
+  loadMore: ConvRef | null;
 }
 
 export interface ChatMessagesState extends EntityState<ConversationMessageDto> {
@@ -69,6 +73,7 @@ export const initialConversationState: ConversationState = {
   names: namesAdapter.getInitialState(),
   members: membersAdapter.getInitialState(),
   messages: messagesAdapter.getInitialState(),
+  loadMore: null,
 };
 
 export const {
@@ -147,6 +152,14 @@ export const conversationReducer = createReducer(
     members: membersAdapter.removeOne(action.userId, state.members),
   })),
   // MESSAGES
+  on(startLoadMoreMessages, (state, action) => ({
+    ...state,
+    loadMore: action as ConvRef
+  })),
+  on(stopLoadMoreMessages, (state, _) => ({
+    ...state,
+    loadMore: null
+  })),
   on(listNextMessagesSuccess, (state, action) => ({
     ...state,
     messages: addMessagePage(

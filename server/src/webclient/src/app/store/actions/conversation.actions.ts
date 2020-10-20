@@ -25,14 +25,13 @@ export const listConversationsFailure = createAction(
 export type ConvRef = { conversationId: number };
 export const addConversation = createAction(
   '[Conversation/Silent] Add Conversation',
-  props<{name: string}>()
+  props<{ name: string }>()
 );
 
 export const renameConversation = createAction(
   '[Conversation/Silent] Rename Conversation',
-  props<ConvRef & {name: string}>()
+  props<ConvRef & { name: string }>()
 );
-
 
 // MEMBERS
 
@@ -71,6 +70,14 @@ export const removeMember = createAction(
 );
 
 // MESSAGES
+export const startLoadMoreMessages = createAction(
+  '[Conversation] Start Load More Messages',
+  props<ConvRef>()
+);
+
+export const stopLoadMoreMessages = createAction(
+  '[Conversation] Stop Load More Messages'
+);
 
 export const listNextMessages = createAction(
   '[Conversation/API] List Next Messages',
@@ -88,7 +95,7 @@ export const listNextMessagesFailure = createAction(
 
 export const searchNextMessages = createAction(
   '[Conversation/API] Search Next Messages',
-  props<ConvRef & {search: string; regex: boolean }>()
+  props<ConvRef & { search: string; regex: boolean }>()
 );
 
 export const searchNextMessagesSuccess = createAction(
@@ -130,7 +137,6 @@ export const conversationUpserted = createAction(
   '[Conversation/Event] Upsert Conversation',
   props<{ conv: ConversationNameDto }>()
 );
-
 
 export const messageUpserted = createAction(
   '[Conversation/Event] Upsert Message',

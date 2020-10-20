@@ -8,17 +8,19 @@ import {
   deleteMessage,
   editMessage,
   listMembers,
-  listNextMessages
+  listNextMessages,
+  startLoadMoreMessages,
+  stopLoadMoreMessages
 } from '../store/actions/conversation.actions';
 import {selectedConversationId} from '../store/reducers/router.reducer';
 import {
   isFirstPage,
   isLastPage, selectConversationMemberEntities,
   selectConversationMessages,
-  selectSelfMember
+  selectSelfMember,
+  isLoadingMoreMessages
 } from '../store/selectors/conversation.selectors';
 import {selectSelfUserId} from '../store/selectors/user.selectors';
-import {isLoadingMoreMessages} from '../store/selectors/progress.selectors';
 
 @Component({
   selector: 'app-conversation',
@@ -43,15 +45,12 @@ export class ConversationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
-  loadMoreMessages(conversationId: number): void {
-    this.isLastPage$
-      .pipe(
-        take(1),
-        filter((v) => !v)
-      )
-      .subscribe(() => {
-        this.store.dispatch(listNextMessages({ conversationId }));
-      });
+  loadMoreMessages(conversationId: number, loadMore: boolean): void {
+    if (loadMore) {
+      this.store.dispatch(startLoadMoreMessages({ conversationId }));
+    } else {
+      this.store.dispatch(stopLoadMoreMessages());
+    }
   }
 
   deleteMessage(conversationId: number, msg: ConversationMessageDto): void {

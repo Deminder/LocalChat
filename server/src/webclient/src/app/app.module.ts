@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
-import { StoreModule } from '@ngrx/store';
+import { StoreModule, Action, ActionReducer } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -38,11 +38,19 @@ import { appreducer } from './store/reducers/app.reducer';
 import { routerKey } from './store/reducers/router.reducer';
 import { DynamicScrollDirective } from './shared/directives/scrollable.directive';
 import { AuthInterceptor } from './http-interceptors/auth.interceptor';
-import {ScrollingModule} from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 registerLocaleData(localeDe);
 
-export const metaReducers = [];
+export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
+  return (state, action) => {
+    console.log('state', state);
+    console.log('action', action);
+    return reducer(state, action);
+  };
+}
+
+export const metaReducers = [debug];
 
 @NgModule({
   declarations: [

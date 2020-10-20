@@ -1,20 +1,15 @@
 import * as store from '@ngrx/store';
+import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
 import {
   conversationKey,
   ConversationState,
   selectAllConvs,
-  selectConvEntites,
   selectAllMembers,
   selectAllMessages,
+  selectConvEntites,
   selectMemberEntites,
-  selectMemberIds,
 } from '../reducers/conversation.reducer';
-import {
-  selectedConversationId,
-  isChatOpen,
-  isMembersOpen,
-} from '../reducers/router.reducer';
-import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
+import { isChatOpen, selectedConversationId } from '../reducers/router.reducer';
 import { selectSelfUserId } from './user.selectors';
 
 const selectConversation = store.createFeatureSelector<ConversationState>(
@@ -78,14 +73,20 @@ export const areMembersNeeded = store.createSelector(
     cid >= 0 && (members.length === 0 || members[0].convId !== cid)
 );
 
+export const selectOldestMessage = store.createSelector(
+  selectConversationMessages,
+  (messages) => (messages.length > 0 ? messages[messages.length - 1] : null)
+);
+
 export const isFirstPage = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
-  selectConversationMessages,
-  (cid, prevPage, messages) =>
+  selectOldestMessage,
+  (cid, prevPage, oldestMessage) =>
     prevPage &&
     prevPage.convId === cid &&
-    prevPage.request.olderThan > messages[messages.length - 1].authorDate
+    oldestMessage &&
+    prevPage.request.olderThan > oldestMessage.authorDate
 );
 
 export const isLastPage = store.createSelector(
@@ -109,4 +110,16 @@ export const selectNextMessagePageRequest = store.createSelector(
         }
       : { pageSize: 40 };
   }
+);
+
+export const selectLoadMoreConversationId = store.createSelector(
+  selectConversation,
+  (state) => state.loadMore?.conversationId
+);
+
+export const isLoadingMoreMessages = store.createSelector(
+  selectedConversationId,
+  selectLoadMoreConversationId,
+  isLastPage,
+  (cid, scid, last) => !last && cid === scid
 );
