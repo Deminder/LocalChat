@@ -7,14 +7,16 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { Dictionary } from '@ngrx/entity';
-import { interval, of, Subscription } from 'rxjs';
-import { concatMap, filter, map } from 'rxjs/operators';
+import { interval, of, Subscription, Subject } from 'rxjs';
+import { concatMap, filter, map, take, mergeMap } from 'rxjs/operators';
 import {
   ConversationMessageDto,
   MemberDto,
 } from 'src/app/openapi/model/models';
+import { DynamicScrollDirective } from 'src/app/shared/directives/scrollable.directive';
 
 @Component({
   selector: 'app-message-list',
@@ -27,7 +29,7 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
 
   shownMessageIds = new Set<number>();
 
-  newMessageQueue: number[] = [];
+  newMessageQueue$ = new Subject<number[]>();
 
   shownMessages: ConversationMessageDto[] = [];
 
@@ -52,6 +54,9 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   @Output()
   atTop = new EventEmitter<boolean>();
 
+  @ViewChild(DynamicScrollDirective, { static: true })
+  dynamicDirective: DynamicScrollDirective;
+
   updater: Subscription;
 
   selected = -1;
@@ -71,19 +76,26 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
       );
       this.updateShownMessages();
       // add one-by-one
-      this.newMessageQueue = this.newMessageQueue.concat(
-        ...this.shortestShownMessageDistance(
+      this.newMessageQueue$.next(
+        this.shortestShownMessageDistance(
           msgIds.filter((msgId) => !this.shownMessageIds.has(msgId))
         ).map(([mid]) => Number(mid))
       );
     }
+    if (changes.scrollDown?.currentValue) {
+      this.dynamicDirective.scrollDown();
+    }
   }
 
   ngOnInit(): void {
-    this.updater = interval(20)
+    this.updater = this.newMessageQueue$
       .pipe(
-        filter(() => this.newMessageQueue.length > 0),
-        map(() => this.newMessageQueue.pop())
+        mergeMap((msgIds) =>
+          interval(20).pipe(
+            take(msgIds.length),
+            map(() => msgIds.pop())
+          )
+        )
       )
       .subscribe((i) => {
         this.shownMessageIds.add(i);
@@ -147,5 +159,14 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
     this.shownMessages = this.messages.filter((msg) =>
       this.shownMessageIds.has(msg.id)
     );
+  }
+
+  selectMessage(msgId: number): void {
+    if (this.selected !== msgId) {
+      this.selected = msgId;
+    } else {
+      this.selected = -1;
+    }
+    this.dynamicDirective.onContentUpdate();
   }
 }

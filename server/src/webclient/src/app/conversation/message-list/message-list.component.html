@@ -1,6 +1,5 @@
 <cdk-virtual-scroll-viewport
   appDynamicScroll
-  [scrollDown]="scrollDown"
   (atTop)="atTop.emit($event)"
   class="message-viewport"
 >
@@ -12,8 +11,8 @@
   <div *cdkVirtualFor="let msg of shownMessages" class="msg-item">
     <div
       [ngClass]="messageClasses(msg)"
-      (dblclick)="selected !== msg.id ? (selected = msg.id) : (selected = -1)"
-      (blur)="selected = -1"
+      (dblclick)="selectMessage(msg.id)"
+      (blur)="selectMessage(-1)"
       [style.background-color]="msg.authorUserId | authorColor: memberDict"
     >
       <div *ngIf="selected === msg.id" class="tools-row">

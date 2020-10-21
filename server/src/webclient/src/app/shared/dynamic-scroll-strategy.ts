@@ -121,7 +121,6 @@ export class DynamicScrollStrategy implements VirtualScrollStrategy {
 
       // forward and backward offsets are relative to startOffset
       const startOffset = this.viewport.getOffsetToRenderedContentStart();
-      console.log('offset', startOffset);
 
       const hardStart = Math.max(0, scrollOffset - this.maxBufferPixel);
       const targetStart = Math.max(0, scrollOffset - this.minBufferPixel);

@@ -9,6 +9,7 @@ import {
   Output,
   ViewContainerRef,
   forwardRef,
+  SimpleChanges,
 } from '@angular/core';
 import {
   Subject,
@@ -38,16 +39,13 @@ export class DynamicScrollDirective implements OnInit, OnDestroy, OnChanges {
   @Output()
   atTop = new EventEmitter<boolean>();
 
-  @Input()
-  scrollDown = false;
-
   atTop$ = new Subject<void>();
 
   dynamicStrategy = new DynamicScrollStrategy();
   sub: Subscription;
   sub2: Subscription;
 
-  constructor() {}
+  constructor(private ref: ViewContainerRef) {}
 
   ngOnInit(): void {
     this.sub = this.dynamicStrategy.bottomPos.subscribe((endOffset) => {
@@ -70,16 +68,23 @@ export class DynamicScrollDirective implements OnInit, OnDestroy, OnChanges {
       });
   }
 
-  ngOnChanges(): void {
-    if (this.scrollDown) {
-      setTimeout(
-        () =>
-          window.requestAnimationFrame(() => {
-            this.dynamicStrategy.scrollToEnd();
-          }),
-        1000
-      );
-    }
+  ngOnChanges(changes: SimpleChanges): void {}
+
+  scrollDown(): void {
+    window.requestAnimationFrame(() => {
+      this.dynamicStrategy.scrollToEnd();
+    });
+  }
+
+  onContentUpdate(): void {
+    window.requestAnimationFrame(() => {
+      this.dynamicStrategy.onContentScrolled();
+    });
+  }
+
+  @HostListener('resize')
+  onResize(): void {
+    this.dynamicStrategy.onContentScrolled();
   }
 
   ngOnDestroy(): void {
