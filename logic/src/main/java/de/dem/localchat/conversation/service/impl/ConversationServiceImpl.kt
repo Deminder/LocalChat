@@ -33,7 +33,7 @@ class ConversationServiceImpl(
 
 
     override fun changeConversationName(conversationId: Long, newName: String) =
-            conversationRepository.findByIdOrNull(conversationId)?.let {
+            conversationRepository.findConvById(conversationId)?.let {
                 conversationRepository.save(it.copy(name = newName))
             } ?: error("No such conversation!")
 

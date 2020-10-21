@@ -15,4 +15,8 @@ interface ConversationRepository : CrudRepository<Conversation, Long> {
             "ORDER BY last_update DESC")
     fun findAllByUsername(@Param("username") username: String): List<Conversation>
 
+    @Query("SELECT c.*, ci.last_author_date as last_update " +
+            "FROM conversation c JOIN conversation_info ci ON c.id = ci.id WHERE c.id = :conversationId")
+    fun findConvById(conversationId: Long): Conversation
+
 }
