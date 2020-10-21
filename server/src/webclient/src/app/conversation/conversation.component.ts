@@ -1,13 +1,22 @@
+import { CdkScrollable } from '@angular/cdk/overlay';
 import {
+  AfterViewChecked,
+  AfterViewInit,
   Component,
+  NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
-  AfterViewInit,
-  AfterViewChecked,
-  NgZone,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { animationFrameScheduler, Subscription } from 'rxjs';
+import {
+  auditTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  take,
+} from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
 import {
   createMessage,
@@ -23,29 +32,10 @@ import {
   isLoadingMoreMessages,
   selectConversationMemberEntities,
   selectConversationMessages,
-  selectSelfMember,
-  selectOldestMessage,
   selectNewestMessage,
+  selectSelfMember,
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
-import {
-  Subscription,
-  asyncScheduler,
-  animationFrameScheduler,
-  asapScheduler,
-} from 'rxjs';
-import { DynamicScrollDirective } from '../shared/directives/scrollable.directive';
-import {
-  filter,
-  map,
-  auditTime,
-  distinctUntilChanged,
-  withLatestFrom,
-  tap,
-  take,
-} from 'rxjs/operators';
-import { MessageListComponent } from './message-list/message-list.component';
-import { CdkScrollable } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-conversation',

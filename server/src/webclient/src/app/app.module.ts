@@ -36,7 +36,6 @@ import { UserEffects } from './store/effects/user/user.effects';
 import { RouterEffects } from './store/effects/router/router.effects';
 import { appreducer } from './store/reducers/app.reducer';
 import { routerKey } from './store/reducers/router.reducer';
-import { DynamicScrollDirective } from './shared/directives/scrollable.directive';
 import { AuthInterceptor } from './http-interceptors/auth.interceptor';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
@@ -71,7 +70,6 @@ export const metaReducers = [debug];
     AddConversationComponent,
     MembersComponent,
     AddMemberComponent,
-    DynamicScrollDirective,
   ],
   imports: [
     BrowserModule,
