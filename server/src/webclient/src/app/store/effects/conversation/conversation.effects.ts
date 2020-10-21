@@ -89,11 +89,11 @@ export class ConversationEffects {
   continueLoadMoreMessages$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listNextMessagesSuccess),
+      delay(100),
       withLatestFrom(this.store.select(selectLoadMoreConversationId)),
       filter(
         ([a, scid]) => !a.messagePage.last && a.messagePage.convId === scid
       ),
-      delay(100),
       map(([_, conversationId]) => listNextMessages({ conversationId }))
     )
   );

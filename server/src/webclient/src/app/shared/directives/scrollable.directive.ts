@@ -2,93 +2,54 @@ import {
   Directive,
   EventEmitter,
   HostListener,
-  Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
   ViewContainerRef,
-  forwardRef,
-  SimpleChanges,
 } from '@angular/core';
-import {
-  Subject,
-  Subscription,
-  asyncScheduler,
-  animationFrameScheduler,
-} from 'rxjs';
-import { auditTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
-import { DynamicScrollStrategy } from '../dynamic-scroll-strategy';
-
-export const dynamicScrollStrategyFactory = (dir: DynamicScrollDirective) => {
-  return dir.dynamicStrategy;
-};
+import { asyncScheduler, Subject, Subscription } from 'rxjs';
+import { auditTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Directive({
-  selector: 'cdk-virtual-scroll-viewport[appDynamicScroll]',
-  providers: [
-    {
-      provide: VIRTUAL_SCROLL_STRATEGY,
-      useFactory: dynamicScrollStrategyFactory,
-      deps: [forwardRef(() => DynamicScrollDirective)],
-    },
-  ],
+  selector: '[appDynamicScroll]',
 })
-export class DynamicScrollDirective implements OnInit, OnDestroy, OnChanges {
+export class DynamicScrollDirective implements OnInit, OnDestroy {
   @Output()
   atTop = new EventEmitter<boolean>();
 
-  atTop$ = new Subject<void>();
+  atTop$ = new Subject<boolean>();
 
-  dynamicStrategy = new DynamicScrollStrategy();
   sub: Subscription;
-  sub2: Subscription;
 
   constructor(private ref: ViewContainerRef) {}
 
   ngOnInit(): void {
-    this.sub = this.dynamicStrategy.bottomPos.subscribe((endOffset) => {
-      if (endOffset === 0) {
-        this.dynamicStrategy.scrollToEnd();
-      }
-    });
-
-    this.sub2 = this.dynamicStrategy.topPos
-      .pipe(
-        auditTime(200, asyncScheduler),
-        map(
-          (scrollTop) =>
-            scrollTop < 1.5 * this.dynamicStrategy.getViewportSize()
-        ),
-        distinctUntilChanged()
-      )
+    this.sub = this.atTop$
+      .pipe(auditTime(200, asyncScheduler), distinctUntilChanged())
       .subscribe((atTop) => {
         this.atTop.emit(atTop);
       });
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+  }
 
   scrollDown(): void {
     window.requestAnimationFrame(() => {
-      this.dynamicStrategy.scrollToEnd();
+      const e = this.ele();
+      e.scrollTop = e.scrollHeight;
     });
-  }
-
-  onContentUpdate(): void {
-    window.requestAnimationFrame(() => {
-      this.dynamicStrategy.onContentScrolled();
-    });
-  }
-
-  @HostListener('resize')
-  onResize(): void {
-    this.dynamicStrategy.onContentScrolled();
   }
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
-    this.sub2.unsubscribe();
+  }
+
+  @HostListener('scroll', ['$event'])
+  onScroll(): void {
+    const e = this.ele();
+    this.atTop$.next(e.scrollTop < 1.5 * e.clientHeight);
+  }
+
+  ele(): HTMLElement {
+    return this.ref.element.nativeElement;
   }
 }

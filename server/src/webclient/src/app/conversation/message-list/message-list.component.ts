@@ -6,17 +6,13 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
-  ViewChild,
+  SimpleChanges
 } from '@angular/core';
-import { Dictionary } from '@ngrx/entity';
-import { interval, of, Subscription, Subject } from 'rxjs';
-import { concatMap, filter, map, take, mergeMap } from 'rxjs/operators';
+import {Dictionary} from '@ngrx/entity';
 import {
   ConversationMessageDto,
-  MemberDto,
+  MemberDto
 } from 'src/app/openapi/model/models';
-import { DynamicScrollDirective } from 'src/app/shared/directives/scrollable.directive';
 
 @Component({
   selector: 'app-message-list',
@@ -27,12 +23,6 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   messages: ConversationMessageDto[];
 
-  shownMessageIds = new Set<number>();
-
-  newMessageQueue$ = new Subject<number[]>();
-
-  shownMessages: ConversationMessageDto[] = [];
-
   @Input()
   showSpinner: boolean;
 
@@ -42,98 +32,22 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   memberDict: Dictionary<MemberDto>;
 
-  @Input()
-  scrollDown: boolean;
-
   @Output()
   delete = new EventEmitter<{ messageId: number }>();
 
   @Output()
   edit = new EventEmitter<{ messageId: number }>();
 
-  @Output()
-  atTop = new EventEmitter<boolean>();
-
-  @ViewChild(DynamicScrollDirective, { static: true })
-  dynamicDirective: DynamicScrollDirective;
-
-  updater: Subscription;
-
   selected = -1;
 
   constructor() {}
-  ngOnDestroy(): void {
-    this.updater.unsubscribe();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.messages !== undefined) {
-      const msgIds = this.messages.map((msg) => msg.id);
-      const msgIdSet = new Set(msgIds);
-      // missing messages are deleted instantly
-      this.shownMessageIds = new Set(
-        [...this.shownMessageIds].filter((msgId) => msgIdSet.has(msgId))
-      );
-      this.updateShownMessages();
-      // add one-by-one
-      this.newMessageQueue$.next(
-        this.shortestShownMessageDistance(
-          msgIds.filter((msgId) => !this.shownMessageIds.has(msgId))
-        ).map(([mid]) => Number(mid))
-      );
-    }
-    if (changes.scrollDown?.currentValue) {
-      this.dynamicDirective.scrollDown();
-    }
+    console.log(changes);
+  }
+  ngOnDestroy(): void {
   }
 
   ngOnInit(): void {
-    this.updater = this.newMessageQueue$
-      .pipe(
-        mergeMap((msgIds) =>
-          interval(20).pipe(
-            take(msgIds.length),
-            map(() => msgIds.pop())
-          )
-        )
-      )
-      .subscribe((i) => {
-        this.shownMessageIds.add(i);
-        this.updateShownMessages();
-      });
-  }
-
-  private shortestShownMessageDistance(msgIds: number[]): [number, number][] {
-    const ids = new Set(msgIds);
-    // forward distance
-    const fres = this.shownMessageDistance(ids, false);
-    // backward distance
-    const bres = this.shownMessageDistance(ids, false);
-    const res = Object.entries(fres).map(
-      ([mid, dist]) =>
-        [Number(mid), Math.min(bres[mid], dist)] as [number, number]
-    );
-    res.sort(([_, dist], [__, dist2]) => dist - dist2);
-    return res;
-  }
-
-  private shownMessageDistance(
-    ids: Set<number>,
-    reverse: boolean
-  ): { [msgId: number]: number } {
-    const res = {};
-    let dist = 0;
-    const messages = Array.from(this.messages);
-    if (reverse) {
-      messages.reverse();
-    }
-    for (const msg of messages) {
-      if (ids.has(msg.id)) {
-        res[msg.id] = dist;
-      }
-      dist = this.shownMessageIds.has(msg.id) ? 0 : dist + 1;
-    }
-    return res;
   }
 
   isOutgoing(msg: ConversationMessageDto): boolean {
@@ -155,18 +69,11 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-  updateShownMessages(): void {
-    this.shownMessages = this.messages.filter((msg) =>
-      this.shownMessageIds.has(msg.id)
-    );
-  }
-
   selectMessage(msgId: number): void {
     if (this.selected !== msgId) {
       this.selected = msgId;
     } else {
       this.selected = -1;
     }
-    this.dynamicDirective.onContentUpdate();
   }
 }

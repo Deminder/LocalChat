@@ -1,11 +1,9 @@
-:host {
+.message-list {
   display: flex;
-  flex-direction: column;
-}
-
-
-.message-viewport {
-  flex: auto;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
 }
 
 .msg-item {

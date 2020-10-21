@@ -75,6 +75,11 @@ export const areMembersNeeded = store.createSelector(
 
 export const selectOldestMessage = store.createSelector(
   selectConversationMessages,
+  (messages) => (messages.length > 0 ? messages[0] : null)
+);
+
+export const selectNewestMessage = store.createSelector(
+  selectConversationMessages,
   (messages) => (messages.length > 0 ? messages[messages.length - 1] : null)
 );
 
