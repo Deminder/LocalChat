@@ -1,6 +1,5 @@
 import { CdkScrollable } from '@angular/cdk/overlay';
 import {
-  AfterViewChecked,
   AfterViewInit,
   Component,
   NgZone,
@@ -36,14 +35,14 @@ import {
   selectSelfMember,
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
+import { MessageListComponent } from './message-list/message-list.component';
 
 @Component({
   selector: 'app-conversation',
   templateUrl: './conversation.component.html',
   styleUrls: ['./conversation.component.scss'],
 })
-export class ConversationComponent
-  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+export class ConversationComponent implements OnInit, OnDestroy, AfterViewInit {
   conversationId$ = this.store.select(selectedConversationId);
   selfUserId$ = this.store.select(selectSelfUserId);
   conversationMessages$ = this.store.select(selectConversationMessages);
@@ -54,11 +53,15 @@ export class ConversationComponent
   selfMember$ = this.store.select(selectSelfMember);
   loadingMoreMessages$ = this.store.select(isLoadingMoreMessages);
 
+  @ViewChild(MessageListComponent)
+  messageList: MessageListComponent;
+
   @ViewChild(CdkScrollable)
   messageScrollable: CdkScrollable;
 
   downScroller: Subscription;
-  wantsScrollDown = 0;
+  scrollToLowestMsgIds = -1;
+  bottomScroll = -1;
 
   updater: Subscription;
 
@@ -73,8 +76,14 @@ export class ConversationComponent
         map((msg) => msg.id),
         distinctUntilChanged()
       )
-      .subscribe(() => {
-        this.wantsScrollDown = 3;
+      .subscribe((msgId) => {
+        this.scrollToLowestMsgIds = msgId;
+        // scrolls shortly after keepScrollRelativeToBottom fired
+        this.ngZone.runOutsideAngular(() => {
+          animationFrameScheduler.schedule(() => {
+            this.messageScrollable.scrollTo({ bottom: 0, behavior: 'smooth'});
+          }, 10);
+        });
       });
 
     this.updater = this.messageScrollable
@@ -98,11 +107,17 @@ export class ConversationComponent
       });
   }
 
-  ngAfterViewChecked(): void {
-    if (this.wantsScrollDown) {
-      this.wantsScrollDown--;
-      this.messageScrollable.scrollTo({ bottom: 0 });
-    }
+  keepScrollRelativeToBottom(): void {
+    // measure size before view updates
+    this.bottomScroll =
+      this.messageScrollable?.measureScrollOffset('bottom') ?? 0;
+    const scrollBottomTarget = this.bottomScroll;
+    // scrolls right after change detection is done
+    this.ngZone.runOutsideAngular(() => {
+      animationFrameScheduler.schedule(() => {
+        this.messageScrollable.scrollTo({ bottom: scrollBottomTarget });
+      });
+    });
   }
 
   ngOnDestroy(): void {

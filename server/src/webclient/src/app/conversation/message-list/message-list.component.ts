@@ -6,12 +6,12 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
-import {Dictionary} from '@ngrx/entity';
+import { Dictionary } from '@ngrx/entity';
 import {
   ConversationMessageDto,
-  MemberDto
+  MemberDto,
 } from 'src/app/openapi/model/models';
 
 @Component({
@@ -38,17 +38,25 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   @Output()
   edit = new EventEmitter<{ messageId: number }>();
 
+  @Output()
+  lengthUpdate = new EventEmitter<number>();
+
   selected = -1;
 
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    if (
+      changes.showSpinner || (
+      changes.messages &&
+      changes.messages.previousValue?.length !==
+        changes.messages.currentValue.length )
+    ) {
+      this.lengthUpdate.emit(this.messages.length);
+    }
   }
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   isOutgoing(msg: ConversationMessageDto): boolean {
     return this.selfUserId === msg.authorUserId;

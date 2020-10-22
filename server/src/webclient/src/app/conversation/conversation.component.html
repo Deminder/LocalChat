@@ -6,12 +6,14 @@
     [selfUserId]="selfUserId$ | async"
     [memberDict]="memberEntites$ | async"
     [showSpinner]="loadingMoreMessages$ | async"
+    (lengthUpdate)="keepScrollRelativeToBottom()"
     (delete)="deleteMessage(cid, $event)"
     (edit)="editMessage(cid, $event)"
   ></app-message-list>
   <app-writer
-    *ngIf="(selfMember$ | async)?.permission.write"
     class="writer shaded-background"
+    [member]="selfMember$ | async"
     (send)="sendMessage(cid, $event)"
+    (hidden)="keepScrollRelativeToBottom()"
   ></app-writer>
 </div>

@@ -3,8 +3,10 @@
     #writer="ngModel"
     matInput
     name="message"
+    [disabled]="isHidden"
     [(ngModel)]="text"
     (keydown)="keydown($event)"
     placeholder="Write message..."
   ></textarea>
 </mat-form-field>
+<button mat-icon-button (click)="submit()"><mat-icon>double_arrow</mat-icon></button>
