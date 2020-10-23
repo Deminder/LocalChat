@@ -3127,6 +3127,11 @@ deep-equal@^1.0.1:
     object-keys "^1.1.1"
     regexp.prototype.flags "^1.2.0"
 
+deepmerge@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-3.3.0.tgz#d3c47fd6f3a93d517b14426b0628a17b0125f5f7"
+  integrity sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA==
+
 default-gateway@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/default-gateway/-/default-gateway-4.2.0.tgz#167104c7500c2115f6dd69b0a536bb8ed720552b"
@@ -5875,6 +5880,14 @@ ng-mocks@10.1.2:
   version "10.1.2"
   resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-10.1.2.tgz#343d1b2f99a7c153910ec4e2dab9f099ac75cc77"
   integrity sha512-H2d2XDQvwy4/2eeIAucX5JH/zrU8tAQATuZCe//MN06BxPs6aoa0lav7w8sdJRIgnTEUyfMitje2QI7XxuliqA==
+
+ngrx-store-localstorage@^10.1.1:
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/ngrx-store-localstorage/-/ngrx-store-localstorage-10.1.1.tgz#c1d096d6ef700456ad0aca5920b21e8847996982"
+  integrity sha512-OacpqJMraLrgqr/T3DfyT4T4lqAISZdCPWmYQyHtXWsNgKGid6xL4SgPktJ3vcMbIuuMckOpEFIgIpgBvf8E3g==
+  dependencies:
+    deepmerge "^3.2.0"
+    tslib "^2.0.0"
 
 nice-try@^1.0.4:
   version "1.0.5"

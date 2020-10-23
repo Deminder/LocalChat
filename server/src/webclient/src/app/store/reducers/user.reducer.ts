@@ -1,12 +1,13 @@
 import { createReducer, on } from '@ngrx/store';
 import { UserDto } from '../../openapi/model/models';
-import { getSelfSuccess } from '../actions/user.actions';
+import { getSelfSuccess, sidenavToggle } from '../actions/user.actions';
 import {logout} from '../actions/authorize.actions';
 
 export const userKey = 'user';
 
 export interface UserState {
   selfUser: UserDto;
+  sidenavOpen: boolean;
 }
 
 export const initialUserState: UserState = {
@@ -15,6 +16,7 @@ export const initialUserState: UserState = {
     id: -1,
     registerDate: 0,
   },
+  sidenavOpen: true
 };
 
 export const userReducer = createReducer(
@@ -24,5 +26,8 @@ export const userReducer = createReducer(
   }),
   on(logout, () => {
     return { ...initialUserState };
-  })
+  }),
+  on(sidenavToggle, (state) => {
+    return { ...state, sidenavOpen: !state.sidenavOpen };
+  }),
 );

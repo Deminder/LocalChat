@@ -14,3 +14,5 @@ export const getSelfSuccess = createAction(
 
 export const getSelfFailure = createAction('[User] Get Self Failure');
 
+export const sidenavToggle = createAction('[User] Toggle Navigation Bar', props<{ enabled: boolean }>());
+

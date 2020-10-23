@@ -1,0 +1,37 @@
+<mat-checkbox
+  *ngIf="!searchCollapsed"
+  class="regex-checkbox"
+  matTooltip="Search by Regex"
+  [(ngModel)]="regex"
+  (ngModelChange)="searcher.focus()"
+></mat-checkbox>
+<button
+  mat-icon-button
+  class="search-button"
+  aria-label="Search"
+  (click)="focusSearch()"
+>
+  <mat-icon>search</mat-icon>
+</button>
+<div class="search-section" [class.hidden]="searchCollapsed">
+  <mat-form-field>
+    <input
+      #searcher
+      name="searchField"
+      matInput
+      type="text"
+      (focus)="focused = true"
+      (blur)="focused = false"
+      [(ngModel)]="searchText"
+    />
+  </mat-form-field>
+  <button
+    mat-icon-button
+    [class.hidden]="isClear"
+    class="clear-button"
+    aria-label="Clear"
+    (click)="searchText = ''; searcher.focus()"
+  >
+    <mat-icon>clear</mat-icon>
+  </button>
+</div>

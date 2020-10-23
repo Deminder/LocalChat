@@ -13,3 +13,9 @@ export const selectSelfUserId = createSelector(
   (state) => state.selfUser.id
 );
 
+export const isSideNavOpen = createSelector(
+  selectUser,
+  (state) => state.sidenavOpen
+);
+
+

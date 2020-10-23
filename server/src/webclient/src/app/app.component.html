@@ -11,8 +11,15 @@
   <span>{{ toolbarTitle$ | async }}</span>
   <span class="example-spacer"></span>
 
-  <ng-template [ngIf]="(isSettingsOpen$ | async) || (isMembersOpen$ | async)">
+  <app-searcher *ngIf="isChatOpen$ | async">
+  </app-searcher>
+  <ng-template [ngIf]="isSettingsOpen$ | async">
     <button mat-icon-button aria-label="Back" (click)="back()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </ng-template>
+  <ng-template [ngIf]="isMembersOpen$ | async">
+    <button mat-icon-button aria-label="Back" (click)="backToChat()">
       <mat-icon>arrow_back</mat-icon>
     </button>
   </ng-template>
@@ -35,7 +42,8 @@
 
 <app-sidenav
   #sidenav
-  [(opened)]="sidenavOpen"
+  [opened]="isSideNavOpen$ | async"
+  (openedChange)="sidenavChange($event)"
   (createConv)="addConversation()"
   [conversationId]="conversationId$ | async"
   [conversations]="conversations$ | async"

@@ -56,7 +56,8 @@
 }
 
 .divider {
-  flex: 1 1 auto;
+  flex: 1;
+  min-width: 1em;
 }
 
 .tools-row {

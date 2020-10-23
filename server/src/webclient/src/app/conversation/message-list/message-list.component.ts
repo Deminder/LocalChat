@@ -39,9 +39,13 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   edit = new EventEmitter<{ messageId: number }>();
 
   @Output()
-  lengthUpdate = new EventEmitter<number>();
+  lengthUpdate = new EventEmitter<any>();
 
   selected = -1;
+
+  get heightFingerprint(): [boolean, number] {
+    return [this.selected >= 0, this.messages.length];
+  }
 
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
@@ -51,7 +55,7 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
       changes.messages.previousValue?.length !==
         changes.messages.currentValue.length )
     ) {
-      this.lengthUpdate.emit(this.messages.length);
+      this.lengthUpdate.emit(this.heightFingerprint);
     }
   }
   ngOnDestroy(): void {}
@@ -83,5 +87,6 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.selected = -1;
     }
+    this.lengthUpdate.emit(this.heightFingerprint);
   }
 }

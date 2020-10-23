@@ -11,13 +11,15 @@ import {
   isMembersOpen,
   isSettingsOpen,
   selectedConversationId,
+  isChatOpen,
 } from './store/reducers/router.reducer';
 import {
   selectActiveConversation,
   selectConversations,
 } from './store/selectors/conversation.selectors';
 import { isGlobalLoading } from './store/selectors/progress.selectors';
-import { selectSelfName } from './store/selectors/user.selectors';
+import { selectSelfName, isSideNavOpen } from './store/selectors/user.selectors';
+import {sidenavToggle} from './store/actions/user.actions';
 
 @Component({
   selector: 'app-root',
@@ -26,12 +28,13 @@ import { selectSelfName } from './store/selectors/user.selectors';
 })
 export class AppComponent implements OnInit {
   defaultTitle = 'Local Chat';
-  sidenavOpen = false;
 
   selfName$ = this.store.select(selectSelfName);
   isGlobalLoading$ = this.store.select(isGlobalLoading);
   isSettingsOpen$ = this.store.select(isSettingsOpen);
   isMembersOpen$ = this.store.select(isMembersOpen);
+  isSideNavOpen$ = this.store.select(isSideNavOpen);
+  isChatOpen$ = this.store.select(isChatOpen);
 
   conversations$ = this.store.select(selectConversations);
   conversationId$ = this.store.select(selectedConversationId);
@@ -50,16 +53,12 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  backToChat(): void {}
-
   back(): void {
-    this.isMembersOpen$.pipe(take(1)).subscribe((memberOpen) => {
-      if (memberOpen) {
-        this.store.dispatch(routeBackToChat());
-      } else {
-        this.location.back();
-      }
-    });
+    this.location.back();
+  }
+
+  backToChat(): void {
+    this.store.dispatch(routeBackToChat());
   }
 
   addConversation(): void {
@@ -75,5 +74,9 @@ export class AppComponent implements OnInit {
           }
         })
     );
+  }
+
+  sidenavChange(enabled: boolean): void {
+    this.store.dispatch(sidenavToggle({ enabled }));
   }
 }

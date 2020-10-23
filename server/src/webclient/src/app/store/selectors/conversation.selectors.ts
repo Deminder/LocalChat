@@ -86,12 +86,12 @@ export const selectNewestMessage = store.createSelector(
 export const isFirstPage = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
-  selectOldestMessage,
-  (cid, prevPage, oldestMessage) =>
+  selectNewestMessage,
+  (cid, prevPage, newestMessage) =>
     prevPage &&
     prevPage.convId === cid &&
-    oldestMessage &&
-    prevPage.request.olderThan > oldestMessage.authorDate
+    newestMessage &&
+    prevPage.request.olderThan > newestMessage.authorDate
 );
 
 export const isLastPage = store.createSelector(

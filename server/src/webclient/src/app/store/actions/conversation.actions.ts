@@ -93,6 +93,11 @@ export const listNextMessagesFailure = createAction(
   '[Conversation/API] List Next Messages Failure'
 );
 
+// MESSAGE SEARCH
+export const startMessageSearch = createAction(
+  '[Conversation] Start Message Search',
+  props<ConvRef & { search: string; regex: boolean }>()
+);
 export const searchNextMessages = createAction(
   '[Conversation/API] Search Next Messages',
   props<ConvRef & { search: string; regex: boolean }>()
@@ -106,6 +111,7 @@ export const searchNextMessagesSuccess = createAction(
 export const searchNextMessagesFailure = createAction(
   '[Conversation/API] Search Next Messages Failure'
 );
+
 
 // single message changes
 export type MessageRef = ConvRef & { messageId: number };

@@ -38,6 +38,8 @@ import { appreducer } from './store/reducers/app.reducer';
 import { routerKey } from './store/reducers/router.reducer';
 import { AuthInterceptor } from './http-interceptors/auth.interceptor';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { localStorageSync } from 'ngrx-store-localstorage';
+import { SearcherComponent } from './searcher/searcher.component';
 
 registerLocaleData(localeDe);
 
@@ -49,7 +51,13 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
   };
 }
 
-export const metaReducers = [debug];
+export const metaReducers = [
+  localStorageSync({
+    keys: [{ user: ['sidenavOpen'] }],
+    rehydrate: true,
+    syncCondition: (_) => true
+  }),
+].concat(environment.production ? [] : [debug]);
 
 @NgModule({
   declarations: [
@@ -70,6 +78,7 @@ export const metaReducers = [debug];
     AddConversationComponent,
     MembersComponent,
     AddMemberComponent,
+    SearcherComponent,
   ],
   imports: [
     BrowserModule,

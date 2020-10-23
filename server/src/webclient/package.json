@@ -31,6 +31,7 @@
     "@ngrx/router-store": "^10.0.0",
     "@ngrx/store": "^10.0.0",
     "material-design-icons": "^3.0.1",
+    "ngrx-store-localstorage": "^10.1.1",
     "puppeteer": "^5.2.1",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",

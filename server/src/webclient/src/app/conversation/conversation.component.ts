@@ -6,6 +6,8 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  AfterViewChecked,
+  AfterContentChecked,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { animationFrameScheduler, Subscription } from 'rxjs';
@@ -15,6 +17,7 @@ import {
   filter,
   map,
   take,
+  withLatestFrom,
 } from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
 import {
@@ -36,13 +39,15 @@ import {
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
+import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-conversation',
   templateUrl: './conversation.component.html',
   styleUrls: ['./conversation.component.scss'],
 })
-export class ConversationComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ConversationComponent
+  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   conversationId$ = this.store.select(selectedConversationId);
   selfUserId$ = this.store.select(selectSelfUserId);
   conversationMessages$ = this.store.select(selectConversationMessages);
@@ -61,7 +66,8 @@ export class ConversationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   downScroller: Subscription;
   scrollToLowestMsgIds = -1;
-  bottomScroll = -1;
+  keepPreviousScrollPosition = false;
+  firstPage = false;
 
   updater: Subscription;
 
@@ -74,16 +80,12 @@ export class ConversationComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         filter((msg) => msg !== null),
         map((msg) => msg.id),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        withLatestFrom(this.isFirstPage$)
       )
-      .subscribe((msgId) => {
+      .subscribe(([msgId, firstPage]) => {
         this.scrollToLowestMsgIds = msgId;
-        // scrolls shortly after keepScrollRelativeToBottom fired
-        this.ngZone.runOutsideAngular(() => {
-          animationFrameScheduler.schedule(() => {
-            this.messageScrollable.scrollTo({ bottom: 0, behavior: 'smooth'});
-          }, 10);
-        });
+        this.firstPage = firstPage;
       });
 
     this.updater = this.messageScrollable
@@ -109,15 +111,38 @@ export class ConversationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   keepScrollRelativeToBottom(): void {
     // measure size before view updates
-    this.bottomScroll =
+    const scrollBottomTarget =
       this.messageScrollable?.measureScrollOffset('bottom') ?? 0;
-    const scrollBottomTarget = this.bottomScroll;
+    this.keepPreviousScrollPosition = true;
     // scrolls right after change detection is done
     this.ngZone.runOutsideAngular(() => {
       animationFrameScheduler.schedule(() => {
-        this.messageScrollable.scrollTo({ bottom: scrollBottomTarget });
+        if (this.keepPreviousScrollPosition) {
+          this.messageScrollable.scrollTo({ bottom: scrollBottomTarget });
+        }
       });
     });
+  }
+
+  ngAfterViewChecked(): void {
+    // scrolls to last index if messageList is showing last id
+    const msgs = this.messageList.messages;
+    if (
+      this.scrollToLowestMsgIds >= 0 &&
+      msgs.length >= 0 &&
+      this.scrollToLowestMsgIds === msgs[msgs.length - 1].id
+    ) {
+      this.scrollToLowestMsgIds = -1;
+      this.ngZone.runOutsideAngular(() => {
+        animationFrameScheduler.schedule(() => {
+          this.messageScrollable.scrollTo({
+            bottom: 0,
+            behavior: this.firstPage ? 'auto' : 'smooth',
+          });
+          this.keepPreviousScrollPosition = false;
+        });
+      });
+    }
   }
 
   ngOnDestroy(): void {
