@@ -7,7 +7,6 @@ import {
   OnInit,
   ViewChild,
   AfterViewChecked,
-  AfterContentChecked,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { animationFrameScheduler, Subscription } from 'rxjs';
@@ -36,10 +35,10 @@ import {
   selectConversationMessages,
   selectNewestMessage,
   selectSelfMember,
+  selectMessageSearch,
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
-import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-conversation',
@@ -53,10 +52,11 @@ export class ConversationComponent
   conversationMessages$ = this.store.select(selectConversationMessages);
   memberEntites$ = this.store.select(selectConversationMemberEntities);
   isFirstPage$ = this.store.select(isFirstPage);
-  newestConversationMessage$ = this.store.select(selectNewestMessage);
   isLastPage$ = this.store.select(isLastPage);
   selfMember$ = this.store.select(selectSelfMember);
   loadingMoreMessages$ = this.store.select(isLoadingMoreMessages);
+  newestConversationMessage$ = this.store.select(selectNewestMessage);
+  messageSearch$ = this.store.select(selectMessageSearch);
 
   @ViewChild(MessageListComponent)
   messageList: MessageListComponent;

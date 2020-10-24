@@ -3,7 +3,7 @@
   class="regex-checkbox"
   matTooltip="Search by Regex"
   [(ngModel)]="regex"
-  (ngModelChange)="searcher.focus()"
+  (ngModelChange)="searchUpdate(); searcher.focus()"
 ></mat-checkbox>
 <button
   mat-icon-button
@@ -22,7 +22,9 @@
       type="text"
       (focus)="focused = true"
       (blur)="focused = false"
+      (keydown)="keydown($event)"
       [(ngModel)]="searchText"
+      (ngModelChange)="searchUpdate()"
     />
   </mat-form-field>
   <button
@@ -30,7 +32,7 @@
     [class.hidden]="isClear"
     class="clear-button"
     aria-label="Clear"
-    (click)="searchText = ''; searcher.focus()"
+    (click)="searchText = ''; searchUpdate(); searcher.focus()"
   >
     <mat-icon>clear</mat-icon>
   </button>

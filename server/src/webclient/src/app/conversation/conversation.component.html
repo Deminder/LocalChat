@@ -6,6 +6,7 @@
     [selfUserId]="selfUserId$ | async"
     [memberDict]="memberEntites$ | async"
     [showSpinner]="loadingMoreMessages$ | async"
+    [search]="messageSearch$ | async"
     (lengthUpdate)="keepScrollRelativeToBottom()"
     (delete)="deleteMessage(cid, $event)"
     (edit)="editMessage(cid, $event)"

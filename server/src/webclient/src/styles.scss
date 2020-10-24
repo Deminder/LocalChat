@@ -80,7 +80,7 @@ body {
   bottom: 0px;
   top: 0px;
   font-family: "Roboto",sans-serif;
-  scrollbar-width: .5em;
+  scrollbar-width: thin;
   scrollbar-color: mat-color($candy-app-primary, 600) mat-color($candy-app-primary, 800);
 }
 

@@ -20,6 +20,10 @@
   align-self: flex-end;
 }
 
+.nomatch {
+  opacity: 0.6;
+}
+
 .chatmessage {
   display: flex;
   flex-flow: column nowrap;

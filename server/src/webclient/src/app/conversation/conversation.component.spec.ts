@@ -16,10 +16,11 @@ import {
   isFirstPage,
   isLastPage,
   selectSelfMember,
+  isLoadingMoreMessages,
+  selectNewestMessage,
 } from '../store/selectors/conversation.selectors';
 import { MaterialModule } from '../material/material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { isLoadingMoreMessages } from '../store/selectors/progress.selectors';
 
 describe('ConversationComponent', () => {
   let component: ConversationComponent;
@@ -39,6 +40,10 @@ describe('ConversationComponent', () => {
   let mockIsLastPageSelector: MemoizedSelector<AppState, boolean>;
   let mockSelfMemberSelector: MemoizedSelector<AppState, MemberDto>;
   let mockIsLoadingMoreMessagesSelector: MemoizedSelector<AppState, boolean>;
+  let mockNewestConversationMessageSelector: MemoizedSelector<
+    AppState,
+    ConversationMessageDto
+  >;
 
   beforeEach(
     waitForAsync(() => {
@@ -98,6 +103,11 @@ describe('ConversationComponent', () => {
     mockIsLoadingMoreMessagesSelector = store.overrideSelector(
       isLoadingMoreMessages,
       false
+    );
+
+    mockNewestConversationMessageSelector = store.overrideSelector(
+      selectNewestMessage,
+      { id: 88, text: '', authorDate: 0, authorUserId: 1, lastChange: 0 }
     );
 
     // component

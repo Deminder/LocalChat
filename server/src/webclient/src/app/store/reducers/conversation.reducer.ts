@@ -25,6 +25,7 @@ import {
   ConvRef,
   startLoadMoreMessages,
   stopLoadMoreMessages,
+  changeMessageSearch,
 } from '../actions/conversation.actions';
 import { logout } from '../actions/authorize.actions';
 
@@ -39,10 +40,16 @@ const permcompare = (
   permMap: (m: PermissionDtoRes) => boolean
 ) => Number(permMap(m2.permission)) - Number(permMap(m1.permission));
 
+export type MessageSearch = {
+  search: string;
+  regex: boolean;
+};
+
 export interface ConversationState {
   names: EntityState<ConversationNameDto>;
   members: EntityState<MemberDto>;
   messages: ChatMessagesState;
+  search: MessageSearch;
   loadMore: ConvRef | null;
 }
 
@@ -69,10 +76,20 @@ export const messagesAdapter = createEntityAdapter<ConversationMessageDto>({
   sortComparer: (m1, m2) => datecompare(m1.authorDate, m2.authorDate),
 });
 
+export const searchMessagesAdapter = createEntityAdapter<
+  ConversationMessageDto
+>({
+  sortComparer: (m1, m2) => datecompare(m1.authorDate, m2.authorDate),
+});
+
 export const initialConversationState: ConversationState = {
   names: namesAdapter.getInitialState(),
   members: membersAdapter.getInitialState(),
   messages: messagesAdapter.getInitialState(),
+  search: {
+    search: '',
+    regex: false,
+  },
   loadMore: null,
 };
 
@@ -106,8 +123,7 @@ const addMessagePage = (
     ...state,
     previousPage: { ...pageResponse },
   };
-  return state.previousPage?.convId === pageResponse.convId &&
-    state.previousPage?.request.search === pageResponse.request.search
+  return state.previousPage?.convId === pageResponse.convId
     ? adapter.addMany(pageResponse.messages, nextPageState)
     : adapter.setAll(pageResponse.messages, nextPageState);
 };
@@ -154,11 +170,11 @@ export const conversationReducer = createReducer(
   // MESSAGES
   on(startLoadMoreMessages, (state, action) => ({
     ...state,
-    loadMore: action as ConvRef
+    loadMore: action as ConvRef,
   })),
   on(stopLoadMoreMessages, (state, _) => ({
     ...state,
-    loadMore: null
+    loadMore: null,
   })),
   on(listNextMessagesSuccess, (state, action) => ({
     ...state,
@@ -169,13 +185,15 @@ export const conversationReducer = createReducer(
     ),
   })),
   on(listNextMessagesFailure, (state) => ({ ...state })),
-  on(searchNextMessagesSuccess, (state, action) => ({
+  on(changeMessageSearch, (state, action) => ({
     ...state,
-    messages: addMessagePage(
-      action.messagePage,
-      messagesAdapter,
-      state.messages
-    ),
+    search: { search: action.search, regex: action.regex },
+  })),
+  on(searchNextMessagesSuccess, (state, _) => ({
+    ...state,
+    search: { // TODO remove search api
+      ...state.search,
+    },
   })),
   on(searchNextMessagesFailure, (state) => ({ ...state })),
   // events

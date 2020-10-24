@@ -42,17 +42,21 @@ import {
   removeMember,
   renameConversation,
   startLoadMoreMessages,
+  changeMessageSearch,
 } from '../../actions/conversation.actions';
 import {
   isLastPage,
   selectLoadMoreConversationId,
   selectNextMessagePageRequest,
+  isMessageSearching,
 } from '../../selectors/conversation.selectors';
 import { selectSelfUserId } from '../../selectors/user.selectors';
 import { ConversationService } from './conversation.service';
 
 @Injectable()
 export class ConversationEffects {
+  isMessageSearching$ = this.store.select(isMessageSearching);
+
   loadConversations$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listConversations),
@@ -98,15 +102,31 @@ export class ConversationEffects {
     )
   );
 
+  searchChanged$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(changeMessageSearch),
+      withLatestFrom(this.isMessageSearching$),
+      filter(([_, searching]) => searching),
+      withLatestFrom(this.store.select(isLastPage)),
+      filter(([_, lastPage]) => !lastPage),
+      map(([[a]]) => listNextMessages({ conversationId: a.conversationId }))
+    )
+  );
+
   loadMessages$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listNextMessages),
-      concatMap((a) =>
+      withLatestFrom(this.isMessageSearching$),
+      concatMap(([a, searching]) =>
         this.store.select(selectNextMessagePageRequest).pipe(
           take(1),
           mergeMap((nextPageReq) =>
             this.conversationService
-              .messages(a.conversationId, nextPageReq)
+              .messages(
+                a.conversationId,
+                // load all messages when searching
+                searching ? { ...nextPageReq, pageSize: 4096 } : nextPageReq
+              )
               .pipe(
                 map((messagePage) => listNextMessagesSuccess({ messagePage })),
                 catchError(() => of(listNextMessagesFailure()))

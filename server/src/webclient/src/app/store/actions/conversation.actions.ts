@@ -80,7 +80,7 @@ export const stopLoadMoreMessages = createAction(
 );
 
 export const listNextMessages = createAction(
-  '[Conversation/API] List Next Messages',
+  '[Conversation/API/Silent] List Next Messages',
   props<ConvRef>()
 );
 
@@ -94,8 +94,8 @@ export const listNextMessagesFailure = createAction(
 );
 
 // MESSAGE SEARCH
-export const startMessageSearch = createAction(
-  '[Conversation] Start Message Search',
+export const changeMessageSearch = createAction(
+  '[Conversation/Silent] Start Message Search',
   props<ConvRef & { search: string; regex: boolean }>()
 );
 export const searchNextMessages = createAction(

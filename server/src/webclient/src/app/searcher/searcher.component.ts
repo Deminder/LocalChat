@@ -9,13 +9,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, asyncScheduler } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   withLatestFrom,
 } from 'rxjs/operators';
-import { startMessageSearch } from '../store/actions/conversation.actions';
+import { changeMessageSearch } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 
 @Component({
@@ -23,8 +23,7 @@ import { selectedConversationId } from '../store/reducers/router.reducer';
   templateUrl: './searcher.component.html',
   styleUrls: ['./searcher.component.scss'],
 })
-export class SearcherComponent
-  implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
+export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
   conversationId$ = this.store.select(selectedConversationId);
 
   searchCollapsed = true;
@@ -48,13 +47,13 @@ export class SearcherComponent
   ngOnInit(): void {
     this.sub = this.searchTexts
       .pipe(
-        debounceTime(700),
+        debounceTime(200, asyncScheduler),
         distinctUntilChanged(),
         withLatestFrom(this.conversationId$)
       )
       .subscribe(([[search, regex], conversationId]) => {
         this.store.dispatch(
-          startMessageSearch({ conversationId, search, regex })
+          changeMessageSearch({ conversationId, search, regex })
         );
       });
   }
@@ -63,10 +62,8 @@ export class SearcherComponent
     this.sub.unsubscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.searchText || changes.regex) {
-      this.searchTexts.next([this.searchText, this.regex]);
-    }
+  searchUpdate(): void {
+    this.searchTexts.next([this.searchText, this.regex]);
   }
 
   focusSearch(): void {
@@ -76,6 +73,13 @@ export class SearcherComponent
 
   get isClear(): boolean {
     return this.searchText === '';
+  }
+
+  keydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.inputElement.nativeElement.blur();
+      event.preventDefault();
+    }
   }
 
   ngAfterViewChecked(): void {

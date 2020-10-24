@@ -24,7 +24,7 @@ import {
   selectConversations,
 } from './store/selectors/conversation.selectors';
 import { isProgressActive, isGlobalLoading } from './store/selectors/progress.selectors';
-import { selectSelfName } from './store/selectors/user.selectors';
+import { selectSelfName, isSideNavOpen } from './store/selectors/user.selectors';
 import { MaterialModule } from './material/material.module';
 import { MockComponent } from 'ng-mocks';
 import { SidenavComponent } from './sidenav/sidenav.component';
@@ -66,6 +66,7 @@ describe('AppComponent', () => {
   let mockGlobalLoadingSelector: MemoizedSelector<AppState, boolean>;
   let mockSettingsOpenSelector: MemoizedSelector<AppState, boolean>;
   let mockMembersOpenSelector: MemoizedSelector<AppState, boolean>;
+  let mockIsSidenavOpenSelector: MemoizedSelector<AppState, boolean>;
   let titleSpy: jasmine.SpyObj<Title>;
 
   beforeEach(
@@ -106,6 +107,7 @@ describe('AppComponent', () => {
       mockGlobalLoadingSelector = store.overrideSelector(isGlobalLoading, false);
       mockSettingsOpenSelector = store.overrideSelector(isSettingsOpen, false);
       mockMembersOpenSelector = store.overrideSelector(isMembersOpen, false);
+      mockIsSidenavOpenSelector = store.overrideSelector(isSideNavOpen, false);
 
       // component
       fixture = TestBed.createComponent(AppComponent);

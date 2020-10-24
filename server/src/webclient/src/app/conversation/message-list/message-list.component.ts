@@ -13,6 +13,11 @@ import {
   ConversationMessageDto,
   MemberDto,
 } from 'src/app/openapi/model/models';
+import { MessageSearch } from 'src/app/store/reducers/conversation.reducer';
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
+}
 
 @Component({
   selector: 'app-message-list',
@@ -32,6 +37,20 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   memberDict: Dictionary<MemberDto>;
 
+  searchMatcher: RegExp | null;
+
+  @Input()
+  set search(s: MessageSearch) {
+    if (s.search !== '') {
+      this.searchMatcher = new RegExp(
+        s.regex ? s.search : escapeRegExp(s.search),
+        'i'
+      );
+    } else {
+      this.searchMatcher = null;
+    }
+  }
+
   @Output()
   delete = new EventEmitter<{ messageId: number }>();
 
@@ -50,10 +69,10 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes.showSpinner || (
-      changes.messages &&
-      changes.messages.previousValue?.length !==
-        changes.messages.currentValue.length )
+      changes.showSpinner ||
+      (changes.messages &&
+        changes.messages.previousValue?.length !==
+          changes.messages.currentValue.length)
     ) {
       this.lengthUpdate.emit(this.heightFingerprint);
     }
@@ -67,7 +86,15 @@ export class MessageListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   messageClasses(msg: ConversationMessageDto): string[] {
-    return ['chatmessage', this.isOutgoing(msg) ? 'outgoing' : 'incoming'];
+    const classes = [
+      'chatmessage',
+      this.isOutgoing(msg) ? 'outgoing' : 'incoming',
+    ];
+    if (this.searchMatcher && !this.searchMatcher.test(msg.text)) {
+      classes.push('nomatch');
+    }
+
+    return classes;
   }
 
   editPermission(userId: number): boolean {

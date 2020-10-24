@@ -8,6 +8,7 @@ import {
   selectAllMessages,
   selectConvEntites,
   selectMemberEntites,
+  MessageSearch,
 } from '../reducers/conversation.reducer';
 import { isChatOpen, selectedConversationId } from '../reducers/router.reducer';
 import { selectSelfUserId } from './user.selectors';
@@ -115,6 +116,16 @@ export const selectNextMessagePageRequest = store.createSelector(
         }
       : { pageSize: 40 };
   }
+);
+
+export const selectMessageSearch = store.createSelector(
+  selectConversation,
+  (state) => state.search
+);
+
+export const isMessageSearching = store.createSelector(
+  selectMessageSearch,
+  (search: MessageSearch) => search.search !== ''
 );
 
 export const selectLoadMoreConversationId = store.createSelector(
