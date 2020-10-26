@@ -94,8 +94,17 @@ export const listNextMessagesFailure = createAction(
 );
 
 // MESSAGE SEARCH
+export const changeMessageSearchIndex = createAction(
+  '[Conversation] Change Index in Search Result',
+  props<{ indexChange: number }>()
+);
+
+export const changeMessageSearchCount = createAction(
+  '[Conversation] Change Count of Search Result',
+  props<{ total: number }>()
+);
 export const changeMessageSearch = createAction(
-  '[Conversation/Silent] Start Message Search',
+  '[Conversation] Start Message Search',
   props<ConvRef & { search: string; regex: boolean }>()
 );
 export const searchNextMessages = createAction(

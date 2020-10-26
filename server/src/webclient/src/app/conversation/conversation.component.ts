@@ -25,6 +25,7 @@ import {
   editMessage,
   startLoadMoreMessages,
   stopLoadMoreMessages,
+  changeMessageSearchCount,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
@@ -36,9 +37,11 @@ import {
   selectNewestMessage,
   selectSelfMember,
   selectMessageSearch,
+  selectMessageSearchIndex,
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
+import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-conversation',
@@ -57,6 +60,7 @@ export class ConversationComponent
   loadingMoreMessages$ = this.store.select(isLoadingMoreMessages);
   newestConversationMessage$ = this.store.select(selectNewestMessage);
   messageSearch$ = this.store.select(selectMessageSearch);
+  messageSearchIndex$ = this.store.select(selectMessageSearchIndex);
 
   @ViewChild(MessageListComponent)
   messageList: MessageListComponent;
@@ -68,8 +72,12 @@ export class ConversationComponent
   scrollToLowestMsgIds = -1;
   keepPreviousScrollPosition = false;
   firstPage = false;
+  searchTopOffsets: { [msgId: number]: number } = {};
 
   updater: Subscription;
+
+  searchHighlight = -1;
+  searchJumper: Subscription;
 
   constructor(private store: Store, private ngZone: NgZone) {}
 
@@ -107,6 +115,16 @@ export class ConversationComponent
             .subscribe((cid) => this.loadMoreMessages(cid, high));
         });
       });
+    this.searchJumper = this.messageSearchIndex$
+      .pipe(distinctUntilChanged())
+      .subscribe((index) => {
+        const ids = Object.keys(this.searchTopOffsets);
+        const msgId = index >= 0 ? Number(ids[ids.length - 1 - index]) : -1;
+        this.searchHighlight = msgId;
+        this.doScrollTo({
+          top: this.searchTopOffsets[msgId],
+        });
+      });
   }
 
   keepScrollRelativeToBottom(): void {
@@ -124,6 +142,15 @@ export class ConversationComponent
     });
   }
 
+  doScrollTo(options: ExtendedScrollToOptions): void {
+    this.ngZone.runOutsideAngular(() => {
+      animationFrameScheduler.schedule(() => {
+        this.messageScrollable.scrollTo(options);
+        this.keepPreviousScrollPosition = false;
+      });
+    });
+  }
+
   ngAfterViewChecked(): void {
     // scrolls to last index if messageList is showing last id
     const msgs = this.messageList.messages;
@@ -133,14 +160,9 @@ export class ConversationComponent
       this.scrollToLowestMsgIds === msgs[msgs.length - 1].id
     ) {
       this.scrollToLowestMsgIds = -1;
-      this.ngZone.runOutsideAngular(() => {
-        animationFrameScheduler.schedule(() => {
-          this.messageScrollable.scrollTo({
-            bottom: 0,
-            behavior: this.firstPage ? 'auto' : 'smooth',
-          });
-          this.keepPreviousScrollPosition = false;
-        });
+      this.doScrollTo({
+        bottom: 0,
+        behavior: this.firstPage ? 'auto' : 'smooth',
       });
     }
   }
@@ -176,5 +198,15 @@ export class ConversationComponent
 
   sendMessage(conversationId: number, text: string): void {
     this.store.dispatch(createMessage({ conversationId, text }));
+  }
+
+  updateSearchTopOffsets(offsets: { [msgId: number]: number }): void {
+    this.searchTopOffsets = offsets;
+  }
+
+  updateSearchSize(size: number): void {
+    setTimeout(() => {
+      this.store.dispatch(changeMessageSearchCount({ total: size }));
+    });
   }
 }

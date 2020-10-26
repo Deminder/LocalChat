@@ -118,9 +118,24 @@ export const selectNextMessagePageRequest = store.createSelector(
   }
 );
 
-export const selectMessageSearch = store.createSelector(
+export const selectMessageSearchState = store.createSelector(
   selectConversation,
   (state) => state.search
+);
+
+export const selectMessageSearch = store.createSelector(
+  selectMessageSearchState,
+  (state) => state.search
+);
+
+export const selectMessageSearchCount = store.createSelector(
+  selectMessageSearchState,
+  (state) => state.count
+);
+
+export const selectMessageSearchIndex = store.createSelector(
+  selectMessageSearchState,
+  (state) => state.index
 );
 
 export const isMessageSearching = store.createSelector(

@@ -7,9 +7,12 @@
     [memberDict]="memberEntites$ | async"
     [showSpinner]="loadingMoreMessages$ | async"
     [search]="messageSearch$ | async"
+    [highlight]="searchHighlight"
     (lengthUpdate)="keepScrollRelativeToBottom()"
     (delete)="deleteMessage(cid, $event)"
     (edit)="editMessage(cid, $event)"
+    (searchTopOffsets)="updateSearchTopOffsets($event)"
+    (searchSize)="updateSearchSize($event)"
   ></app-message-list>
   <app-writer
     class="writer shaded-background"

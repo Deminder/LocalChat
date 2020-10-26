@@ -1,3 +1,20 @@
+<ng-template [ngIf]="searchItemCount$ | async">
+<small>{{ (searchItemIndex$ | async) + 1 }} / {{ searchItemCount$ | async  }}</small>
+<button
+  mat-icon-button
+  aria-label="Previous"
+  (click)="previousItem()"
+>
+  <mat-icon>keyboard_arrow_down</mat-icon>
+</button>
+<button
+  mat-icon-button
+  aria-label="Next"
+  (click)="nextItem()"
+>
+  <mat-icon>keyboard_arrow_up</mat-icon>
+</button>
+</ng-template>
 <mat-checkbox
   *ngIf="!searchCollapsed"
   class="regex-checkbox"

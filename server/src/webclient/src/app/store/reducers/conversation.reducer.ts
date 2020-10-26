@@ -26,6 +26,8 @@ import {
   startLoadMoreMessages,
   stopLoadMoreMessages,
   changeMessageSearch,
+  changeMessageSearchIndex,
+  changeMessageSearchCount,
 } from '../actions/conversation.actions';
 import { logout } from '../actions/authorize.actions';
 
@@ -49,7 +51,7 @@ export interface ConversationState {
   names: EntityState<ConversationNameDto>;
   members: EntityState<MemberDto>;
   messages: ChatMessagesState;
-  search: MessageSearch;
+  search: { search: MessageSearch; index: number; count: number };
   loadMore: ConvRef | null;
 }
 
@@ -87,8 +89,9 @@ export const initialConversationState: ConversationState = {
   members: membersAdapter.getInitialState(),
   messages: messagesAdapter.getInitialState(),
   search: {
-    search: '',
-    regex: false,
+    search: { search: '', regex: false },
+    index: -1,
+    count: 0,
   },
   loadMore: null,
 };
@@ -185,13 +188,31 @@ export const conversationReducer = createReducer(
     ),
   })),
   on(listNextMessagesFailure, (state) => ({ ...state })),
+  on(changeMessageSearchIndex, (state, action) => ({
+    ...state,
+    search: {
+      ...state.search,
+      index: (action.indexChange + state.search.index + state.search.count) % state.search.count,
+    },
+  })),
+  on(changeMessageSearchCount, (state, action) => ({
+    ...state,
+    search: { ...state.search, index: 0, count: action.total },
+  })),
   on(changeMessageSearch, (state, action) => ({
     ...state,
-    search: { search: action.search, regex: action.regex },
+    search: {
+      ...initialConversationState.search,
+      search: {
+        search: action.search,
+        regex: action.regex,
+      },
+    },
   })),
   on(searchNextMessagesSuccess, (state, _) => ({
     ...state,
-    search: { // TODO remove search api
+    search: {
+      // TODO remove search api
       ...state.search,
     },
   })),

@@ -15,8 +15,15 @@ import {
   distinctUntilChanged,
   withLatestFrom,
 } from 'rxjs/operators';
-import { changeMessageSearch } from '../store/actions/conversation.actions';
+import {
+  changeMessageSearch,
+  changeMessageSearchIndex,
+} from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
+import {
+  selectMessageSearchIndex,
+  selectMessageSearchCount,
+} from '../store/selectors/conversation.selectors';
 
 @Component({
   selector: 'app-searcher',
@@ -25,6 +32,8 @@ import { selectedConversationId } from '../store/reducers/router.reducer';
 })
 export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
   conversationId$ = this.store.select(selectedConversationId);
+  searchItemIndex$ = this.store.select(selectMessageSearchIndex);
+  searchItemCount$ = this.store.select(selectMessageSearchCount);
 
   searchCollapsed = true;
 
@@ -80,6 +89,18 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.inputElement.nativeElement.blur();
       event.preventDefault();
     }
+  }
+
+  previousItem(): void {
+    this.changeItemIndex(-1);
+  }
+
+  nextItem(): void {
+    this.changeItemIndex(1);
+  }
+
+  private changeItemIndex(indexChange: number): void {
+    this.store.dispatch(changeMessageSearchIndex({ indexChange }));
   }
 
   ngAfterViewChecked(): void {
