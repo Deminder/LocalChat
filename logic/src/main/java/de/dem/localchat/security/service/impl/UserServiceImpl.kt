@@ -2,6 +2,7 @@ package de.dem.localchat.security.service.impl
 
 import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.security.dataacess.UserTokenRepository
+import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User
 import de.dem.localchat.security.model.TokenRef
 import de.dem.localchat.security.model.TokenRefToken
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,6 +24,7 @@ class UserServiceImpl(
         @Autowired val userTokenRepository: UserTokenRepository,
         @Value("\${manage.admin.password:admin}") val adminPassword: String,
         @Autowired val authProvider: AuthenticationProvider,
+        val passwordEncoder: PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder(),
 ) : UserService {
 
     @Transactional
@@ -37,10 +40,12 @@ class UserServiceImpl(
                 )
 
 
-    override fun changePassword(password: String) {
+    override fun changePassword(password: String, oldPassword: String) {
         val name = SecurityContextHolder.getContext().authentication?.name ?: error("Not authenticated!")
         userRepository.findByUsername(name)?.let {
-            userRepository.save(it.copy(password = enc(password)))
+            if (passwordEncoder.matches(oldPassword, it.password))
+                userRepository.save(it.copy(password = enc(password)))
+            else error("Old password is incorrect!")
         } ?: error("User '${name}' not found!")
     }
 
@@ -95,6 +100,9 @@ class UserServiceImpl(
     override fun removeToken(tokenRef: TokenRef) {
         userTokenRepository.deleteByToken(tokenRef.token)
     }
+
+    override fun listUserTokens(username: String): List<LoginToken> =
+            userTokenRepository.findAllByUsername(username)
 
     private fun enc(password: String) = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password)
 }

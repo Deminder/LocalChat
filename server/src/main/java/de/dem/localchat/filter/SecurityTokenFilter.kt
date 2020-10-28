@@ -3,6 +3,9 @@ package de.dem.localchat.filter
 import de.dem.localchat.security.model.TokenRef
 import de.dem.localchat.security.model.TokenRefToken
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.ConfigurableEnvironment
+import org.springframework.core.env.Environment
+import org.springframework.core.env.Profiles
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -15,7 +18,8 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class SecurityTokenFilter(
-        @Autowired val authenticationProvider: AuthenticationProvider
+        @Autowired val authenticationProvider: AuthenticationProvider,
+        @Autowired val env: Environment
 ) : HttpFilter() {
 
     val cookieName = "API-Token"
@@ -42,7 +46,7 @@ class SecurityTokenFilter(
                     if (auth is TokenRefToken) auth.token.token else "x"
             ).apply {
                 isHttpOnly = true
-                secure = false // TODO https -> set to true
+                secure = env.acceptsProfiles( Profiles.of("prod") )
                 path = "/api"
                 maxAge = if (addC && auth is TokenRefToken) auth.maxAge else 0
             })

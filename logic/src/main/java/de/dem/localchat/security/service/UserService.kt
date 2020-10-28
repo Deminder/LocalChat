@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 interface UserService {
     fun registerUser(name: String, password: String): User
 
-    fun changePassword(password: String)
+    fun changePassword(password: String, oldPassword: String)
 
     @PreAuthorize("#username == authentication.name")
     fun deleteUser(@Param("username") name: String)
@@ -23,4 +23,5 @@ interface UserService {
 
     fun logout()
     fun removeToken(tokenRef: TokenRef)
+    fun listUserTokens(username: String): List<LoginToken>
 }

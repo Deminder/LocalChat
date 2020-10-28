@@ -1,10 +1,8 @@
 package de.dem.localchat.rest
 
 import de.dem.localchat.dtos.*
-import de.dem.localchat.dtos.requests.LoginRequest
-import de.dem.localchat.dtos.requests.RegisterRequest
-import de.dem.localchat.dtos.requests.UserGetRequest
-import de.dem.localchat.dtos.requests.UserSearchRequest
+import de.dem.localchat.dtos.requests.*
+import de.dem.localchat.security.model.TokenRef
 import de.dem.localchat.security.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
@@ -32,6 +30,17 @@ class UserController(private val userService: UserService) {
                     ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You are not logged in!")
 
 
+    @GetMapping("/tokens")
+    fun allTokens(): LoginTokenListResponse =
+            LoginTokenListResponse(tokens = userService.listUserTokens(username()).map { it.toLoginTokenDto() })
+
+    @DeleteMapping("/tokens/{id}")
+    fun allTokens(@PathVariable tid: Long) {
+        userService.listUserTokens(username()).find { it.id == tid }?.let {
+            userService.removeToken(TokenRef(token = it.token))
+        } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such token!")
+    }
+
     @PostMapping("/search")
     fun searchUser(@RequestBody @Valid req: UserSearchRequest): UserSearchResponse =
             UserSearchResponse(userService.searchVisibleUsers(username(), req.search).map {
@@ -51,6 +60,11 @@ class UserController(private val userService: UserService) {
     @PostMapping("/logout")
     fun logout() {
         userService.logout()
+    }
+
+    @PostMapping("/change-password")
+    fun changePassword(@RequestBody @Valid req: ChangePasswordRequest) {
+        userService.changePassword(req.password, req.oldPassword)
     }
 
 

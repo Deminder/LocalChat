@@ -6,6 +6,7 @@ import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.dtos.requests.MessageSearchRequest
+import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User
 
 fun Conversation.toConversationNameDto() = ConversationNameDto(
@@ -67,4 +68,12 @@ fun User.toUserDts() = UserDto(
         id = id ?: -1,
         username = username,
         registerDate = registerDate.toEpochMilli()
+)
+
+
+fun LoginToken.toLoginTokenDto() = LoginTokenDto(
+        id = id ?: -1,
+        createDate = createDate.toEpochMilli(),
+        lastUsed = lastUsed.toEpochMilli(),
+        description = description
 )

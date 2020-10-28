@@ -19,6 +19,10 @@ interface UserTokenRepository : CrudRepository<LoginToken, String> {
 
     fun findByToken(token: String): LoginToken?
 
+    @Query("SELECT u.* FROM login_token l JOIN \"user\" u ON l.user_id = u.id WHERE u.username = :username " +
+            "ORDER BY l.last_used DESC")
+    fun findAllByUsername(username: String): List<LoginToken>
+
     @Modifying
     @Query("UPDATE login_token SET last_used = NOW() WHERE token = :token")
     fun updateLastUsed(token: String)
