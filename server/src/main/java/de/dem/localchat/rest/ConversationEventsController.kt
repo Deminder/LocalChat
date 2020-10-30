@@ -19,12 +19,14 @@ class ConversationEventsController(
         @Autowired val requestThreadPool: ExecutorService,
         @Autowired val eventSubscriptionService: EventSubscriptionService
 ) {
+    private var identifier: Int = 0;
+
     @GetMapping("/api/events")
     fun handleSse(session: HttpSession): SseEmitter {
         val emitter = SseEmitter(-1L)
         val username = SecurityContextHolder.getContext().authentication?.name
                 ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not logged in user!")
-        val sessionId = session.id
+        val sessionId = session.id + "#${String.format("%085X", identifier++)}"
         requestThreadPool.execute {
             try {
                 val queue = eventSubscriptionService.subscribeFor(username, sessionId)

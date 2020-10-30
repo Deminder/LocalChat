@@ -11,12 +11,12 @@ interface ConversationRepository : CrudRepository<Conversation, Long> {
 
     @Query("SELECT c.*, ci.last_author_date as last_update " +
             "FROM conversation c, conversation_info ci, member m, \"user\" u WHERE " +
-            "c.id = ci.id AND m.conversation_id = c.id AND m.user_id = u.id AND u.username = :username " +
+            "c.id = ci.id AND m.conversation_id = c.id AND m.user_id = u.id AND u.id = :uid " +
             "ORDER BY last_update DESC")
-    fun findAllByUsername(@Param("username") username: String): List<Conversation>
+    fun findAllByUser(@Param("uid") userId: Long): List<Conversation>
 
     @Query("SELECT c.*, ci.last_author_date as last_update " +
-            "FROM conversation c JOIN conversation_info ci ON c.id = ci.id WHERE c.id = :conversationId")
-    fun findConvById(conversationId: Long): Conversation
+            "FROM conversation c JOIN conversation_info ci ON c.id = ci.id WHERE c.id = :cid")
+    fun findConvById(@Param("cid") conversationId: Long): Conversation?
 
 }

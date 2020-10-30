@@ -7,6 +7,10 @@
   width: 15em;
 }
 
+:host ::ng-deep.mat-list-text {
+  overflow: visible !important;
+}
+
 .mat-sidenav-container {
   width: 100%;
   min-height: 30em;

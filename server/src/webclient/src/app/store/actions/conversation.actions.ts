@@ -6,23 +6,29 @@ import {
   ConversationMessagePageDto,
   MemberUpdateRequest,
 } from 'src/app/openapi/model/models';
+import { createApiActions } from './actions-creation';
 
 // CONVERSATIONS
 
-export const listConversations = createAction(
-  '[Conversation/API] List Conversations'
+export const listConversationsActions = createApiActions(
+  'Conversation',
+  'List Conversations',
+  { success: props<{ convs: ConversationNameDto[] }>() }
 );
 
-export const listConversationsSuccess = createAction(
-  '[Conversation/API] List Conversations Success',
-  props<{ convs: ConversationNameDto[] }>()
-);
-
-export const listConversationsFailure = createAction(
-  '[Conversation/API] List Conversations Failure'
-);
 // single conversation actions
 export type ConvRef = { conversationId: number };
+
+export const refreshConversationActions = createApiActions(
+  'Conversation',
+  'Refresh Conversations',
+  {
+    request: props<ConvRef>(),
+    success: props<{ conv: ConversationNameDto }>(),
+  },
+  true
+);
+
 export const addConversation = createAction(
   '[Conversation/Silent] Add Conversation',
   props<{ name: string }>()
@@ -35,18 +41,10 @@ export const renameConversation = createAction(
 
 // MEMBERS
 
-export const listMembers = createAction(
-  '[Conversation/API] List Members',
-  props<ConvRef>()
-);
-
-export const listMembersSuccess = createAction(
-  '[Conversation/API] List Members Success',
-  props<{ members: MemberDto[] }>()
-);
-
-export const listMembersFailure = createAction(
-  '[Conversation/API] List Members Failure'
+export const listMembersActions = createApiActions(
+  'Conversation',
+  'List Members',
+  { request: props<ConvRef>(), success: props<{ members: MemberDto[] }>() }
 );
 
 // single member actions
@@ -79,18 +77,14 @@ export const stopLoadMoreMessages = createAction(
   '[Conversation] Stop Load More Messages'
 );
 
-export const listNextMessages = createAction(
-  '[Conversation/API/Silent] List Next Messages',
-  props<ConvRef>()
-);
-
-export const listNextMessagesSuccess = createAction(
-  '[Conversation/API] List Next Messages Success',
-  props<{ messagePage: ConversationMessagePageDto }>()
-);
-
-export const listNextMessagesFailure = createAction(
-  '[Conversation/API] List Next Messages Failure'
+export const listNextMessagesActions = createApiActions(
+  'Conversation',
+  'List Next Messages',
+  {
+    request: props<ConvRef>(),
+    success: props<{ messagePage: ConversationMessagePageDto }>(),
+  },
+  true
 );
 
 // MESSAGE SEARCH
@@ -107,20 +101,6 @@ export const changeMessageSearch = createAction(
   '[Conversation] Start Message Search',
   props<ConvRef & { search: string; regex: boolean }>()
 );
-export const searchNextMessages = createAction(
-  '[Conversation/API] Search Next Messages',
-  props<ConvRef & { search: string; regex: boolean }>()
-);
-
-export const searchNextMessagesSuccess = createAction(
-  '[Conversation/API] Search Next Messages Success',
-  props<{ messagePage: ConversationMessagePageDto }>()
-);
-
-export const searchNextMessagesFailure = createAction(
-  '[Conversation/API] Search Next Messages Failure'
-);
-
 
 // single message changes
 export type MessageRef = ConvRef & { messageId: number };

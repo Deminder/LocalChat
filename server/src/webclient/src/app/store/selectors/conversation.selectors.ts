@@ -27,10 +27,15 @@ export const selectConversations = store.createSelector(
   (state) => selectAllConvs(state)
 );
 
-export const selectActiveConversation = store.createSelector(
+export const selectConversationNameEntities = store.createSelector(
   selectConversation,
+  (state) => selectConvEntites(state.names)
+);
+
+export const selectActiveConversation = store.createSelector(
+  selectConversationNameEntities,
   selectedConversationId,
-  (state, cid) => selectConvEntites(state.names)[cid]
+  (convNameEntities, cid) => convNameEntities[cid]
 );
 
 export const selectConversationMembers = store.createSelector(

@@ -4,6 +4,7 @@ import de.dem.localchat.conversation.entity.ConversationMessage
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.PagingAndSortingRepository
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -45,4 +46,10 @@ interface ConversationMessageRepository : PagingAndSortingRepository<Conversatio
 
 
     fun findByIdAndConversationId(messageId: Long, conversationId: Long): ConversationMessage?
+
+    @Query("SELECT COUNT(m.id) " +
+            "FROM conversation_message m, member mem WHERE mem.user_id = :uid " +
+            "AND mem.conversation_id = m.conversation_id AND m.conversation_id = :cid " +
+            "AND mem.last_read < m.author_date")
+    fun countUnreadMessagesOfMember(@Param("uid") userId: Long, @Param("cid") conversationId: Long): Int
 }

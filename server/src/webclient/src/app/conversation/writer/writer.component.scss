@@ -23,3 +23,14 @@ textarea.mat-input-element {
   //-moz-appearance: textarea;
 }
 
+@media screen and (max-height: 50em) {
+  textarea.mat-input-element {
+    height: 2em;
+  }
+
+  .mat-form-field {
+    margin-top: .25em;
+    margin-left: .5em;
+    margin-right: .5em;
+  }
+}

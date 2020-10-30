@@ -15,7 +15,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.time.Instant
-
 @Service
 class ConversationServiceImpl(
         @Autowired val conversationRepository: ConversationRepository,
@@ -24,8 +23,17 @@ class ConversationServiceImpl(
         @Autowired val conversationMessageRepository: ConversationMessageRepository
 ) : ConversationService {
 
+    override fun getConversation(conversationId: Long) =
+            memberRepository.findByIdAndUsername(conversationId, username())?.let {
+                conversationRepository.findConvById(conversationId)
+            }
+
+
+
     override fun listConversations(): List<Conversation> =
-            conversationRepository.findAllByUsername(username())
+            conversationRepository.findAllByUser(uid())
+
+
 
 
     override fun membersOfConversation(conversationId: Long): List<Member> =
@@ -84,6 +92,16 @@ class ConversationServiceImpl(
                         )
                     }
 
+    override fun countUnreadMessages(conversationId: Long): Int =
+                conversationMessageRepository.countUnreadMessagesOfMember(uid(), conversationId)
+
+
+    override fun memberReadsConversation(conversationId: Long) {
+        memberRepository.findByConvIdAndUserId(conversationId, uid())?.let {
+            memberRepository.save(it.copy(lastRead = Instant.now()))
+        } ?: error("Member not found!")
+    }
+
     override fun createConversation(conversationName: String,
                                     memberNames: Set<String>): Conversation =
             username().let { adminName ->
@@ -113,6 +131,10 @@ class ConversationServiceImpl(
                 }
             }
 
+    private fun uid(): Long = uid(username())!!
+    private fun uid(name: String): Long? = (userRepository.findByUsername(name) ?: error("User not found!")).id
+
     private fun username() = SecurityContextHolder.getContext().authentication?.name
             ?: error("Not logged in!")
 }
+

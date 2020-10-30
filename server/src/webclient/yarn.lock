@@ -1230,6 +1230,11 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/howler@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/howler/-/howler-2.2.1.tgz#c95314724a8e970b1b29a731861975f39987b9ca"
+  integrity sha512-1MiSldngr+eAO4lDPtjzl4Nf2GmRh8VDHIpNBIkyd25L22JExVlI6w3fjSM7+FNc1e1WZAPNq7/flkw685byfg==
+
 "@types/jasmine@*", "@types/jasmine@~3.5.0":
   version "3.5.14"
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.5.14.tgz#f41a14e8ffa939062a71cf9722e5ee7d4e1f94af"
@@ -4323,6 +4328,11 @@ hosted-git-info@^3.0.2:
   integrity sha512-i4dpK6xj9BIpVOTboXIlKG9+8HMKggcrMX7WA24xZtKwX0TPelq/rbaS5rCKeNX8sJXZJGdSxpnEGtta+wismQ==
   dependencies:
     lru-cache "^6.0.0"
+
+howler@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/howler/-/howler-2.2.1.tgz#a521a9b495841e8bb9aa12e651bebba0affc179e"
+  integrity sha512-0iIXvuBO/81CcrQ/HSSweYmbT50fT2mIc9XMFb+kxIfk2pW/iKzDbX1n3fZmDXMEIpYvyyfrB+gXwPYSDqUxIQ==
 
 hpack.js@^2.1.6:
   version "2.1.6"

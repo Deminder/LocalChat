@@ -25,13 +25,13 @@ class ConversationController(
     @GetMapping
     fun allConversationsOfUser(): List<ConversationNameDto> {
         return conversationService.listConversations()
-                .map { it.toConversationNameDto() }
+                .map { it.toConversationNameDto(unreadCount(it.id!!)) }
     }
 
     @PostMapping
-    fun createConversation(@RequestBody @Valid createRequest: ConversationCreateRequest): ConversationNameDto {
-        return conversationService.createConversation(createRequest.name, createRequest.memberNames)
-                .toConversationNameDto().also {
+    fun createConversation(@RequestBody @Valid req: ConversationCreateRequest): ConversationNameDto {
+        return conversationService.createConversation(req.name, req.memberNames)
+                .toConversationNameDto(0).also {
                     eventSubscriptionService.notifyMembers(
                             ConversationEvent("upsert-conv", it), it.id, username())
                 }
@@ -40,10 +40,17 @@ class ConversationController(
     @PostMapping("/rename")
     fun renameConversation(@RequestBody @Valid req: ConversationRenameRequest): ConversationNameDto {
         return conversationService.changeConversationName(req.conversationId, req.conversationName)
-                .toConversationNameDto().also {
+                .toConversationNameDto(unreadCount(req.conversationId)).also {
                     eventSubscriptionService.notifyMembers(
                             ConversationEvent("upsert-conv", it), it.id, username())
                 }
+    }
+
+    @GetMapping("/{cid}")
+    fun getConversation(@PathVariable("cid") conversationId: Long): ConversationNameDto {
+        return conversationService.getConversation(conversationId)?.let {
+            it.toConversationNameDto(unreadCount(it.id!!))
+        } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found!")
     }
 
 
@@ -63,7 +70,11 @@ class ConversationController(
                        @RequestBody r: MessageSearchRequest): ConversationMessagePageDto {
         return conversationService.conversationMessagePage(cid, r.page, r.pageSize,
                 Instant.ofEpochMilli(r.olderThan), Instant.ofEpochMilli(r.newerThan),
-                r.search, r.regex).toConversationMessagePageDto()
+                r.search, r.regex).toConversationMessagePageDto().also {
+            if (it.request.page == 0 && it.request.search == null) {
+                conversationService.memberReadsConversation(cid)
+            }
+        }
     }
 
     @DeleteMapping("/{cid}/messages/{mid}")
@@ -117,6 +128,8 @@ class ConversationController(
                 memberService.allowedRemoval(cid, uid)
         )
     }
+
+    private fun unreadCount(conversationId: Long): Int = conversationService.countUnreadMessages(conversationId)
 
     private fun username() = SecurityContextHolder.getContext().authentication?.name
             ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not logged in user!")

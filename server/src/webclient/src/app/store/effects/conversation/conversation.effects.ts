@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { EMPTY, ObservedValueOf, of, OperatorFunction } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {Store} from '@ngrx/store';
+import {EMPTY, ObservedValueOf, of, OperatorFunction} from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -12,27 +12,22 @@ import {
   mergeMap,
   switchMap,
   take,
-  withLatestFrom,
+  withLatestFrom
 } from 'rxjs/operators';
-import { MemberUpdateRequest } from 'src/app/openapi/model/models';
+import {MemberUpdateRequest} from 'src/app/openapi/model/models';
 import {
   addConversation,
   addMember,
+  changeMessageSearch,
   conversationDeleted,
   conversationUpserted,
   createMessage,
   deleteMessage,
   editMember,
   editMessage,
-  listConversations,
-  listConversationsFailure,
-  listConversationsSuccess,
-  listMembers,
-  listMembersFailure,
-  listMembersSuccess,
-  listNextMessages,
-  listNextMessagesFailure,
-  listNextMessagesSuccess,
+  listConversationsActions,
+  listMembersActions,
+  listNextMessagesActions,
   memberDeleted,
   MemberRef,
   memberUpserted,
@@ -42,28 +37,40 @@ import {
   removeMember,
   renameConversation,
   startLoadMoreMessages,
-  changeMessageSearch,
+  refreshConversationActions
 } from '../../actions/conversation.actions';
 import {
   isLastPage,
-  selectLoadMoreConversationId,
-  selectNextMessagePageRequest,
   isMessageSearching,
+  selectLoadMoreConversationId,
+  selectNextMessagePageRequest
 } from '../../selectors/conversation.selectors';
-import { selectSelfUserId } from '../../selectors/user.selectors';
-import { ConversationService } from './conversation.service';
+import {selectSelfUserId} from '../../selectors/user.selectors';
+import {ConversationService} from './conversation.service';
 
 @Injectable()
 export class ConversationEffects {
   isMessageSearching$ = this.store.select(isMessageSearching);
 
+  refreshConversation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(refreshConversationActions.request),
+      switchMap((a) =>
+        this.conversationService.getOne(a.conversationId).pipe(
+          map((conv) => refreshConversationActions.success({ conv })),
+          catchError(() => of(refreshConversationActions.failure()))
+        )
+      )
+    )
+  );
+
   loadConversations$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(listConversations),
+      ofType(listConversationsActions.request),
       switchMap(() =>
         this.conversationService.list().pipe(
-          map((convs) => listConversationsSuccess({ convs })),
-          catchError(() => of(listConversationsFailure()))
+          map((convs) => listConversationsActions.success({ convs })),
+          catchError(() => of(listConversationsActions.failure()))
         )
       )
     )
@@ -71,11 +78,11 @@ export class ConversationEffects {
 
   loadMembers$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(listMembers),
+      ofType(listMembersActions.request),
       switchMap((a) =>
         this.conversationService.members(a.conversationId).pipe(
-          map((members) => listMembersSuccess({ members })),
-          catchError(() => of(listMembersFailure()))
+          map((members) => listMembersActions.success({ members })),
+          catchError(() => of(listMembersActions.failure()))
         )
       )
     )
@@ -86,19 +93,23 @@ export class ConversationEffects {
       ofType(startLoadMoreMessages),
       withLatestFrom(this.store.select(isLastPage)),
       filter(([_, last]) => !last),
-      map(([{ conversationId }]) => listNextMessages({ conversationId }))
+      map(([{ conversationId }]) =>
+        listNextMessagesActions.request({ conversationId })
+      )
     )
   );
 
   continueLoadMoreMessages$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(listNextMessagesSuccess),
+      ofType(listNextMessagesActions.success),
       delay(100),
       withLatestFrom(this.store.select(selectLoadMoreConversationId)),
       filter(
         ([a, scid]) => !a.messagePage.last && a.messagePage.convId === scid
       ),
-      map(([_, conversationId]) => listNextMessages({ conversationId }))
+      map(([_, conversationId]) =>
+        listNextMessagesActions.request({ conversationId })
+      )
     )
   );
 
@@ -109,13 +120,15 @@ export class ConversationEffects {
       filter(([_, searching]) => searching),
       withLatestFrom(this.store.select(isLastPage)),
       filter(([_, lastPage]) => !lastPage),
-      map(([[a]]) => listNextMessages({ conversationId: a.conversationId }))
+      map(([[a]]) =>
+        listNextMessagesActions.request({ conversationId: a.conversationId })
+      )
     )
   );
 
   loadMessages$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(listNextMessages),
+      ofType(listNextMessagesActions.request),
       withLatestFrom(this.isMessageSearching$),
       concatMap(([a, searching]) =>
         this.store.select(selectNextMessagePageRequest).pipe(
@@ -128,8 +141,10 @@ export class ConversationEffects {
                 searching ? { ...nextPageReq, pageSize: 4096 } : nextPageReq
               )
               .pipe(
-                map((messagePage) => listNextMessagesSuccess({ messagePage })),
-                catchError(() => of(listNextMessagesFailure()))
+                map((messagePage) =>
+                  listNextMessagesActions.success({ messagePage })
+                ),
+                catchError(() => of(listNextMessagesActions.failure()))
               )
           )
         )
@@ -195,7 +210,9 @@ export class ConversationEffects {
           .select(selectSelfUserId)
           .pipe(
             mergeMap((userId) =>
-              userId === a.member.userId ? of(listConversations()) : EMPTY
+              userId === a.member.userId
+                ? of(listConversationsActions.request())
+                : EMPTY
             )
           )
       )

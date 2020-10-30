@@ -1,6 +1,7 @@
 package de.dem.localchat.conversation.dataaccess
 
 import de.dem.localchat.conversation.entity.Member
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository
 interface MemberRepository : CrudRepository<Member, Long> {
 
     @Query("SELECT m.* FROM member m, \"user\" u WHERE " +
-            "m.conversation_id = :conversationId AND u.id = m.user_id AND u.username = :username")
+            "m.conversation_id = :conversationId AND u.id = m.user_id AND LOWER(u.username) = LOWER(:username)")
     fun findByIdAndUsername(conversationId: Long,
                             username: String): Member?
 
@@ -25,4 +26,5 @@ interface MemberRepository : CrudRepository<Member, Long> {
     @Query("SELECT COUNT(m.id) FROM member m WHERE " +
             "m.conversation_id = :conversationId" )
     fun countByConversationId(conversationId: Long): Int
+
 }

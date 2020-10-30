@@ -68,7 +68,7 @@ internal class ConversationServiceImplTest {
     @Test
     fun `List conversations by conversation repository`() {
         val conversations = mockk<List<Conversation>>()
-        every { conversationRepository.findAllByUsername(userName) } returns conversations
+        every { conversationRepository.findAllByUser(userName) } returns conversations
 
         assertThat(unit.listConversations(), equalTo(conversations))
     }

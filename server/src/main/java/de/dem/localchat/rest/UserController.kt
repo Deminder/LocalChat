@@ -35,8 +35,8 @@ class UserController(private val userService: UserService) {
             LoginTokenListResponse(tokens = userService.listUserTokens(username()).map { it.toLoginTokenDto() })
 
     @DeleteMapping("/tokens/{id}")
-    fun allTokens(@PathVariable tid: Long) {
-        userService.listUserTokens(username()).find { it.id == tid }?.let {
+    fun allTokens(@PathVariable("id") tokenId: Long) {
+        userService.listUserTokens(username()).find { it.id == tokenId }?.let {
             userService.removeToken(TokenRef(token = it.token))
         } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such token!")
     }

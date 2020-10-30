@@ -14,7 +14,12 @@
           [routerLink]="'/chat/' + conv.id"
           [value]="conv.id"
         >
-          {{ conv.name }}
+          <span
+            [matBadge]="conv.unreadCount"
+            [matBadgeHidden]="conv.unreadCount === 0"
+            matBadgeColor="accent"
+            >{{ conv.name }}</span
+          >
         </mat-list-option>
         <mat-divider></mat-divider>
       </ng-template>

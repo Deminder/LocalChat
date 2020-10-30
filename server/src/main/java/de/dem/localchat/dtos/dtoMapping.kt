@@ -9,11 +9,12 @@ import de.dem.localchat.dtos.requests.MessageSearchRequest
 import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User
 
-fun Conversation.toConversationNameDto() = ConversationNameDto(
+fun Conversation.toConversationNameDto(unreadCount: Int) = ConversationNameDto(
         id = id ?: -1,
         name = name,
         createDate = createDate.toEpochMilli(),
-        lastUpdate = lastUpdate?.toEpochMilli() ?: 0
+        lastUpdate = lastUpdate?.toEpochMilli() ?: 0,
+        unreadCount = unreadCount
 )
 
 fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessagePageDto(

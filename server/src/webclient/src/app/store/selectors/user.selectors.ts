@@ -8,10 +8,26 @@ export const selectSelfName = createSelector(
   (state) => state.selfUser.username
 );
 
+
 export const selectSelfUserId = createSelector(
   selectUser,
   (state) => state.selfUser.id
 );
+
+export const selectLoginTokens = createSelector(
+  selectUser,
+  (state) => state.loginTokens
+);
+export const areDesktopNotificationsEnabled = createSelector(
+  selectUser,
+  (state) => state.desktopNotifications
+);
+
+export const areSoundAlertsEnabled = createSelector(
+  selectUser,
+  (state) => state.soundAlerts
+);
+
 
 export const isSideNavOpen = createSelector(
   selectUser,

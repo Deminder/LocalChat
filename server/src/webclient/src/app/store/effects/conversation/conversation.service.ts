@@ -19,6 +19,12 @@ import { catchError } from 'rxjs/operators';
 export class ConversationService {
   endpoint = '/api/conversations';
 
+  getOne(conversationId: number): Observable<ConversationNameDto> {
+    return this.http
+      .get<ConversationNameDto>(`${this.endpoint}/${conversationId}`)
+      .pipe(catchError(this.handleAPIError));
+  }
+
   list(): Observable<ConversationNameDto[]> {
     return this.http
       .get<ConversationNameDto[]>(this.endpoint)
@@ -37,7 +43,8 @@ export class ConversationService {
   rename(cid: number, name: string): Observable<ConversationNameDto> {
     return this.http
       .post<ConversationNameDto>(`${this.endpoint}/rename`, {
-        conversationId: cid, conversationName: name
+        conversationId: cid,
+        conversationName: name,
       })
       .pipe(catchError(this.handleAPIError));
   }

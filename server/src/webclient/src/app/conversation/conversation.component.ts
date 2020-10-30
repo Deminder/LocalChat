@@ -7,6 +7,7 @@ import {
   OnInit,
   ViewChild,
   AfterViewChecked,
+  ElementRef,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { animationFrameScheduler, Subscription } from 'rxjs';
@@ -42,6 +43,9 @@ import {
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
 import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
+import { EditMessageComponent } from '../shared/dialogs/edit-message/edit-message.component';
+import { MatDialog } from '@angular/material/dialog';
+import {NotifyService} from '../shared/services/notify.service';
 
 @Component({
   selector: 'app-conversation',
@@ -79,11 +83,19 @@ export class ConversationComponent
   searchHighlight = -1;
   searchJumper: Subscription;
 
-  constructor(private store: Store, private ngZone: NgZone) {}
+  constructor(
+    private store: Store,
+    private ngZone: NgZone,
+    private notifyService: NotifyService,
+    private dialog: MatDialog
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   ngAfterViewInit(): void {
+    
     this.downScroller = this.newestConversationMessage$
       .pipe(
         filter((msg) => msg !== null),
@@ -181,19 +193,26 @@ export class ConversationComponent
   }
 
   deleteMessage(conversationId: number, msg: ConversationMessageDto): void {
-    // TODO open confirm popup
     this.store.dispatch(deleteMessage({ conversationId, messageId: msg.id }));
   }
 
   editMessage(conversationId: number, msg: ConversationMessageDto): void {
-    // TODO edit dialog
-    this.store.dispatch(
-      editMessage({
-        conversationId,
-        messageId: msg.id,
-        text: msg.text + ' Edited text!',
+    this.dialog
+      .open(EditMessageComponent, {
+        data: { message: msg },
       })
-    );
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.store.dispatch(
+            editMessage({
+              conversationId,
+              messageId: msg.id,
+              text: result,
+            })
+          );
+        }
+      });
   }
 
   sendMessage(conversationId: number, text: string): void {

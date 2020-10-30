@@ -40,6 +40,8 @@ import { AuthInterceptor } from './http-interceptors/auth.interceptor';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { localStorageSync } from 'ngrx-store-localstorage';
 import { SearcherComponent } from './searcher/searcher.component';
+import { TokenTableComponent } from './settings/token-table/token-table.component';
+import { EditMessageComponent } from './shared/dialogs/edit-message/edit-message.component';
 
 registerLocaleData(localeDe);
 
@@ -53,7 +55,7 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
 
 export const metaReducers = [
   localStorageSync({
-    keys: [{ user: ['sidenavOpen'] }],
+    keys: [{ user: ['sidenavOpen', 'desktopNotifications', 'soundAlerts'] }],
     rehydrate: true,
     syncCondition: (_) => true
   }),
@@ -79,6 +81,8 @@ export const metaReducers = [
     MembersComponent,
     AddMemberComponent,
     SearcherComponent,
+    TokenTableComponent,
+    EditMessageComponent,
   ],
   imports: [
     BrowserModule,

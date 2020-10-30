@@ -1,13 +1,22 @@
 import { createReducer, on } from '@ngrx/store';
-import { UserDto } from '../../openapi/model/models';
-import { getSelfSuccess, sidenavToggle } from '../actions/user.actions';
-import {logout} from '../actions/authorize.actions';
+import { LoginTokenDto, UserDto } from '../../openapi/model/models';
+import { logout } from '../actions/authorize.actions';
+import {
+  getSelfActions,
+  listLoginTokensActions,
+  sidenavToggle,
+  toggleDesktopNotifications,
+  toggleSoundAlerts,
+} from '../actions/user.actions';
 
 export const userKey = 'user';
 
 export interface UserState {
   selfUser: UserDto;
   sidenavOpen: boolean;
+  desktopNotifications: boolean;
+  soundAlerts: boolean;
+  loginTokens: LoginTokenDto[];
 }
 
 export const initialUserState: UserState = {
@@ -16,12 +25,15 @@ export const initialUserState: UserState = {
     id: -1,
     registerDate: 0,
   },
-  sidenavOpen: true
+  sidenavOpen: true,
+  desktopNotifications: false,
+  soundAlerts: true,
+  loginTokens: [],
 };
 
 export const userReducer = createReducer(
   initialUserState,
-  on(getSelfSuccess, (state, action) => {
+  on(getSelfActions.success, (state, action) => {
     return { ...state, selfUser: action.user };
   }),
   on(logout, () => {
@@ -30,4 +42,13 @@ export const userReducer = createReducer(
   on(sidenavToggle, (state) => {
     return { ...state, sidenavOpen: !state.sidenavOpen };
   }),
+  on(listLoginTokensActions.success, (state, action) => {
+    return { ...state, loginTokens: action.tokens };
+  }),
+  on(toggleDesktopNotifications, (state, action) => {
+    return { ...state, desktopNotifications: action.enabled };
+  }),
+  on(toggleSoundAlerts, (state, action) => {
+    return { ...state, soundAlerts: action.enabled };
+  })
 );

@@ -16,5 +16,6 @@ export interface ConversationNameDto {
     id: number;
     lastUpdate: number;
     name: string;
+    unreadCount: number;
 }
 

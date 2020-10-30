@@ -1,3 +1,22 @@
 <ng-template ngIf="selfName$ | async">
-  <button id="logoutButton" mat-raised-button (click)="doLogout()">Logout</button>
+  <mat-accordion>
+    <mat-expansion-panel (opened)="openLoginTokens()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Login Tokens
+        </mat-panel-title>
+        <mat-panel-description>
+          Active LocalChat Authentication Tokens
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-token-table [tokens]="tokens$ | async" (delete)="deleteToken($event)"></app-token-table>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <section class="options-section">
+  <mat-checkbox [ngModel]="desktopNotification$ | async" (ngModelChange)="enableNotifications($event)">Enable Desktop Notifications</mat-checkbox>
+  <mat-checkbox [ngModel]="soundAlerts$ | async" (ngModelChange)="enableSoundAlerts($event)">Enable Sound Alerts</mat-checkbox>
+  </section>
+  <button id="logoutButton" mat-raised-button (click)="doLogout()">
+    Logout
+  </button>
 </ng-template>

@@ -1,69 +1,99 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { EMPTY, of } from 'rxjs';
-import { catchError, mergeMap, switchMap } from 'rxjs/operators';
+import { Action, Store } from '@ngrx/store';
+import { EMPTY, merge, Observable, of } from 'rxjs';
+import {
+  catchError,
+  map,
+  mergeMap,
+  switchMap,
+  withLatestFrom,
+} from 'rxjs/operators';
+import {
+  ConversationMessageDto,
+  MemberDto,
+} from 'src/app/openapi/model/models';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { SseEventService } from '../../../shared/services/sse-event.service';
 import {
+  APIActionCreator,
+  APIActionCreatorContainer,
+} from '../../actions/actions-creation';
+import {
   conversationUpserted,
-  listConversations,
+  ConvRef,
   memberDeleted,
+  MemberRef,
   memberUpserted,
   messageDeleted,
+  MessageRef,
   messageUpserted,
+  listConversationsActions,
+  refreshConversationActions,
 } from '../../actions/conversation.actions';
 import {
-  getSelf,
-  getSelfFailure,
-  getSelfSuccess,
+  deleteTokenActions,
+  getSelfActions,
   listenForEvents,
+  listLoginTokensActions,
 } from '../../actions/user.actions';
+import { selectedConversationId } from '../../reducers/router.reducer';
 import { UserService } from './user.service';
 
 @Injectable()
 export class UserEffects {
-  getSelf$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(getSelf),
-      switchMap(() =>
-        this.userService.getSelf().pipe(
-          mergeMap((s) =>
-            of(
-              getSelfSuccess({ user: s }),
-              listConversations(),
-              listenForEvents()
-            )
-          ),
-          catchError((message) => {
-            this.snackbar.open(message || 'Username unavailable!', '', {
-              duration: 3000,
-            });
-            return of(getSelfFailure());
-          })
-        )
-      )
-    )
-  );
+  getSelf$ = this.createApiActionEffect(getSelfActions, {
+    service: () => this.userService.getSelf().pipe(map((user) => ({ user }))),
+    success: () => of(listConversationsActions.request(), listenForEvents()),
+    error: (message) => {
+      this.snackbar.open(message || 'Username unavailable!', '', {
+        duration: 3000,
+      });
+      return EMPTY;
+    },
+  });
 
   eventListen$ = createEffect(() =>
     this.actions$.pipe(
       ofType(listenForEvents),
       switchMap(() =>
         this.sseEventService.receiveEvents().pipe(
-          mergeMap((event) => {
+          withLatestFrom(this.store.select(selectedConversationId)),
+          mergeMap(([event, cid]) => {
             switch (event.subject) {
               case 'upsert-conv':
                 return of(conversationUpserted({ conv: event.message }));
               case 'upsert-member':
-                return of(memberUpserted({ member: event.message }));
+                const member = event.message as MemberDto;
+                return cid === member.convId
+                  ? of(memberUpserted({ member }))
+                  : EMPTY;
               case 'delete-member':
-                return of(memberDeleted(event.message));
+                const memberRef = event.message as MemberRef;
+                return cid === memberRef.conversationId
+                  ? of(memberDeleted(memberRef))
+                  : EMPTY;
               case 'upsert-message':
-                return of(messageUpserted(event.message));
+                this.notifyService.incomingMessage(
+                  event.message.conversationId,
+                  event.message.message
+                );
+                const convMessage = event.message as ConvRef & {
+                  message: ConversationMessageDto;
+                };
+                return cid === convMessage.conversationId
+                  ? of(messageUpserted(convMessage))
+                  : of(
+                      refreshConversationActions.request(convMessage as ConvRef)
+                    );
               case 'delete-message':
-                return of(messageDeleted(event.message));
+                const convMessageRef = event.message as MessageRef;
+                return convMessageRef.conversationId === cid
+                  ? of(messageDeleted(convMessageRef))
+                  : of(
+                      refreshConversationActions.request(convMessageRef as ConvRef)
+                    );
               default:
                 console.log(JSON.stringify(event));
                 return EMPTY;
@@ -73,19 +103,79 @@ export class UserEffects {
             this.snackbar.open(error.message || 'Event source error!', '', {
               duration: 3000,
             });
-            return of(getSelfFailure());
+            return of(getSelfActions.failure());
           })
         )
       )
     )
   );
 
+  listLoginTokens$ = this.createApiActionEffect(listLoginTokensActions, {
+    service: () => this.userService.listLoginTokens(),
+    error: (message) => {
+      this.snackbar.open(message || 'Login Tokens unavailable!', '', {
+        duration: 3000,
+      });
+      return EMPTY;
+    },
+  });
+
+  deleteToken$ = this.createApiActionEffect(deleteTokenActions, {
+    service: (a) => this.userService.deleteLoginToken(a.tokenId),
+    success: () => of(listLoginTokensActions.request()),
+    error: (message) => {
+      this.snackbar.open(message || 'Delete Token failed!', '', {
+        duration: 3000,
+      });
+      return EMPTY;
+    },
+  });
+
+  private createApiActionEffect<
+    R extends object | void,
+    S extends object | void,
+    F extends object | void
+  >(
+    container: APIActionCreatorContainer<R, S, F>,
+    calls: {
+      service: (action: ReturnType<APIActionCreator<R>>) => Observable<S>;
+      success?: (res: S) => Observable<Action>;
+      error?: (error: any) => Observable<Action>;
+    }
+  ): Observable<Action> {
+    return createEffect(() =>
+      this.actions$.pipe(
+        ofType(container.request),
+        switchMap((r) =>
+          calls.service(r).pipe(
+            mergeMap((s) =>
+              merge(
+                calls.success ? calls.success(s) : EMPTY,
+                of(
+                  s instanceof Object
+                    ? container.success(s)
+                    : container.success(null)
+                )
+              )
+            ),
+            catchError((e) => {
+              return merge(
+                calls.error ? calls.error(e) : EMPTY,
+                of(container.failure(e))
+              );
+            })
+          )
+        )
+      )
+    );
+  }
+
   constructor(
     private actions$: Actions,
-    private router: Router,
-    private store: Store,
     private snackbar: MatSnackBar,
+    private store: Store,
     private userService: UserService,
-    private sseEventService: SseEventService
+    private sseEventService: SseEventService,
+    private notifyService: NotifyService
   ) {}
 }

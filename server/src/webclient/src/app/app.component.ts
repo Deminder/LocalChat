@@ -16,6 +16,7 @@ import {
 import {
   selectActiveConversation,
   selectConversations,
+  isMessageSearching,
 } from './store/selectors/conversation.selectors';
 import { isGlobalLoading } from './store/selectors/progress.selectors';
 import { selectSelfName, isSideNavOpen } from './store/selectors/user.selectors';
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit {
 
   conversations$ = this.store.select(selectConversations);
   conversationId$ = this.store.select(selectedConversationId);
+  isSearching$ = this.store.select(isMessageSearching);
 
   toolbarTitle$ = this.store.select(selectActiveConversation).pipe(
     map((curConv) => curConv?.name ?? this.defaultTitle),

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { UserDto, UserSearchRequest, UserSearchResponse, UserGetRequest, UserGetResponse } from 'src/app/openapi/model/models';
+import { UserDto, UserSearchRequest, UserSearchResponse, UserGetRequest, UserGetResponse, LoginTokenListResponse } from 'src/app/openapi/model/models';
 import {catchError} from 'rxjs/operators';
 
 @Injectable({
@@ -27,12 +27,22 @@ export class UserService {
       .pipe(catchError(this.handleAPIError));
   }
 
+  listLoginTokens(): Observable<LoginTokenListResponse> {
+    return this.http.get<LoginTokenListResponse>(`${this.endpoint}/tokens`)
+      .pipe(catchError(this.handleAPIError));
+  }
+
+  deleteLoginToken(tokenId: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/tokens/${tokenId}`)
+      .pipe(catchError(this.handleAPIError));
+  }
+
   private handleAPIError(error: HttpErrorResponse): Observable<never> {
     const err = error.error;
     if (err instanceof ErrorEvent) {
       console.error(`[Error Angular] ${err.message}`);
     } else {
-      console.error(`[Error ${error.status}] ${err}`);
+      console.error(`[Error ${error.status}] ${JSON.stringify(err)}`);
     }
     return throwError(err.message);
   }

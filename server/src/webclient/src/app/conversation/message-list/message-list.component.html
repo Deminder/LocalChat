@@ -32,7 +32,7 @@
         </button>
       </div>
       <div class="message-header">
-        <span class="username">{{
+        <span *ngIf="selfUserId !== msg.authorUserId" class="username">{{
           msg.authorUserId | authorName: memberDict
         }}</span>
         <div class="divider"></div>

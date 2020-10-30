@@ -11,6 +11,8 @@ import java.time.Instant
 
 interface ConversationService {
 
+    fun getConversation(conversationId: Long): Conversation?
+
     fun listConversations(): List<Conversation>
 
     @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'READ', 'ADMIN')")
@@ -27,6 +29,16 @@ interface ConversationService {
             regex: Boolean?): ConversationMessagePage
 
 
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'READ')")
+    fun countUnreadMessages(
+            @Param("cid") conversationId: Long,
+            ): Int
+
+    @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'READ')")
+    fun memberReadsConversation(
+            @Param("cid") conversationId: Long
+    )
+
     fun createConversation(conversationName: String, memberNames: Set<String>): Conversation
 
     @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'ADMIN')")
@@ -38,4 +50,6 @@ interface ConversationService {
     @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'MOD') || " +
             "@memberServiceImpl.wroteMessage(#cid, authentication.name, #mid)")
     fun deleteMessage(@Param("cid") conversationId: Long, @Param("mid") messageId: Long)
+
+
 }

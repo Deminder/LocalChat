@@ -7,29 +7,25 @@ import {
   MemberDto,
   PermissionDtoRes,
 } from 'src/app/openapi/model/models';
+import { logout } from '../actions/authorize.actions';
 import {
+  changeMessageSearch,
+  changeMessageSearchCount,
+  changeMessageSearchIndex,
   conversationDeleted,
-  listConversationsFailure,
-  listConversationsSuccess,
-  listMembersFailure,
-  listMembersSuccess,
-  listNextMessagesFailure,
-  listNextMessagesSuccess,
+  conversationUpserted,
+  ConvRef,
+  listConversationsActions,
+  listMembersActions,
+  listNextMessagesActions,
   memberDeleted,
   memberUpserted,
   messageDeleted,
   messageUpserted,
-  searchNextMessagesFailure,
-  searchNextMessagesSuccess,
-  conversationUpserted,
-  ConvRef,
   startLoadMoreMessages,
   stopLoadMoreMessages,
-  changeMessageSearch,
-  changeMessageSearchIndex,
-  changeMessageSearchCount,
+  refreshConversationActions,
 } from '../actions/conversation.actions';
-import { logout } from '../actions/authorize.actions';
 
 export const conversationKey = 'conversation';
 
@@ -117,6 +113,17 @@ export const {
   selectTotal: selectConvsTotal,
 } = namesAdapter.getSelectors();
 
+const resetUnreadCount = (
+  conversationId: number,
+  adapter: EntityAdapter<ConversationNameDto>,
+  state: EntityState<ConversationNameDto>
+) => {
+  return adapter.updateOne(
+    { id: conversationId, changes: { unreadCount: 0 } },
+    state
+  );
+};
+
 const addMessagePage = (
   pageResponse: ConversationMessagePageDto,
   adapter: EntityAdapter<ConversationMessageDto>,
@@ -135,11 +142,15 @@ export const conversationReducer = createReducer(
   initialConversationState,
   on(logout, () => ({ ...initialConversationState })),
   // CONVERSATIONS
-  on(listConversationsSuccess, (state, action) => ({
+  on(refreshConversationActions.success, (state, action) => ({
+    ...state,
+    names: namesAdapter.setOne(action.conv, state.names),
+  })),
+  on(listConversationsActions.success, (state, action) => ({
     ...state,
     names: namesAdapter.setAll(action.convs, state.names),
   })),
-  on(listConversationsFailure, (state) => ({
+  on(listConversationsActions.failure, (state) => ({
     ...state,
     names: namesAdapter.removeAll(state.names),
   })),
@@ -153,11 +164,11 @@ export const conversationReducer = createReducer(
     names: namesAdapter.setOne(action.conv, state.names),
   })),
   // MEMBERS
-  on(listMembersSuccess, (state, action) => ({
+  on(listMembersActions.success, (state, action) => ({
     ...state,
     members: membersAdapter.setAll(action.members, state.members),
   })),
-  on(listMembersFailure, (state) => ({
+  on(listMembersActions.failure, (state) => ({
     ...state,
     members: membersAdapter.removeAll(state.members),
   })),
@@ -179,20 +190,26 @@ export const conversationReducer = createReducer(
     ...state,
     loadMore: null,
   })),
-  on(listNextMessagesSuccess, (state, action) => ({
+  on(listNextMessagesActions.success, (state, action) => ({
     ...state,
+    names: resetUnreadCount(
+      action.messagePage.convId,
+      namesAdapter,
+      state.names
+    ),
     messages: addMessagePage(
       action.messagePage,
       messagesAdapter,
       state.messages
     ),
   })),
-  on(listNextMessagesFailure, (state) => ({ ...state })),
   on(changeMessageSearchIndex, (state, action) => ({
     ...state,
     search: {
       ...state.search,
-      index: (action.indexChange + state.search.index + state.search.count) % state.search.count,
+      index:
+        (action.indexChange + state.search.index + state.search.count) %
+        state.search.count,
     },
   })),
   on(changeMessageSearchCount, (state, action) => ({
@@ -209,14 +226,6 @@ export const conversationReducer = createReducer(
       },
     },
   })),
-  on(searchNextMessagesSuccess, (state, _) => ({
-    ...state,
-    search: {
-      // TODO remove search api
-      ...state.search,
-    },
-  })),
-  on(searchNextMessagesFailure, (state) => ({ ...state })),
   // events
   on(messageUpserted, (state, action) => ({
     ...state,
