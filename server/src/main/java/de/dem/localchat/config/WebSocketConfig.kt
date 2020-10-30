@@ -23,10 +23,8 @@ class WebSocketConfig : WebSocketConfigurer {
 
 
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(voiceWebSocketHandler(), "/api/voice")
+        registry.addHandler(VoiceWebSocketHandler(voiceChannelService, executorService), "/api/voice")
                 .addInterceptors(HttpSessionHandshakeInterceptor())
     }
 
-    @Bean
-    fun voiceWebSocketHandler() = VoiceWebSocketHandler(voiceChannelService, executorService)
 }

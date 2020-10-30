@@ -53,9 +53,12 @@ class VoiceWebSocketHandler(
 
     }
 
+    private fun queryToConversationId(query: String) =
+            if (query.startsWith("cid=")) query.substring("cid=".length).toLong() else null
+
     private fun withCidAndUsername(session: WebSocketSession, procedure: (cid: Long, username: String) -> Unit) =
             session.principal?.name?.let { username ->
-                session.handshakeHeaders["X-ConversationId"]?.get(0)?.toLong()?.let { cid ->
+                session.uri?.query?.let { queryToConversationId(it) }?.let { cid ->
                     procedure(cid, username)
                 }
             } ?: session.close(CloseStatus.PROTOCOL_ERROR)
