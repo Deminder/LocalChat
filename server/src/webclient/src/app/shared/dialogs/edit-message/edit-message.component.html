@@ -1,0 +1,21 @@
+<span mat-dialog-title>Edit Message</span>
+<div mat-dialog-content>
+  <mat-form-field class="edit-textarea">
+    <textarea
+      #writer="ngModel"
+      matInput
+      name="message"
+      [(ngModel)]="text"
+      placeholder="Write message..."
+    ></textarea>
+  </mat-form-field>
+  <small>Last Change {{ data.message.lastChange | date: "short" }}</small>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [disabled]="!text" type="submit" (click)="confirm()">
+    Edit
+  </button>
+  <button mat-button mat-dialog-close>
+    Cancel
+  </button>
+</div>
