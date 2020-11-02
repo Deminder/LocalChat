@@ -11,7 +11,6 @@ interface VoiceChannelService {
     fun speak(voiceBuffer: VoiceBuffer)
     fun leave(conversationId: Long, username: String, sessionId: String)
 
-    @PreAuthorize("@memberServiceImpl.isMember(#cid, #username, 'VOICE')")
     fun join(@Param("cid") conversationId: Long,
              @Param("username") username: String,
              sessionId: String

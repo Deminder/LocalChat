@@ -42,4 +42,55 @@
   >
     Rename Conversation
   </button>
+  <button
+    *ngIf="(voiceChannel$ | async).conversationId !== conv.id; else leaveButton"
+    mat-button
+    [disabled]="!(selfMember$ | async)?.permission.voice"
+    (click)="joinVoice(conv)"
+  >
+    Join Voice
+  </button>
+  <ng-template #leaveButton>
+    <button mat-button (click)="leaveVoice()">
+      Leave Voice
+    </button>
+  </ng-template>
+  <button
+    *ngIf="isMicEnabled$ | async; else micEnableButton"
+    mat-icon-button
+    (click)="enableMic(false)"
+  >
+    <mat-icon>mic</mat-icon>
+  </button>
+  <ng-template #micEnableButton>
+    <button mat-icon-button (click)="enableMic(true)">
+      <mat-icon>mic_off</mat-icon>
+    </button>
+  </ng-template>
+  <button
+    *ngIf="isPlaybackEnabled$ | async; else playbackEnableButton"
+    mat-icon-button
+    (click)="enablePlayback(false)"
+  >
+    <mat-icon>hearing</mat-icon>
+  </button>
+  <ng-template #playbackEnableButton>
+    <button mat-icon-button (click)="enablePlayback(true)">
+      <mat-icon>hearing_disabled</mat-icon>
+    </button>
+  </ng-template>
+  <div class="voice-visualizers" *ngIf="isMicEnabled$ | async">
+    <app-voice-visual
+      [voiceAnalyser]="selfVoiceAnalyser$ | async"
+      [gain]="selfGain$ | async"
+    ></app-voice-visual>
+  </div>
+  <div class="voice-visualizers" *ngIf="isPlaybackEnabled$ | async">
+    <div *ngIf="memberVoiceAnalysers$ | async as anas">
+      <ng-template ngFor [ngForOf]="anas" let-pair>
+        <app-voice-visual [voiceAnalyser]="pair[1]"></app-voice-visual>
+        <span> {{ pair[0] }}</span>
+      </ng-template>
+    </div>
+  </div>
 </div>

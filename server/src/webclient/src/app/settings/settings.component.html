@@ -15,7 +15,6 @@
   <section class="options-section">
   <mat-checkbox [ngModel]="desktopNotification$ | async" (ngModelChange)="enableNotifications($event)">Enable Desktop Notifications</mat-checkbox>
   <mat-checkbox [ngModel]="soundAlerts$ | async" (ngModelChange)="enableSoundAlerts($event)">Enable Sound Alerts</mat-checkbox>
-  <button mat-icon-button (click)="enableVoice(!voice)"><mat-icon>{{ voice ? 'mic' : 'mic_off' }}</mat-icon></button>
   </section>
   <button id="logoutButton" mat-raised-button (click)="doLogout()">
     Logout

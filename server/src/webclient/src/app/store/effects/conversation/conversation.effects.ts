@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {Store} from '@ngrx/store';
-import {EMPTY, ObservedValueOf, of, OperatorFunction} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { EMPTY, ObservedValueOf, of, OperatorFunction } from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -12,9 +12,10 @@ import {
   mergeMap,
   switchMap,
   take,
-  withLatestFrom
+  withLatestFrom,
+  tap,
 } from 'rxjs/operators';
-import {MemberUpdateRequest} from 'src/app/openapi/model/models';
+import { MemberUpdateRequest } from 'src/app/openapi/model/models';
 import {
   addConversation,
   addMember,
@@ -37,16 +38,20 @@ import {
   removeMember,
   renameConversation,
   startLoadMoreMessages,
-  refreshConversationActions
+  refreshConversationActions,
+  enableMicrophone,
+  enablePlayback,
+  switchVoiceConversation,
 } from '../../actions/conversation.actions';
 import {
   isLastPage,
   isMessageSearching,
   selectLoadMoreConversationId,
-  selectNextMessagePageRequest
+  selectNextMessagePageRequest,
 } from '../../selectors/conversation.selectors';
-import {selectSelfUserId} from '../../selectors/user.selectors';
-import {ConversationService} from './conversation.service';
+import { selectSelfUserId } from '../../selectors/user.selectors';
+import { ConversationService } from './conversation.service';
+import { VoiceService } from 'src/app/shared/services/voice.service';
 
 @Injectable()
 export class ConversationEffects {
@@ -281,6 +286,36 @@ export class ConversationEffects {
     )
   );
 
+
+  /* VOICE */
+
+  enableMicrophone$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(enableMicrophone),
+        tap((a) => this.voiceService.enableMic(a.enabled))
+      ),
+    { dispatch: false }
+  );
+
+  enablePlayback$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(enablePlayback),
+        tap((a) => this.voiceService.enablePlayback(a.enabled))
+      ),
+    { dispatch: false }
+  );
+
+  switchVoiceChannel$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(switchVoiceConversation),
+        tap((a) => this.voiceService.join(a.conversationId))
+      ),
+    { dispatch: false }
+  );
+
   private catchActionError<T, O>(): OperatorFunction<
     T,
     T | ObservedValueOf<O>
@@ -295,6 +330,7 @@ export class ConversationEffects {
     private actions$: Actions,
     private conversationService: ConversationService,
     private snackbar: MatSnackBar,
-    private store: Store
+    private store: Store,
+    private voiceService: VoiceService
   ) {}
 }

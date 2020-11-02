@@ -106,6 +106,7 @@ export const isLastPage = store.createSelector(
   (cid, prevPage) => prevPage && prevPage.convId === cid && prevPage.last
 );
 
+/* SEARCHING */
 export const selectNextMessagePageRequest = store.createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
@@ -158,4 +159,25 @@ export const isLoadingMoreMessages = store.createSelector(
   selectLoadMoreConversationId,
   isLastPage,
   (cid, scid, last) => !last && cid === scid
+);
+
+/* VOICE */
+export const selectVoice = store.createSelector(
+  selectConversation,
+  (state) => state.voice
+);
+
+export const isMicrohponeEnabled = store.createSelector(
+  selectVoice,
+  (voice) => voice.microphone
+);
+
+export const isPlaybackEnabled = store.createSelector(
+  selectVoice,
+  (voice) => voice.playback
+);
+
+export const selectVoiceChannel = store.createSelector(
+  selectVoice,
+  (voice) => voice.channel
 );

@@ -27,7 +27,6 @@ export class SettingsComponent implements OnInit {
   desktopNotification$ = this.store.select(areDesktopNotificationsEnabled);
   soundAlerts$ = this.store.select(areSoundAlertsEnabled);
 
-  voice = false;
 
   constructor(private voiceService: VoiceService, private store: Store) {}
 
@@ -53,10 +52,4 @@ export class SettingsComponent implements OnInit {
     this.store.dispatch(toggleSoundAlerts({ enabled }));
   }
 
-  enableVoice(enabled: boolean): void {
-    this.voice = enabled;
-    if (this.voice) {
-      this.voiceService.join(3);
-    }
-  }
 }

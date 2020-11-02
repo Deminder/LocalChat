@@ -7,6 +7,7 @@ import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.BinaryWebSocketHandler
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
@@ -23,14 +24,15 @@ class VoiceWebSocketHandler(
                 socketWorkers[session.id]?.cancel(true)
                 socketWorkers = socketWorkers + (session.id to executorService.submit {
                     while (session.isOpen) {
-                        it.poll().let { buffer ->
+                        it.take().let { buffer ->
                             val nameArray = buffer.username.toByteArray()
                             val b = ByteBuffer.allocate(
-                                    Integer.BYTES + nameArray.size + Integer.BYTES + buffer.length)
+                                    Integer.BYTES + nameArray.size + buffer.length)
+                                    .order(ByteOrder.LITTLE_ENDIAN)
                             b.putInt(nameArray.size)
                             b.put(nameArray)
-                            b.putInt(buffer.length)
                             b.put(buffer.data)
+                            b.rewind()
                             session.sendMessage(BinaryMessage(b))
                         }
                     }
@@ -46,11 +48,10 @@ class VoiceWebSocketHandler(
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
+        socketWorkers[session.id]?.cancel(true)
         withCidAndUsername(session) { cid, username ->
             voiceChannelService.leave(cid, username, session.id)
         }
-        socketWorkers[session.id]?.cancel(true)
-
     }
 
     private fun queryToConversationId(query: String) =

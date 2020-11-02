@@ -25,6 +25,9 @@ import {
   startLoadMoreMessages,
   stopLoadMoreMessages,
   refreshConversationActions,
+  enableMicrophone,
+  enablePlayback,
+  switchVoiceConversation,
 } from '../actions/conversation.actions';
 
 export const conversationKey = 'conversation';
@@ -43,12 +46,19 @@ export type MessageSearch = {
   regex: boolean;
 };
 
+export interface VoiceState {
+  playback: boolean;
+  microphone: boolean;
+  channel: ConvRef;
+}
+
 export interface ConversationState {
   names: EntityState<ConversationNameDto>;
   members: EntityState<MemberDto>;
   messages: ChatMessagesState;
   search: { search: MessageSearch; index: number; count: number };
   loadMore: ConvRef | null;
+  voice: VoiceState;
 }
 
 export interface ChatMessagesState extends EntityState<ConversationMessageDto> {
@@ -90,6 +100,11 @@ export const initialConversationState: ConversationState = {
     count: 0,
   },
   loadMore: null,
+  voice: {
+    playback: false,
+    microphone: false,
+    channel: { conversationId: -1 },
+  },
 };
 
 export const {
@@ -225,6 +240,19 @@ export const conversationReducer = createReducer(
         regex: action.regex,
       },
     },
+  })),
+  // VOICE
+  on(enableMicrophone, (state, action) => ({
+    ...state,
+    voice: { ...state.voice, microphone: action.enabled },
+  })),
+  on(enablePlayback, (state, action) => ({
+    ...state,
+    voice: { ...state.voice, playback: action.enabled },
+  })),
+  on(switchVoiceConversation, (state, action) => ({
+    ...state,
+    voice: { ...state.voice, channel: action as ConvRef },
   })),
   // events
   on(messageUpserted, (state, action) => ({

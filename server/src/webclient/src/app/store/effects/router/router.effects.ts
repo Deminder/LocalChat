@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
 import { ROUTER_NAVIGATED } from '@ngrx/router-store';
 import { Store } from '@ngrx/store';
 import { filter, map, tap, withLatestFrom } from 'rxjs/operators';
+import { VoiceService } from 'src/app/shared/services/voice.service';
 import {
   listMembersActions,
   listNextMessagesActions,
@@ -14,6 +15,9 @@ import { selectedConversationId } from '../../reducers/router.reducer';
 import {
   areMembersNeeded,
   isFirstPageNeeded,
+  isMicrohponeEnabled,
+  isPlaybackEnabled,
+  selectVoiceChannel,
 } from '../../selectors/conversation.selectors';
 import { selectSelfName } from '../../selectors/user.selectors';
 
@@ -62,9 +66,28 @@ export class RouterEffects {
     { dispatch: false }
   );
 
+  voiceInit$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ROOT_EFFECTS_INIT),
+        withLatestFrom(
+          this.store.select(isMicrohponeEnabled),
+          this.store.select(isPlaybackEnabled),
+          this.store.select(selectVoiceChannel)
+        ),
+        tap(([_, mic, playback, channel]) => {
+          this.voiceService.join(channel.conversationId);
+          this.voiceService.enablePlayback(playback);
+          this.voiceService.enableMic(mic);
+        })
+      ),
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private voiceService: VoiceService
   ) {}
 }

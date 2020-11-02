@@ -106,18 +106,33 @@ export const changeMessageSearch = createAction(
 export type MessageRef = ConvRef & { messageId: number };
 
 export const createMessage = createAction(
-  '[Conversation/Silent] Create Message',
+  '[Conversation] Create Message',
   props<ConvRef & { text: string }>()
 );
 
 export const deleteMessage = createAction(
-  '[Conversation/Silent] Delete Message',
+  '[Conversation] Delete Message',
   props<MessageRef>()
 );
 
 export const editMessage = createAction(
-  '[Conversation/Silent] Edit Message',
+  '[Conversation] Edit Message',
   props<MessageRef & { text: string }>()
+);
+
+/* VOICE */
+
+export const enableMicrophone = createAction(
+  '[Conversation] Enable Mircophone',
+  props<{enabled: boolean}>()
+);
+export const enablePlayback = createAction(
+  '[Conversation] Enable Playback',
+  props<{enabled: boolean}>()
+);
+export const switchVoiceConversation = createAction(
+  '[Conversation] Switch Voice Conversation',
+  props<ConvRef>()
 );
 
 /**

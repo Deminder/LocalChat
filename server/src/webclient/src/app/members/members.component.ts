@@ -1,21 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ConversationNameDto, MemberDto } from '../openapi/model/models';
 import { AddConversationComponent } from '../shared/dialogs/add-conversation/add-conversation.component';
 import { AddMemberComponent } from '../shared/dialogs/add-member/add-member.component';
+import { VoiceService } from '../shared/services/voice.service';
 import {
   addMember,
   editMember,
+  enableMicrophone,
+  enablePlayback,
   removeMember,
   renameConversation,
+  switchVoiceConversation,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
+  isMicrohponeEnabled,
+  isPlaybackEnabled,
   selectActiveConversation,
   selectConversationMembers,
   selectSelfMember,
+  selectVoiceChannel,
 } from '../store/selectors/conversation.selectors';
 
 @Component({
@@ -28,8 +35,22 @@ export class MembersComponent implements OnInit, OnDestroy {
   activeConversation$ = this.store.select(selectActiveConversation);
   conversationId$ = this.store.select(selectedConversationId);
   selfMember$ = this.store.select(selectSelfMember);
+  voiceChannel$ = this.store.select(selectVoiceChannel);
+  isMicEnabled$ = this.store.select(isMicrohponeEnabled);
+  isPlaybackEnabled$ = this.store.select(isPlaybackEnabled);
 
-  constructor(private store: Store, private dialog: MatDialog) {}
+  selfVoiceAnalyser$ = this.voiceService.selfVoiceAnalyser$;
+  selfGain$ = this.voiceService.selfGain$;
+  memberVoiceAnalysers$ = this.voiceService.voiceAnalysers$.pipe(
+    map((as) => Object.entries(as))
+  );
+  memberGain$ = this.voiceService.gains$;
+
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+    private voiceService: VoiceService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -86,5 +107,21 @@ export class MembersComponent implements OnInit, OnDestroy {
           );
         }
       });
+  }
+
+  joinVoice(conv: ConversationNameDto): void {
+    this.store.dispatch(switchVoiceConversation({ conversationId: conv.id }));
+  }
+
+  leaveVoice(): void {
+    this.store.dispatch(switchVoiceConversation({ conversationId: -1 }));
+  }
+
+  enableMic(enabled: boolean): void {
+    this.store.dispatch(enableMicrophone({ enabled }));
+  }
+
+  enablePlayback(enabled: boolean): void {
+    this.store.dispatch(enablePlayback({ enabled }));
   }
 }

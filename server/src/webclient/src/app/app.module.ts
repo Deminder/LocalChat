@@ -42,6 +42,7 @@ import { localStorageSync } from 'ngrx-store-localstorage';
 import { SearcherComponent } from './searcher/searcher.component';
 import { TokenTableComponent } from './settings/token-table/token-table.component';
 import { EditMessageComponent } from './shared/dialogs/edit-message/edit-message.component';
+import { VoiceVisualComponent } from './members/voice-visual/voice-visual.component';
 
 registerLocaleData(localeDe);
 
@@ -83,6 +84,7 @@ export const metaReducers = [
     SearcherComponent,
     TokenTableComponent,
     EditMessageComponent,
+    VoiceVisualComponent,
   ],
   imports: [
     BrowserModule,

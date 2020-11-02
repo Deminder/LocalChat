@@ -9,6 +9,7 @@ import org.springframework.core.env.Profiles
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
+import javax.naming.AuthenticationException
 import javax.servlet.FilterChain
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpFilter
@@ -27,13 +28,19 @@ class SecurityTokenFilter(
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val reqCookie = request.cookies?.find { c -> c.name == cookieName }
 
+
         // check for token cookie (if not yet authenticated)
         if (SecurityContextHolder.getContext().authentication?.isAuthenticated != true)
             reqCookie?.let {
-                authenticationProvider.authenticate(TokenRefToken(TokenRef(it.value)))
+                try {
+                    authenticationProvider.authenticate(TokenRefToken(TokenRef(it.value)))
+                } catch (ex: AuthenticationException) {
+                    null
+                }
             }.also { auth ->
                 SecurityContextHolder.getContext().authentication = auth
             }
+
 
         chain.doFilter(request, response)
 
@@ -51,6 +58,7 @@ class SecurityTokenFilter(
                 maxAge = if (addC && auth is TokenRefToken) auth.maxAge else 0
             })
         }
+
     }
 
 
