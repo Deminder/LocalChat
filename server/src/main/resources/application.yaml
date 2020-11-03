@@ -8,4 +8,3 @@ autoconfigure:
 jasypt.encryptor:
   iv-generator-classname: org.jasypt.iv.RandomIvGenerator
   algorithm: PBEWITHHMACSHA256ANDAES_128
-

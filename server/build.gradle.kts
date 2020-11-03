@@ -22,7 +22,6 @@ tasks.register("copyFrontend") {
     }
 }
 
-
 tasks.jar {
     dependsOn(tasks.getByName("copyFrontend"))
 }

@@ -10,7 +10,7 @@ spring:
     user: admin
     password: secret
     schemas: public
-    locations: [ 'classpath:db/migration' ]
+    locations: classpath:db/migration
     enabled: true
 
 encrypt:
@@ -18,6 +18,14 @@ encrypt:
     location: classpath:/server-dev.jks
     password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
     alias: localchattest
+
+server:
+  ssl:
+    key-store: classpath:server-dev.jks
+    key-store-password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
+    key-store-type: jks
+    key-alias: localchattest
+    key-password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
 
 logging:
   level:
