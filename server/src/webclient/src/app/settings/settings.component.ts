@@ -9,12 +9,11 @@ import {
   toggleSoundAlerts,
 } from '../store/actions/user.actions';
 import {
-  selectLoginTokens,
-  selectSelfName,
   areDesktopNotificationsEnabled,
   areSoundAlertsEnabled,
+  selectLoginTokens,
+  selectSelfName,
 } from '../store/selectors/user.selectors';
-import { VoiceService } from '../shared/services/voice.service';
 
 @Component({
   selector: 'app-settings',
@@ -27,8 +26,7 @@ export class SettingsComponent implements OnInit {
   desktopNotification$ = this.store.select(areDesktopNotificationsEnabled);
   soundAlerts$ = this.store.select(areSoundAlertsEnabled);
 
-
-  constructor(private voiceService: VoiceService, private store: Store) {}
+  constructor(private store: Store) {}
 
   ngOnInit(): void {}
 
@@ -51,5 +49,4 @@ export class SettingsComponent implements OnInit {
   enableSoundAlerts(enabled: boolean): void {
     this.store.dispatch(toggleSoundAlerts({ enabled }));
   }
-
 }

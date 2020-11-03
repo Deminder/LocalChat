@@ -18,7 +18,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.data.domain.PageRequest
 import org.springframework.security.core.context.SecurityContextHolder
 import java.time.Instant
 
@@ -53,10 +52,10 @@ internal class ConversationServiceImplTest {
 
         val memberName = slot<String>()
         every { userRepository.findByUsername(capture(memberName)) } answers {
-            mockk {
-                every { id } returns Integer.parseInt(
-                        memberName.captured.substring(memberName.captured.length - 1)
-                ).toLong()
+            firstArg<String>().let { name ->
+                mockk {
+                    every { id } returns Integer.parseInt(name.substring(name.length - 1)).toLong()
+                }
             }
         }
 
@@ -68,7 +67,9 @@ internal class ConversationServiceImplTest {
     @Test
     fun `List conversations by conversation repository`() {
         val conversations = mockk<List<Conversation>>()
-        every { conversationRepository.findAllByUser(userName) } returns conversations
+
+
+        every { conversationRepository.findAllByUser(1L) } returns conversations
 
         assertThat(unit.listConversations(), equalTo(conversations))
     }
@@ -147,29 +148,19 @@ internal class ConversationServiceImplTest {
         val regex = true
         every {
             conversationMessageRepository.findAllMessagesByPattern(
-                    any(), any(), any(), any(), any())
+                    any(), any(), any(), any(), any(), any())
         } returns messages
 
         assertThat(unit.conversationMessagePage(cid, page, pageSize, olderThan, newerThan, search, regex),
                 equalTo(ConversationMessagePage(
-                        conversationId = cid,
-                        page = page,
-                        pageSize = pageSize,
-                        olderThan = olderThan,
-                        newerThan = newerThan,
                         last = false,
                         messages = messages,
-                        search = search,
-                        regex = regex
                 )))
 
-        val pr = slot<PageRequest>()
         verify {
             conversationMessageRepository.findAllMessagesByPattern(
-                    cid, olderThan, newerThan, search, capture(pr))
+                    cid, olderThan, newerThan, search, pageSize, page * pageSize)
         }
-        assertThat(pr.captured.pageNumber, equalTo(page))
-        assertThat(pr.captured.pageSize, equalTo(pageSize))
 
     }
 

@@ -11,10 +11,10 @@ import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.security.dataacess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.time.Instant
+
 @Service
 class ConversationServiceImpl(
         @Autowired val conversationRepository: ConversationRepository,
@@ -29,11 +29,8 @@ class ConversationServiceImpl(
             }
 
 
-
     override fun listConversations(): List<Conversation> =
             conversationRepository.findAllByUser(uid())
-
-
 
 
     override fun membersOfConversation(conversationId: Long): List<Member> =
@@ -72,28 +69,20 @@ class ConversationServiceImpl(
                                          regex: Boolean?) =
             (if (search == null)
                 conversationMessageRepository.findAllByConversationIdBetween(
-                        conversationId, olderThan, newerThan, pageSize, page)
+                        conversationId, olderThan, newerThan, pageSize, page * pageSize)
             else (if (regex == true)
                 conversationMessageRepository::findAllMessagesByPattern
             else conversationMessageRepository::findAllMessagesByString)
-                    .invoke(conversationId, olderThan, newerThan, search, pageSize, page)
-
+                    .invoke(conversationId, olderThan, newerThan, search, pageSize, page * pageSize)
                     ).let {
                         ConversationMessagePage(
-                                conversationId = conversationId,
-                                page = page,
-                                pageSize = pageSize,
-                                olderThan = olderThan,
-                                newerThan = newerThan,
                                 last = it.size < pageSize,
                                 messages = it,
-                                search = search,
-                                regex = regex
                         )
                     }
 
     override fun countUnreadMessages(conversationId: Long): Int =
-                conversationMessageRepository.countUnreadMessagesOfMember(uid(), conversationId)
+            conversationMessageRepository.countUnreadMessagesOfMember(uid(), conversationId)
 
 
     override fun memberReadsConversation(conversationId: Long) {

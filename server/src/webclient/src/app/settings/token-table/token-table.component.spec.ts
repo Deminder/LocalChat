@@ -1,17 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TokenTableComponent } from './token-table.component';
+import {MaterialModule} from 'src/app/material/material.module';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('TokenTableComponent', () => {
   let component: TokenTableComponent;
   let fixture: ComponentFixture<TokenTableComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ TokenTableComponent ]
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [MaterialModule, NoopAnimationsModule],
+        declarations: [TokenTableComponent],
+      }).compileComponents();
     })
-    .compileComponents();
-  });
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TokenTableComponent);

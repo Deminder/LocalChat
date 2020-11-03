@@ -8,6 +8,11 @@ import { RegisterComponent } from './register/register.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FieldErrorComponent } from './field-error/field-error.component';
 import { MaterialModule } from '../material/material.module';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MemoizedSelector } from '@ngrx/store';
+import { AppState } from '../store/reducers/app.reducer';
+import { selectRegisteredUsername } from '../store/reducers/router.reducer';
+import { NotifyService } from '../shared/services/notify.service';
 
 describe('AuthorizeComponent', () => {
   let fixture: ComponentFixture<AuthorizeComponent>;
@@ -15,19 +20,27 @@ describe('AuthorizeComponent', () => {
   let store: MockStore;
   const initialState = {};
 
+  let mockInitialUsernameSelector: MemoizedSelector<AppState, string>;
+
+  let notifyServiceSpy: jasmine.SpyObj<NotifyService>;
+
   beforeEach(
-    waitForAsync(() =>
+    waitForAsync(() => {
+      notifyServiceSpy = jasmine.createSpyObj('notifyService', ['select', 'publish']);
       TestBed.configureTestingModule({
-        imports: [MaterialModule, NoopAnimationsModule],
+        imports: [MaterialModule, NoopAnimationsModule, RouterTestingModule],
         declarations: [
           MockComponent(LoginComponent),
           MockComponent(RegisterComponent),
           MockComponent(FieldErrorComponent),
           AuthorizeComponent,
         ],
-        providers: [provideMockStore({ initialState })],
-      })
-    )
+        providers: [
+          provideMockStore({ initialState }),
+          { provide: NotifyService, useValue: notifyServiceSpy },
+        ],
+      }).compileComponents();
+    })
   );
 
   beforeEach(() => {
@@ -35,6 +48,11 @@ describe('AuthorizeComponent', () => {
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);
     fixture.detectChanges();
+
+    mockInitialUsernameSelector = store.overrideSelector(
+      selectRegisteredUsername,
+      null
+    );
   });
 
   it('should create', () => {

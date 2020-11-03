@@ -17,16 +17,9 @@ fun Conversation.toConversationNameDto(unreadCount: Int) = ConversationNameDto(
         unreadCount = unreadCount
 )
 
-fun ConversationMessagePage.toConversationMessagePageDto() = ConversationMessagePageDto(
-        convId = conversationId,
-        request = MessageSearchRequest(
-                page = page,
-                pageSize = pageSize,
-                olderThan = olderThan.toEpochMilli(),
-                newerThan = newerThan.toEpochMilli(),
-                search = search,
-                regex = regex,
-        ),
+fun ConversationMessagePage.toConversationMessagePageDto(convId: Long, r: MessageSearchRequest) = ConversationMessagePageDto(
+        convId = convId,
+        request = r,
         last = last,
         messages = messages.map { message -> message.toConversationMessageDto() }
 )

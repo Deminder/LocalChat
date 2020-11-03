@@ -70,7 +70,7 @@ class ConversationController(
                        @RequestBody r: MessageSearchRequest): ConversationMessagePageDto {
         return conversationService.conversationMessagePage(cid, r.page, r.pageSize,
                 Instant.ofEpochMilli(r.olderThan), Instant.ofEpochMilli(r.newerThan),
-                r.search, r.regex).toConversationMessagePageDto().also {
+                r.search, r.regex).toConversationMessagePageDto(cid, r).also {
             if (it.request.page == 0 && it.request.search == null) {
                 conversationService.memberReadsConversation(cid)
             }

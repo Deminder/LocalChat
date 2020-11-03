@@ -13,7 +13,7 @@
         <ng-template ngFor [ngForOf]="member.permission | keyvalue" let-p>
           <mat-checkbox
             [disabled]="!member.modifiablePermission.modify[p.key]"
-            [ngModel]="p.value"
+            [checked]="p.value"
             (ngModelChange)="changePermission(member, p.key, $event)"
             >{{ p.key | titlecase }}</mat-checkbox
           >

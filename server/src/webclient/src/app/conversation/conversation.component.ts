@@ -1,14 +1,15 @@
 import { CdkScrollable } from '@angular/cdk/overlay';
+import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
-  AfterViewChecked,
-  ElementRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { animationFrameScheduler, Subscription } from 'rxjs';
 import {
@@ -20,13 +21,14 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
+import { EditMessageComponent } from '../shared/dialogs/edit-message/edit-message.component';
 import {
+  changeMessageSearchCount,
   createMessage,
   deleteMessage,
   editMessage,
   startLoadMoreMessages,
   stopLoadMoreMessages,
-  changeMessageSearchCount,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
@@ -35,17 +37,13 @@ import {
   isLoadingMoreMessages,
   selectConversationMemberEntities,
   selectConversationMessages,
-  selectNewestMessage,
-  selectSelfMember,
   selectMessageSearch,
   selectMessageSearchIndex,
+  selectNewestMessage,
+  selectSelfMember,
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
-import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
-import { EditMessageComponent } from '../shared/dialogs/edit-message/edit-message.component';
-import { MatDialog } from '@angular/material/dialog';
-import {NotifyService} from '../shared/services/notify.service';
 
 @Component({
   selector: 'app-conversation',
@@ -86,16 +84,12 @@ export class ConversationComponent
   constructor(
     private store: Store,
     private ngZone: NgZone,
-    private notifyService: NotifyService,
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    
     this.downScroller = this.newestConversationMessage$
       .pipe(
         filter((msg) => msg !== null),

@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatTabGroup } from '@angular/material/tabs';
 import { Store } from '@ngrx/store';
+import { NotifyService } from '../shared/services/notify.service';
 import {
   Credentials,
   login,
   register,
 } from '../store/actions/authorize.actions';
-import { NotifyService } from '../shared/services/notify.service';
 import { selectRegisteredUsername } from '../store/reducers/router.reducer';
-import { map, tap } from 'rxjs/operators';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
@@ -34,15 +33,15 @@ export class AuthorizeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-      this.initialUsername$.subscribe((username) => {
-            this.tabs.selectedIndex = 0;
-            if (this.loginForm) {
-                    this.loginForm.reset(username);
-                  }
-            if (this.registerForm) {
-                    this.registerForm.reset();
-                  }
-          });
+    this.initialUsername$.subscribe((username) => {
+      this.tabs.selectedIndex = 0;
+      if (this.loginForm) {
+        this.loginForm.reset(username);
+      }
+      if (this.registerForm) {
+        this.registerForm.reset();
+      }
+    });
   }
 
   onLogin(credentials: Credentials): void {

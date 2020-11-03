@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 
 import { UserEffects } from './user.effects';
 import { Router } from '@angular/router';
-import {UserService} from './user.service';
-import {SseEventService} from 'src/app/shared/services/sse-event.service';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {provideMockStore} from '@ngrx/store/testing';
+import { UserService } from './user.service';
+import { SseEventService } from 'src/app/shared/services/sse-event.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { provideMockStore } from '@ngrx/store/testing';
+import { userKey } from '../../reducers/user.reducer';
 
 describe('UserEffects', () => {
   let actions$: Observable<any>;
@@ -20,16 +21,23 @@ describe('UserEffects', () => {
   beforeEach(() => {
     routerSpy = jasmine.createSpyObj('router', ['navigate']);
     userServiceSpy = jasmine.createSpyObj('userService', ['getSelf']);
-    sseEventServiceSpy = jasmine.createSpyObj('seeEventService', ['receiveEvents']);
+    sseEventServiceSpy = jasmine.createSpyObj('seeEventService', [
+      'receiveEvents',
+    ]);
 
     TestBed.configureTestingModule({
-      imports: [
-        MatSnackBarModule
-      ],
+      imports: [MatSnackBarModule],
       providers: [
         UserEffects,
         provideMockActions(() => actions$),
-        provideMockStore(),
+        provideMockStore({
+          initialState: {
+            [userKey]: {
+              desktopNotifications: false,
+              soundAlerts: true,
+            },
+          },
+        }),
         { provide: Router, useValue: routerSpy },
         { provide: UserService, useValue: userServiceSpy },
         { provide: SseEventService, useValue: sseEventServiceSpy },

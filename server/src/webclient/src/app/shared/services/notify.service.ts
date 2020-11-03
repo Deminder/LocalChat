@@ -27,6 +27,7 @@ export class NotifyService {
   alertSounds$ = this.store.select(areSoundAlertsEnabled);
   memberEntites$ = this.store.select(selectConversationMemberEntities);
   conversationNameEntities$ = this.store.select(selectConversationNameEntities);
+
   beepSound: Howl;
 
   hidden$ = fromEvent(this.doc, 'visibilitychange').pipe(

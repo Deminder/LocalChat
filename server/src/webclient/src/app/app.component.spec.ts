@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { Title } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MemoizedSelector } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
 import { AppComponent } from './app.component';
+import { MaterialModule } from './material/material.module';
 import {
   ConversationMessageDto,
   ConversationNameDto,
 } from './openapi/model/models';
+import { SidenavComponent } from './sidenav/sidenav.component';
 import { AppState } from './store/reducers/app.reducer';
 import {
   isMembersOpen,
@@ -22,12 +21,13 @@ import {
   selectActiveConversation,
   selectConversationMessages,
   selectConversations,
+  isMessageSearching,
 } from './store/selectors/conversation.selectors';
-import { isProgressActive, isGlobalLoading } from './store/selectors/progress.selectors';
-import { selectSelfName, isSideNavOpen } from './store/selectors/user.selectors';
-import { MaterialModule } from './material/material.module';
-import { MockComponent } from 'ng-mocks';
-import { SidenavComponent } from './sidenav/sidenav.component';
+import { isGlobalLoading } from './store/selectors/progress.selectors';
+import {
+  isSideNavOpen,
+  selectSelfName,
+} from './store/selectors/user.selectors';
 
 export const convSamples: ConversationNameDto[] = [
   {
@@ -35,12 +35,14 @@ export const convSamples: ConversationNameDto[] = [
     name: 'conv 1',
     createDate: 0,
     lastUpdate: 0,
+    unreadCount: 0,
   },
   {
     id: 2,
     name: 'conv 2',
     createDate: 2,
     lastUpdate: 2,
+    unreadCount: 0,
   },
 ];
 
@@ -67,6 +69,8 @@ describe('AppComponent', () => {
   let mockSettingsOpenSelector: MemoizedSelector<AppState, boolean>;
   let mockMembersOpenSelector: MemoizedSelector<AppState, boolean>;
   let mockIsSidenavOpenSelector: MemoizedSelector<AppState, boolean>;
+  let mockIsSearchingSelector: MemoizedSelector<AppState, boolean>;
+
   let titleSpy: jasmine.SpyObj<Title>;
 
   beforeEach(
@@ -104,10 +108,14 @@ describe('AppComponent', () => {
         selectActiveConversation,
         convSamples[0]
       );
-      mockGlobalLoadingSelector = store.overrideSelector(isGlobalLoading, false);
+      mockGlobalLoadingSelector = store.overrideSelector(
+        isGlobalLoading,
+        false
+      );
       mockSettingsOpenSelector = store.overrideSelector(isSettingsOpen, false);
       mockMembersOpenSelector = store.overrideSelector(isMembersOpen, false);
       mockIsSidenavOpenSelector = store.overrideSelector(isSideNavOpen, false);
+      mockIsSearchingSelector = store.overrideSelector(isMessageSearching, false);
 
       // component
       fixture = TestBed.createComponent(AppComponent);
@@ -115,7 +123,6 @@ describe('AppComponent', () => {
       fixture.detectChanges();
     })
   );
-
 
   it('should create the app', () => {
     expect(component).toBeTruthy();

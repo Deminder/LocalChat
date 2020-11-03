@@ -19,8 +19,8 @@
   *ngIf="!searchCollapsed"
   class="regex-checkbox"
   matTooltip="Search by Regex"
-  [(ngModel)]="regex"
-  (ngModelChange)="searchUpdate(); searcher.focus()"
+  [checked]="regex"
+  (change)="regex = $event;searchUpdate(); searcher.focus()"
 ></mat-checkbox>
 <button
   mat-icon-button

@@ -62,6 +62,8 @@ internal class ConversationControllerTest(
     @BeforeEach
     fun setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build()
+
+        every { conversationService.countUnreadMessages(any()) } returns 0
     }
 
     private val json = jacksonObjectMapper()
@@ -72,10 +74,12 @@ internal class ConversationControllerTest(
 
         every { conversationService.listConversations() } returns
                 listOf(Conversation(
+                        id = 0,
                         name = "conv1",
                         creator = "user1",
                         createDate = Instant.now()
                 ), Conversation(
+                        id = 1,
                         name = "conv2",
                         creator = "user2",
                         createDate = Instant.now()

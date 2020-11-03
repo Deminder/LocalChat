@@ -6,22 +6,48 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Store, MemoizedSelector, DefaultProjectorFn } from '@ngrx/store';
 import { AppState } from '../store/reducers/app.reducer';
-import { selectSelfName } from '../store/selectors/user.selectors';
+import {
+  selectSelfName,
+  selectLoginTokens,
+} from '../store/selectors/user.selectors';
 import { By } from '@angular/platform-browser';
 import { logout } from '../store/actions/authorize.actions';
+import { userKey } from '../store/reducers/user.reducer';
+import { LoginTokenDto } from '../openapi/model/models';
+import { MockComponent } from 'ng-mocks';
+import { TokenTableComponent } from './token-table/token-table.component';
+
+const sampleLoginTokens: LoginTokenDto[] = [
+  {
+    createDate: 0,
+    description: 'ip address and user agent...',
+    id: 1,
+    lastUsed: Date.now(),
+  },
+];
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
   let fixture: ComponentFixture<SettingsComponent>;
   let store: MockStore;
   let mockSelfNameSelector: MemoizedSelector<AppState, string>;
+  let mockTokensSelector: MemoizedSelector<AppState, LoginTokenDto[]>;
 
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
         imports: [MaterialModule, NoopAnimationsModule],
-        declarations: [SettingsComponent],
-        providers: [provideMockStore({})],
+        declarations: [MockComponent(TokenTableComponent), SettingsComponent],
+        providers: [
+          provideMockStore({
+            initialState: {
+              [userKey]: {
+                desktopNotifications: false,
+                soundAlerts: false,
+              },
+            },
+          }),
+        ],
       }).compileComponents();
     })
   );
@@ -29,6 +55,10 @@ describe('SettingsComponent', () => {
   beforeEach(() => {
     store = TestBed.inject(MockStore);
     mockSelfNameSelector = store.overrideSelector(selectSelfName, 'user1');
+    mockTokensSelector = store.overrideSelector(
+      selectLoginTokens,
+      sampleLoginTokens
+    );
     fixture = TestBed.createComponent(SettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

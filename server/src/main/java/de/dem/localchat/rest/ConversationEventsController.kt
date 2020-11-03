@@ -34,8 +34,8 @@ class ConversationEventsController(
                 while (true) {
                     val event = queue.poll(80, TimeUnit.SECONDS)
                     if (event == null) {
+                        emitter.send(event().reconnectTime(1000))
                         // avoid tcp timeout
-                        emitter.send(ConversationEvent("food", "banana"))
                     } else {
                         emitter.send(event)
                     }

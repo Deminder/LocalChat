@@ -18,9 +18,41 @@ import {
   selectSelfMember,
   isLoadingMoreMessages,
   selectNewestMessage,
+  selectMessageSearch,
+  selectMessageSearchIndex,
 } from '../store/selectors/conversation.selectors';
 import { MaterialModule } from '../material/material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { sampleConversationMessages } from '../shared/dialogs/edit-message/edit-message.component.spec';
+import { RouterTestingModule } from '@angular/router/testing';
+import { userKey } from '../store/reducers/user.reducer';
+import { MessageSearch } from '../store/reducers/conversation.reducer';
+
+export const sampleMemberDtos = [
+  {
+    userId: 1,
+    convId: 1,
+    username: 'user1',
+    joinDate: 0,
+    permission: {
+      read: true,
+      write: true,
+      voice: true,
+      administrate: false,
+      moderate: true,
+    },
+    modifiablePermission: {
+      remove: true,
+      modify: {
+        read: false,
+        write: false,
+        voice: false,
+        moderate: false,
+        administrate: false,
+      },
+    },
+  },
+];
 
 describe('ConversationComponent', () => {
   let component: ConversationComponent;
@@ -44,17 +76,28 @@ describe('ConversationComponent', () => {
     AppState,
     ConversationMessageDto
   >;
+  let mockMessageSearchSelector: MemoizedSelector<AppState, MessageSearch>;
+  let mockMessageSearchIndexSelector: MemoizedSelector<AppState, number>;
 
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [MaterialModule, NoopAnimationsModule],
+        imports: [MaterialModule, NoopAnimationsModule, RouterTestingModule],
         declarations: [
           ConversationComponent,
           MockComponent(MessageListComponent),
           MockComponent(WriterComponent),
         ],
-        providers: [provideMockStore()],
+        providers: [
+          provideMockStore({
+            initialState: {
+              [userKey]: {
+                desktopNotifications: false,
+                soundAlerts: true,
+              },
+            },
+          }),
+        ],
       }).compileComponents();
     })
   );
@@ -68,7 +111,7 @@ describe('ConversationComponent', () => {
     mockSelfUserIdSelector = store.overrideSelector(selectSelfUserId, 2);
     mockConversationMessagesSelector = store.overrideSelector(
       selectConversationMessages,
-      [{ id: 1, authorDate: 0, authorUserId: 1, lastChange: 0, text: 'hello' }]
+      sampleConversationMessages
     );
     mockConversationMemberEntitiesSelector = store.overrideSelector(
       selectConversationMemberEntities,
@@ -76,29 +119,10 @@ describe('ConversationComponent', () => {
     );
     mockIsFirstPageSelector = store.overrideSelector(isFirstPage, true);
     mockIsLastPageSelector = store.overrideSelector(isLastPage, true);
-    mockSelfMemberSelector = store.overrideSelector(selectSelfMember, {
-      userId: 1,
-      convId: 1,
-      username: 'user1',
-      joinDate: 0,
-      permission: {
-        read: true,
-        write: true,
-        voice: true,
-        administrate: false,
-        moderate: true,
-      },
-      modifiablePermission: {
-        remove: true,
-        modify: {
-          read: false,
-          write: false,
-          voice: false,
-          moderate: false,
-          administrate: false,
-        },
-      },
-    });
+    mockSelfMemberSelector = store.overrideSelector(
+      selectSelfMember,
+      sampleMemberDtos[0]
+    );
 
     mockIsLoadingMoreMessagesSelector = store.overrideSelector(
       isLoadingMoreMessages,
@@ -107,7 +131,15 @@ describe('ConversationComponent', () => {
 
     mockNewestConversationMessageSelector = store.overrideSelector(
       selectNewestMessage,
-      { id: 88, text: '', authorDate: 0, authorUserId: 1, lastChange: 0 }
+      sampleConversationMessages[0]
+    );
+    mockMessageSearchSelector = store.overrideSelector(selectMessageSearch, {
+      search: '',
+      regex: false,
+    });
+    mockMessageSearchIndexSelector = store.overrideSelector(
+      selectMessageSearchIndex,
+      -1
     );
 
     // component
