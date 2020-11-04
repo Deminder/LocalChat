@@ -3,11 +3,11 @@ spring:
   datasource:
     url: jdbc:postgresql://db:5432/postgres?currentSchema=public
     username: admin
-    password: 'ENC(5ThPltCDev5sRn24n0hY1blZggNOquK7DTrQ4nu0iRp/nHg+Htiil0PbaFh/VscW)'
+    password: 'ENC(g20RbALK1buYF4sxMLDdDq4tk+bCrNibjEbBnqhcvk+w8zvULSIHMbHpDpskJKLkGWPBcXyJ8GjFlcR6tzSnkg==)'
   flyway:
     url: jdbc:postgresql://db:5432/postgres?currentSchema=public
     user: admin
-    password: 'ENC(5ThPltCDev5sRn24n0hY1blZggNOquK7DTrQ4nu0iRp/nHg+Htiil0PbaFh/VscW)'
+    password: 'ENC(g20RbALK1buYF4sxMLDdDq4tk+bCrNibjEbBnqhcvk+w8zvULSIHMbHpDpskJKLkGWPBcXyJ8GjFlcR6tzSnkg==)'
 
 devtools:
   add-properties: false
@@ -15,17 +15,17 @@ devtools:
 encrypt:
   key-store:
     location: classpath:/server-prod.p12
-    password: 'ENC(DoPb9KlnnrHThPi3dN9+/Nznh+9KIaWnO2ZUanPZtryDdbtyyIiBztW+rUzIvxun)'
+    password: 'ENC(/mAMgB4BFK+FH4UhZL7XWHbeCEYk2DDlY+mA9TKlchsORDUAjPk+Dvf+PVQJux/5biKEOEWvsf3DBV2ezfR9dqBfbTBiPSmd09gZuU5RbNY=)'
     alias: localchat
 
 server:
   ssl:
     key-store: classpath:server-prod.p12
-    key-store-password: 'ENC(DoPb9KlnnrHThPi3dN9+/Nznh+9KIaWnO2ZUanPZtryDdbtyyIiBztW+rUzIvxun)'
+    key-store-password: 'ENC(/mAMgB4BFK+FH4UhZL7XWHbeCEYk2DDlY+mA9TKlchsORDUAjPk+Dvf+PVQJux/5biKEOEWvsf3DBV2ezfR9dqBfbTBiPSmd09gZuU5RbNY=)'
     key-store-type: pkcs12
     key-alias: localchat
-    key-password: 'ENC(DoPb9KlnnrHThPi3dN9+/Nznh+9KIaWnO2ZUanPZtryDdbtyyIiBztW+rUzIvxun)'
+    key-password: 'ENC(/mAMgB4BFK+FH4UhZL7XWHbeCEYk2DDlY+mA9TKlchsORDUAjPk+Dvf+PVQJux/5biKEOEWvsf3DBV2ezfR9dqBfbTBiPSmd09gZuU5RbNY=)'
 
 manage:
   admin:
-    password: 'ENC(5ThPltCDev5sRn24n0hY1blZggNOquK7DTrQ4nu0iRp/nHg+Htiil0PbaFh/VscW)'
+    password: 'ENC(g20RbALK1buYF4sxMLDdDq4tk+bCrNibjEbBnqhcvk+w8zvULSIHMbHpDpskJKLkGWPBcXyJ8GjFlcR6tzSnkg==)'
