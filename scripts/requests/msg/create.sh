@@ -5,6 +5,5 @@ if [ -z "$CID" ]; then
     exit 1
 fi
 TEXT=${2:-someText}
-./ccurl.sh -X PUT -H "Content-Type: application/json" \
+./ccurl.sh /api/conversations/"$CID"/messages -X PUT -H "Content-Type: application/json" \
     --data '{"text":"'"$TEXT"'"}' \
-    http://localhost:9432/api/conversations/"$CID"/messages

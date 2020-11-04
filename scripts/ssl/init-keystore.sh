@@ -1,7 +1,7 @@
 #!/bin/bash
 # "CN=hostname,OU=?,O=?,L=?,ST=?,C=?"
 DNAME=$1 
-STORENAME=server-prod.p12
+STORENAME=${2:-server-prod}
 ALIAS=localchat
 read -sp "storepass:" pass 
 echo
@@ -14,17 +14,17 @@ if [ ! -z "$DNAME" ]; then
 		-validity 365 \
 		-storetype pkcs12 \
 		-dname "$DNAME" \
-		-keystore "$STORENAME" \
+		-keystore "$STORENAME".p12 \
 		-storepass:env STOREPASS && echo "Gen keypair $STORENAME:$ALIAS ( self signed )"
 fi
-if [ ! -f "$STORENAME" ]; then
+if [ ! -f "$STORENAME".p12 ]; then
 	echo "Expected dname argument to create new keystore!"
 	exit 1
 fi
 keytool -certreq \
 	-alias "$ALIAS" \
-	-keystore "$STORENAME" \
+	-keystore "$STORENAME".p12 \
 	-storepass:env STOREPASS \
-	-file server-prod.csr && echo "Created CSR for $STORENAME:$ALIAS ( pass to CA )"
+	-file "$STORENAME".csr && echo "Created CSR for $STORENAME:$ALIAS ( pass to CA )"
 
 

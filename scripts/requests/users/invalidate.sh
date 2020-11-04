@@ -1,2 +1,2 @@
 #!/bin/bash
-./ccurl.sh -X POST http://localhost:9432/api/user/logout
+./ccurl.sh /api/user/logout -X POST

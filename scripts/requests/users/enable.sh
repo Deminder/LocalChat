@@ -1,3 +1,3 @@
 #!/bin/bash
-./ccurl.sh -X POST http://localhost:9432/api/manage/users/$1/enable
+./ccurl.sh /api/manage/users/$1/enable -X POST
 

@@ -1,2 +1,2 @@
 #!/bin/bash
-./ccurl.sh http://localhost:9432/api/user/self/
+./ccurl.sh /api/user/self/
