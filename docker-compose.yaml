@@ -2,6 +2,9 @@ version: '3.7'
 services:
   server:
     image: localchat2
+    build:
+      context: ./
+      dockerfile: Dockerfile
     env_file:
       - server.env
     ports:
