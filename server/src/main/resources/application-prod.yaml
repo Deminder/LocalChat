@@ -1,18 +1,4 @@
 
-spring:
-  datasource:
-    url: jdbc:postgresql://localchat:5432/postgres?currentSchema=localchat
-    username: chatadmin
-    password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
-    driver-class-name: org.postgresql.Driver
-  flyway:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=localchat
-    user: chatadmin
-    password: 'ENC(fyzyNb35NfO7iXywvA6Z2+WszE9uYY1vVKGJcKMCnsHHY9zjXpuQfnC3R1g6pl710QMzOLk6U3FNVXOuqZBNmg==)'
-    schemas: localchat
-    locations: classpath:db/migration
-    enabled: true
-
 
 devtools:
   add-properties: false

@@ -58,14 +58,14 @@ class UserServiceImpl(
 
     @Transactional
     override fun initAdmin() {
-        if (!isRegistered("admin"))
-            userRepository.save(
-                    User(
-                            username = "admin",
-                            password = enc(adminPassword),
-                            enabled = true,
-                            authorities = mutableSetOf("ADMIN", "MANAGER"))
-            )
+        (userRepository.findByUsername("admin")?.copy(password = enc(adminPassword))
+                ?: User(
+                        username = "admin",
+                        password = enc(adminPassword),
+                        enabled = true,
+                        authorities = mutableSetOf("ADMIN", "MANAGER"))).let {
+            userRepository.save(it)
+        }
 
     }
 
