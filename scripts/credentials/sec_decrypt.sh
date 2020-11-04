@@ -1,4 +1,9 @@
 #!/bin/bash
+cd "$(dirname "${BASH_SOURCE[0]}")"
+export JASYPT=jasypt-1.9.3
+if [ ! -d "$JASYPT" ]; then
+	./jasypt-init.sh >/dev/null 2>/dev/null 
+fi
 # using jaspypt-1.9.3-dist bin
 cd $JASYPT_HOME/bin
 ./decrypt.sh \

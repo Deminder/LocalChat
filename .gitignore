@@ -38,3 +38,12 @@ build/
 /server/src/main/resources/server-dev.jks
 /scripts/requests/cookies.txt
 /.mvn/.gradle-enterprise/gradle-enterprise-workspace-id
+
+# ssl
+*.csr
+*.p12
+*.jsk
+*.pem
+
+# docker
+server.env

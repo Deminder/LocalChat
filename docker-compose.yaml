@@ -2,6 +2,8 @@ version: '3.7'
 services:
   server:
     image: localchat2
+    env_file:
+      - server.env
     ports:
       - 9432:9432
     networks:
