@@ -46,4 +46,4 @@ build/
 *.pem
 
 # docker
-server.env
+*.env
