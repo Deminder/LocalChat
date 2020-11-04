@@ -34,5 +34,5 @@ networks:
     driver: bridge
 
 volumes:
-  posgres-data:
+  postgres-data:
   pgadmin-data:
