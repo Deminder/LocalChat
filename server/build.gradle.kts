@@ -13,18 +13,26 @@ tasks.flywayMigrate {
     dependsOn(tasks.classes)
 }
 
-val staticDir = "build/resources/main/static/"
 
-tasks.register("copyFrontend") {
-    dependsOn(":server:webclient:build")
-    copy {
-        from("src/webclient/dist/webclient")
-        into(staticDir)
+val staticDir = "build/resources/main/static/"
+val copyFrontend by tasks.registering {
+    doFirst {
+        delete(staticDir)
+    }
+    doLast {
+        copy {
+            from("src/webclient/dist/webclient")
+            into(staticDir)
+        }
     }
 }
 
+copyFrontend {
+    dependsOn(":server:webclient:build")
+}
+
 tasks.jar {
-    dependsOn(tasks.getByName("copyFrontend"))
+    dependsOn(copyFrontend)
 }
 
 tasks.clean {

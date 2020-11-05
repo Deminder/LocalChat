@@ -8,8 +8,8 @@
   </button>
   <ng-template [ngIf]="!(isSearching$ | async)">
     <span>{{ toolbarTitle$ | async }}</span>
-    <span class="example-spacer"></span>
   </ng-template>
+  <span class="example-spacer"></span>
   <app-searcher *ngIf="isChatOpen$ | async"> </app-searcher>
   <ng-template [ngIf]="isSettingsOpen$ | async">
     <button mat-icon-button aria-label="Back" (click)="back()">
