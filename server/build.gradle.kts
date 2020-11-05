@@ -16,6 +16,7 @@ tasks.flywayMigrate {
 val staticDir = "build/resources/main/static/"
 
 tasks.register("copyFrontend") {
+    dependsOn(":server:webclient:build")
     copy {
         from("src/webclient/dist/webclient")
         into(staticDir)
