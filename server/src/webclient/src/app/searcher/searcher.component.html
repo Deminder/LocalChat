@@ -1,27 +1,32 @@
-<ng-template [ngIf]="searchItemCount$ | async">
-<small>{{ (searchItemIndex$ | async) + 1 }} / {{ searchItemCount$ | async  }}</small>
-<button
-  mat-icon-button
-  aria-label="Previous"
-  (click)="previousItem()"
->
-  <mat-icon>keyboard_arrow_down</mat-icon>
-</button>
-<button
-  mat-icon-button
-  aria-label="Next"
-  (click)="nextItem()"
->
-  <mat-icon>keyboard_arrow_up</mat-icon>
-</button>
-</ng-template>
+<div class="switch-section" *ngIf="searchItemCount$ | async">
+  <button
+    mat-icon-button
+    class="switch-button"
+    aria-label="Next"
+    (click)="nextItem()"
+  >
+    <mat-icon>keyboard_arrow_up</mat-icon>
+  </button>
+  <span
+    >{{ (searchItemIndex$ | async) + 1 }}/{{ searchItemCount$ | async }}</span
+  >
+  <button
+    mat-icon-button
+    class="switch-button"
+    aria-label="Previous"
+    (click)="previousItem()"
+  >
+    <mat-icon>keyboard_arrow_down</mat-icon>
+  </button>
+</div>
 <mat-checkbox
   *ngIf="!searchCollapsed"
   class="regex-checkbox"
-  matTooltip="Search by Regex"
-  [checked]="regex"
-  (change)="regex = $event;searchUpdate(); searcher.focus()"
-></mat-checkbox>
+  matTooltip="Enable Search by Regex"
+  [(ngModel)]="regex"
+  (ngModelChange)="searchUpdate()"
+  >Regex-Search</mat-checkbox
+>
 <button
   mat-icon-button
   class="search-button"
@@ -37,11 +42,13 @@
       name="searchField"
       matInput
       type="search"
+      appEnterKeydown
       (focus)="focused = true"
       (blur)="focused = false"
-      (keydown)="keydown($event)"
+      (enterKeydown)="enterKeydown($event)"
+      (escapeKeydown)="escapeKeydown($event)"
       [(ngModel)]="searchText"
-      (ngModelChange)="searchUpdate()"
+      (ngModelChange)="searchUpdate(false)"
     />
   </mat-form-field>
   <button
@@ -49,7 +56,7 @@
     [class.hidden]="isClear"
     class="clear-button"
     aria-label="Clear"
-    (click)="searchText = ''; searchUpdate(); searcher.focus()"
+    (click)="searchText = ''; searchUpdate()"
   >
     <mat-icon>clear</mat-icon>
   </button>

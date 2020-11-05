@@ -37,7 +37,7 @@ interface ConversationService {
     @PreAuthorize("@memberServiceImpl.isMember(#cid, authentication.name, 'READ')")
     fun memberReadsConversation(
             @Param("cid") conversationId: Long
-    )
+    ): Member
 
     fun createConversation(conversationName: String, memberNames: Set<String>): Conversation
 

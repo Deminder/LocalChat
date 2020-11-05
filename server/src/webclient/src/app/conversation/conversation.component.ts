@@ -1,4 +1,4 @@
-import { CdkScrollable } from '@angular/cdk/overlay';
+import * as overlay from '@angular/cdk/overlay';
 import { ExtendedScrollToOptions } from '@angular/cdk/scrolling';
 import {
   AfterViewChecked,
@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { animationFrameScheduler, Subscription } from 'rxjs';
+import { animationFrameScheduler, Subscription, combineLatest } from 'rxjs';
 import {
   auditTime,
   distinctUntilChanged,
@@ -29,6 +29,7 @@ import {
   editMessage,
   startLoadMoreMessages,
   stopLoadMoreMessages,
+  selfReadMessage,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
@@ -44,6 +45,7 @@ import {
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
+import { NotifyService } from '../shared/services/notify.service';
 
 @Component({
   selector: 'app-conversation',
@@ -64,11 +66,17 @@ export class ConversationComponent
   messageSearch$ = this.store.select(selectMessageSearch);
   messageSearchIndex$ = this.store.select(selectMessageSearchIndex);
 
+  newMessageId$ = this.newestConversationMessage$.pipe(
+    filter((msg) => msg !== null),
+    map((msg) => msg.id),
+    distinctUntilChanged()
+  );
+
   @ViewChild(MessageListComponent)
   messageList: MessageListComponent;
 
-  @ViewChild(CdkScrollable)
-  messageScrollable: CdkScrollable;
+  @ViewChild(overlay.CdkScrollable)
+  messageScrollable: overlay.CdkScrollable;
 
   downScroller: Subscription;
   scrollToLowestMsgIds = -1;
@@ -81,25 +89,39 @@ export class ConversationComponent
   searchHighlight = -1;
   searchJumper: Subscription;
 
+  readInformer: Subscription;
+
   constructor(
     private store: Store,
     private ngZone: NgZone,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notifyService: NotifyService
   ) {}
 
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    this.downScroller = this.newestConversationMessage$
-      .pipe(
-        filter((msg) => msg !== null),
-        map((msg) => msg.id),
-        distinctUntilChanged(),
-        withLatestFrom(this.isFirstPage$)
-      )
+    this.downScroller = this.newMessageId$
+      .pipe(withLatestFrom(this.isFirstPage$))
       .subscribe(([msgId, firstPage]) => {
         this.scrollToLowestMsgIds = msgId;
         this.firstPage = firstPage;
+      });
+
+    this.readInformer = combineLatest([
+      this.newMessageId$,
+      this.notifyService.hidden$,
+    ])
+      .pipe(
+        filter(([_, hidden]) => !hidden), // user can only read if document visible
+        map(([msgId]) => msgId),
+        distinctUntilChanged(),
+        withLatestFrom(this.conversationId$)
+      )
+      .subscribe(([msgId, cid]) => {
+        this.store.dispatch(
+          selfReadMessage({ conversationId: cid, messageId: msgId })
+        );
       });
 
     this.updater = this.messageScrollable
@@ -176,6 +198,7 @@ export class ConversationComponent
   ngOnDestroy(): void {
     this.downScroller.unsubscribe();
     this.updater.unsubscribe();
+    this.readInformer.unsubscribe();
   }
 
   loadMoreMessages(conversationId: number, loadMore: boolean): void {

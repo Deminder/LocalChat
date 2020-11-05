@@ -5,6 +5,8 @@
     <input
       matInput
       type="text"
+      appEnterKeydown
+      (enterKeydown)="nameControl.valid ? confirm() : null"
       [formControl]="nameControl"
       [matAutocomplete]="auto"
     />

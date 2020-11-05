@@ -1,4 +1,3 @@
-import * as store from '@ngrx/store';
 import { MessageSearchRequestReq } from 'src/app/openapi/model/models';
 import {
   conversationKey,
@@ -12,59 +11,62 @@ import {
 } from '../reducers/conversation.reducer';
 import { isChatOpen, selectedConversationId } from '../reducers/router.reducer';
 import { selectSelfUserId } from './user.selectors';
+import {createSelector, createFeatureSelector} from '@ngrx/store';
 
-const selectConversation = store.createFeatureSelector<ConversationState>(
+const selectConversation = createFeatureSelector<ConversationState>(
   conversationKey
 );
 
-const selectConversationNames = store.createSelector(
+const selectConversationNames = createSelector(
   selectConversation,
   (state) => state.names
 );
 
-export const selectConversations = store.createSelector(
+export const selectConversations = createSelector(
   selectConversationNames,
   (state) => selectAllConvs(state)
 );
 
-export const selectConversationNameEntities = store.createSelector(
+
+export const selectConversationNameEntities = createSelector(
   selectConversation,
   (state) => selectConvEntites(state.names)
 );
 
-export const selectActiveConversation = store.createSelector(
+export const selectActiveConversation = createSelector(
   selectConversationNameEntities,
   selectedConversationId,
   (convNameEntities, cid) => convNameEntities[cid]
 );
 
-export const selectConversationMembers = store.createSelector(
+
+export const selectConversationMembers = createSelector(
   selectConversation,
   (state) => selectAllMembers(state.members)
 );
 
-export const selectConversationMemberEntities = store.createSelector(
+export const selectConversationMemberEntities = createSelector(
   selectConversation,
   (state) => selectMemberEntites(state.members)
 );
 
-export const selectSelfMember = store.createSelector(
+export const selectSelfMember = createSelector(
   selectConversationMemberEntities,
   selectSelfUserId,
   (membs, uid) => membs[uid]
 );
 
-export const selectConversationMessages = store.createSelector(
+export const selectConversationMessages = createSelector(
   selectConversation,
   (state) => selectAllMessages(state.messages)
 );
 
-export const selectPreviousMessagePage = store.createSelector(
+export const selectPreviousMessagePage = createSelector(
   selectConversation,
   (state) => state.messages.previousPage
 );
 
-export const isFirstPageNeeded = store.createSelector(
+export const isFirstPageNeeded = createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   isChatOpen,
@@ -72,24 +74,24 @@ export const isFirstPageNeeded = store.createSelector(
     isOpen && cid >= 0 && (!prevPage || prevPage.convId !== cid)
 );
 
-export const areMembersNeeded = store.createSelector(
+export const areMembersNeeded = createSelector(
   selectedConversationId,
   selectConversationMembers,
   (cid, members) =>
     cid >= 0 && (members.length === 0 || members[0].convId !== cid)
 );
 
-export const selectOldestMessage = store.createSelector(
+export const selectOldestMessage = createSelector(
   selectConversationMessages,
   (messages) => (messages.length > 0 ? messages[0] : null)
 );
 
-export const selectNewestMessage = store.createSelector(
+export const selectNewestMessage = createSelector(
   selectConversationMessages,
   (messages) => (messages.length > 0 ? messages[messages.length - 1] : null)
 );
 
-export const isFirstPage = store.createSelector(
+export const isFirstPage = createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   selectNewestMessage,
@@ -100,14 +102,14 @@ export const isFirstPage = store.createSelector(
     prevPage.request.olderThan > newestMessage.authorDate
 );
 
-export const isLastPage = store.createSelector(
+export const isLastPage = createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   (cid, prevPage) => prevPage && prevPage.convId === cid && prevPage.last
 );
 
 /* SEARCHING */
-export const selectNextMessagePageRequest = store.createSelector(
+export const selectNextMessagePageRequest = createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
   (cid, prevPage): MessageSearchRequestReq => {
@@ -124,37 +126,37 @@ export const selectNextMessagePageRequest = store.createSelector(
   }
 );
 
-export const selectMessageSearchState = store.createSelector(
+export const selectMessageSearchState = createSelector(
   selectConversation,
   (state) => state.search
 );
 
-export const selectMessageSearch = store.createSelector(
+export const selectMessageSearch = createSelector(
   selectMessageSearchState,
   (state) => state.search
 );
 
-export const selectMessageSearchCount = store.createSelector(
+export const selectMessageSearchCount = createSelector(
   selectMessageSearchState,
   (state) => state.count
 );
 
-export const selectMessageSearchIndex = store.createSelector(
+export const selectMessageSearchIndex = createSelector(
   selectMessageSearchState,
   (state) => state.index
 );
 
-export const isMessageSearching = store.createSelector(
+export const isMessageSearching = createSelector(
   selectMessageSearch,
   (search: MessageSearch) => search.search !== ''
 );
 
-export const selectLoadMoreConversationId = store.createSelector(
+export const selectLoadMoreConversationId = createSelector(
   selectConversation,
   (state) => state.loadMore?.conversationId
 );
 
-export const isLoadingMoreMessages = store.createSelector(
+export const isLoadingMoreMessages = createSelector(
   selectedConversationId,
   selectLoadMoreConversationId,
   isLastPage,
@@ -162,22 +164,22 @@ export const isLoadingMoreMessages = store.createSelector(
 );
 
 /* VOICE */
-export const selectVoice = store.createSelector(
+export const selectVoice = createSelector(
   selectConversation,
   (state) => state.voice
 );
 
-export const isMicrohponeEnabled = store.createSelector(
+export const isMicrohponeEnabled = createSelector(
   selectVoice,
   (voice) => voice.microphone
 );
 
-export const isPlaybackEnabled = store.createSelector(
+export const isPlaybackEnabled = createSelector(
   selectVoice,
   (voice) => voice.playback
 );
 
-export const selectVoiceChannel = store.createSelector(
+export const selectVoiceChannel = createSelector(
   selectVoice,
   (voice) => voice.channel
 );

@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
 
   hide = true;
 
-  registerForm = this.fb.group(
+  registerForm: FormGroup = this.fb.group(
     {
       username: [
         '',

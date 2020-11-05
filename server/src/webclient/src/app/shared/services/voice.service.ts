@@ -1,6 +1,11 @@
-import {Injectable, NgZone} from '@angular/core';
-import {Subject} from 'rxjs';
-import {VoiceBuffer} from './voicebuffer';
+import { Injectable, NgZone } from '@angular/core';
+import { Subject } from 'rxjs';
+import { VoiceBuffer } from './voicebuffer';
+import { Store } from '@ngrx/store';
+import {
+  switchVoiceConversation,
+  enableMicrophone,
+} from 'src/app/store/actions/conversation.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +15,6 @@ export class VoiceService {
 
   micAudioContext: AudioContext;
   playBackAudioContext: AudioContext;
-
-  conversationId$ = new Subject<number>();
-  playBackEnabled$ = new Subject<boolean>();
-  micEnabled$ = new Subject<boolean>();
 
   samplesPerFrame = 512;
   silentFrameGap = 0;
@@ -27,7 +28,7 @@ export class VoiceService {
   selfVoiceAnalyser$ = new Subject<AnalyserNode | null>();
   selfGain$ = new Subject<GainNode | null>();
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone, private store: Store) {}
 
   private static signalPower(frame: Float32Array): number {
     return frame.reduce((sum, v) => sum + v * v, 0) / frame.length;
@@ -77,8 +78,6 @@ export class VoiceService {
     this.ngZone.runOutsideAngular(async () => {
       await this.leave();
 
-      this.ngZone.run(() => this.conversationId$.next(conversationId));
-
       if (conversationId > 0) {
         const p = location.protocol === 'http:' ? 'ws:' : 'wss:';
         const ws = new WebSocket(
@@ -117,6 +116,11 @@ export class VoiceService {
             );
           } else {
             console.log('WebSocket closed.', event.reason, event.code);
+            this.ngZone.run(() =>
+              this.store.dispatch(
+                switchVoiceConversation({ conversationId: -1 })
+              )
+            );
           }
         };
 
@@ -150,8 +154,6 @@ export class VoiceService {
   enablePlayback(enabled: boolean): void {
     this.ngZone.runOutsideAngular(async () => {
       await this.disablePlayback();
-
-      this.ngZone.run(() => this.playBackEnabled$.next(enabled));
 
       if (enabled) {
         const audioContext = await this.initPlaybackContext();
@@ -218,17 +220,25 @@ export class VoiceService {
       // clean previous context
       await this.disableMic();
 
-      this.ngZone.run(() => this.micEnabled$.next(enabled));
-
       if (enabled) {
         // start new microphone session if enabled
-        const audioContext = await this.initMicContext();
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        const sendingNode = await this.voiceSendingNode(audioContext);
+        let stream: MediaStream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+        } catch (e) {
+          console.log('No microphone available!', e);
+          this.ngZone.run(() =>
+            this.store.dispatch(enableMicrophone({ enabled: false }))
+          );
+          return;
+        }
         const tracks = stream.getAudioTracks();
         tracks.forEach((t) => (t.enabled = true));
+
+        const audioContext = await this.initMicContext();
+        const sendingNode = await this.voiceSendingNode(audioContext);
 
         const lowPass = audioContext.createBiquadFilter();
         lowPass.type = 'lowpass';

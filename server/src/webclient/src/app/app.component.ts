@@ -1,9 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
 import { addConversation } from './store/actions/conversation.actions';
 import { routeBackToChat } from './store/actions/router.actions';
@@ -19,17 +19,23 @@ import {
   isMessageSearching,
 } from './store/selectors/conversation.selectors';
 import { isGlobalLoading } from './store/selectors/progress.selectors';
-import { selectSelfName, isSideNavOpen } from './store/selectors/user.selectors';
-import {sidenavToggle} from './store/actions/user.actions';
+import {
+  selectSelfName,
+  isSideNavOpen,
+} from './store/selectors/user.selectors';
+import {
+  selectAppTitle,
+  selectAppToolbar,
+} from './store/selectors/app.selectors';
+import { sidenavToggle } from './store/actions/user.actions';
+import { Subscription, zip, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  defaultTitle = 'Local Chat';
-
+export class AppComponent implements OnInit, OnDestroy {
   selfName$ = this.store.select(selectSelfName);
   isGlobalLoading$ = this.store.select(isGlobalLoading);
   isSettingsOpen$ = this.store.select(isSettingsOpen);
@@ -41,10 +47,9 @@ export class AppComponent implements OnInit {
   conversationId$ = this.store.select(selectedConversationId);
   isSearching$ = this.store.select(isMessageSearching);
 
-  toolbarTitle$ = this.store.select(selectActiveConversation).pipe(
-    map((curConv) => curConv?.name ?? this.defaultTitle),
-    tap((t) => this.title.setTitle(t))
-  );
+  toolbarTitle$ = this.store.select(selectAppToolbar);
+
+  titleUpdater: Subscription;
 
   constructor(
     private store: Store,
@@ -53,7 +58,21 @@ export class AppComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.titleUpdater = combineLatest([
+      this.conversations$,
+      this.store.select(selectAppTitle),
+    ]).subscribe(([convs, t]) => {
+      const unreadCount = convs
+        .map((c) => c.unreadCount)
+        .reduce((s, v) => s + v, 0);
+      this.title.setTitle(t + (unreadCount > 0 ? ` (${unreadCount})` : ''));
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.titleUpdater.unsubscribe();
+  }
 
   back(): void {
     this.location.back();

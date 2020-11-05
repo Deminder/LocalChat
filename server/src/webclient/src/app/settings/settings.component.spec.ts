@@ -16,6 +16,7 @@ import { userKey } from '../store/reducers/user.reducer';
 import { LoginTokenDto } from '../openapi/model/models';
 import { MockComponent } from 'ng-mocks';
 import { TokenTableComponent } from './token-table/token-table.component';
+import {FormsModule} from '@angular/forms';
 
 const sampleLoginTokens: LoginTokenDto[] = [
   {
@@ -36,7 +37,7 @@ describe('SettingsComponent', () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [MaterialModule, NoopAnimationsModule],
+        imports: [MaterialModule, FormsModule, NoopAnimationsModule],
         declarations: [MockComponent(TokenTableComponent), SettingsComponent],
         providers: [
           provideMockStore({

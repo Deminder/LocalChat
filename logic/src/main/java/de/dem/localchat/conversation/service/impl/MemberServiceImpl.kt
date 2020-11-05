@@ -37,19 +37,6 @@ class MemberServiceImpl(
                     } ?: false
 
 
-    override fun updateLastRead(conversationMessageId: Long): Member =
-            conversationMessageRepository.findById(conversationMessageId).orElseThrow {
-                ConversationException("Conversation message does not exist!")
-            }.let { message ->
-                authorizedMember(message.conversationId)?.let { member ->
-                    member.copy(
-                            lastRead = max(listOf(member.lastRead, message.authorDate)))
-                            .let {
-                                memberRepository.save(member)
-                            }
-                }
-            } ?: error("Failed updating last read!")
-
     /**
      * True if a member wrote a message and is still member of the conversation
      */
@@ -119,13 +106,16 @@ class MemberServiceImpl(
                                            np: Permission,
                                            ap: Permission) = modificationPermission(ss, op, ap).let { cp ->
         Permission(
-                read = if (cp.read) np.read else error("Not allowed to change read permission!"),
-                write = if (cp.write) np.write else error("Not allowed to change write permission!"),
-                voice = if (cp.voice) np.voice else error("Not allowed to change voice permission!"),
-                moderate = if (cp.moderate) np.moderate else error("Not allowed to change moderate permission!"),
-                administrate = if (cp.administrate) np.administrate else error("Not allowed to administrate permission!")
+                read = checkChangePermission("read", np.read, op.read, cp.read),
+                write = checkChangePermission("write", np.write, op.write, cp.write),
+                voice = checkChangePermission("voice", np.voice, op.voice, cp.voice),
+                moderate = checkChangePermission("moderate", np.moderate, op.moderate, cp.moderate),
+                administrate = checkChangePermission("administrate", np.administrate, op.administrate, cp.administrate)
         )
     }
+
+    private fun <T> checkChangePermission(name: String, newValue: T, oldValue: T, changePermission: Boolean): T =
+            if (newValue != oldValue || changePermission) newValue else error("Not allowed to change '$name' permission!")
 
 
     override fun allowedRemoval(conversationId: Long, userId: Long) =

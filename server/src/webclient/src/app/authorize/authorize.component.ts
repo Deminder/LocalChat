@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Store } from '@ngrx/store';
 import { NotifyService } from '../shared/services/notify.service';
@@ -10,13 +16,14 @@ import {
 import { selectRegisteredUsername } from '../store/reducers/router.reducer';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-authorize',
   templateUrl: './authorize.component.html',
   styleUrls: ['./authorize.component.scss'],
 })
-export class AuthorizeComponent implements OnInit, AfterViewInit {
+export class AuthorizeComponent implements OnInit, AfterViewInit, OnDestroy {
   loginErrors$ = this.notifyService.select('login-errors');
   registerErrors$ = this.notifyService.select('register-errors');
   initialUsername$ = this.store.select(selectRegisteredUsername);
@@ -24,6 +31,8 @@ export class AuthorizeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTabGroup) tabs: MatTabGroup;
   @ViewChild(LoginComponent) loginForm: LoginComponent;
   @ViewChild(RegisterComponent) registerForm: RegisterComponent;
+
+  successReact: Subscription;
 
   constructor(private store: Store, private notifyService: NotifyService) {}
 
@@ -33,7 +42,7 @@ export class AuthorizeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initialUsername$.subscribe((username) => {
+    this.successReact = this.initialUsername$.subscribe((username) => {
       this.tabs.selectedIndex = 0;
       if (this.loginForm) {
         this.loginForm.reset(username);
@@ -42,6 +51,10 @@ export class AuthorizeComponent implements OnInit, AfterViewInit {
         this.registerForm.reset();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.successReact.unsubscribe();
   }
 
   onLogin(credentials: Credentials): void {

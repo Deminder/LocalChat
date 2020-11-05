@@ -7,6 +7,7 @@ export * from './conversationRenameRequest';
 export * from './loginRequest';
 export * from './loginTokenDto';
 export * from './loginTokenListResponse';
+export * from './markReadResponse';
 export * from './memberDto';
 export * from './memberModifyPermissionDto';
 export * from './memberUpdateRequest';

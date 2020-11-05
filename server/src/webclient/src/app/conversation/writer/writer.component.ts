@@ -40,12 +40,10 @@ export class WriterComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {}
 
-  keydown(event: KeyboardEvent): void {
-    if (!event.shiftKey) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        this.submit();
-      }
+  enterKeydown(event: KeyboardEvent): void {
+    if (!event.shiftKey && this.text) {
+      event.preventDefault();
+      this.submit();
     }
   }
 
@@ -56,10 +54,6 @@ export class WriterComponent implements OnInit, OnChanges {
 
   private canWrite(member: MemberDto): boolean {
     return member?.permission.write;
-  }
-
-  private canVoice(member: MemberDto): boolean {
-    return member?.permission.voice;
   }
 
   submit(): void {

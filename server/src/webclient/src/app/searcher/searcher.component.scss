@@ -4,14 +4,22 @@
   flex-flow: row nowrap;
 }
 .search-section {
-  display: flex;
-  align-items: center;
+  display: block;
   width: 12em;
 }
 
+.switch-section {
+  display: flex;
+  font-size: 12px;
+}
+
+.switch-section span{
+  line-height: 40px;
+}
 
 .regex-checkbox {
   margin-left: 0;
+  font-size: 10px;
 }
 
 .mat-input-element{

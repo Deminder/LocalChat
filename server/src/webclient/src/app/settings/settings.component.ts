@@ -43,7 +43,7 @@ export class SettingsComponent implements OnInit {
   }
 
   enableNotifications(enabled: boolean): void {
-    this.store.dispatch(toggleDesktopNotifications({ enabled }));
+    this.store.dispatch(toggleDesktopNotifications({ enabled }))
   }
 
   enableSoundAlerts(enabled: boolean): void {

@@ -36,8 +36,12 @@ export const userReducer = createReducer(
   on(getSelfActions.success, (state, action) => {
     return { ...state, selfUser: action.user };
   }),
-  on(logout, () => {
-    return { ...initialUserState };
+  on(logout, (state) => {
+    return {
+      ...state,
+      loginTokens: [],
+      selfUser: { ...initialUserState.selfUser },
+    };
   }),
   on(sidenavToggle, (state) => {
     return { ...state, sidenavOpen: !state.sidenavOpen };

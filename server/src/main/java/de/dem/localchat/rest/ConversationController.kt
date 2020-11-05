@@ -1,5 +1,6 @@
 package de.dem.localchat.rest
 
+import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.model.ConversationEvent
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.conversation.service.EventSubscriptionService
@@ -70,11 +71,12 @@ class ConversationController(
                        @RequestBody r: MessageSearchRequest): ConversationMessagePageDto {
         return conversationService.conversationMessagePage(cid, r.page, r.pageSize,
                 Instant.ofEpochMilli(r.olderThan), Instant.ofEpochMilli(r.newerThan),
-                r.search, r.regex).toConversationMessagePageDto(cid, r).also {
-            if (it.request.page == 0 && it.request.search == null) {
-                conversationService.memberReadsConversation(cid)
-            }
-        }
+                r.search, r.regex).toConversationMessagePageDto(cid, r)
+    }
+
+    @GetMapping("/{cid}/mark-read")
+    fun markRead(@PathVariable("cid") cid: Long): MarkReadResponse {
+        return MarkReadResponse(toMemberDto(conversationService.memberReadsConversation(cid)), getConversation(cid))
     }
 
     @DeleteMapping("/{cid}/messages/{mid}")
@@ -88,9 +90,7 @@ class ConversationController(
 
     @GetMapping("/{cid}/members")
     fun listMembers(@PathVariable("cid") cid: Long): List<MemberDto> {
-        return conversationService.membersOfConversation(cid).map {
-            it.toMemberDto(memberService.memberName(cid, it.userId), allowedModification(cid, it.userId))
-        }
+        return conversationService.membersOfConversation(cid).map { toMemberDto(it) }
     }
 
     @PostMapping("/{cid}/members/{uid}")
@@ -99,9 +99,7 @@ class ConversationController(
             @PathVariable("uid") uid: Long,
             @Valid @RequestBody updateRequest: MemberUpdateRequest): MemberDto =
             updateRequest.permission?.let {
-                memberService.upsertMember(cid, uid, it.toPermission()).let { member ->
-                    member.toMemberDto(memberService.memberName(cid, member.userId), allowedModification(cid, uid))
-                }.also { member ->
+                toMemberDto(memberService.upsertMember(cid, uid, it.toPermission())).also { member ->
                     eventSubscriptionService.notifyMembers(
                             ConversationEvent("upsert-member", member), cid, username())
                 }
@@ -128,6 +126,12 @@ class ConversationController(
                 memberService.allowedRemoval(cid, uid)
         )
     }
+
+    private fun toMemberDto(member: Member): MemberDto =
+            member.toMemberDto(
+                    memberService.memberName(member.conversationId, member.userId),
+                    allowedModification(member.conversationId, member.userId))
+
 
     private fun unreadCount(conversationId: Long): Int = conversationService.countUnreadMessages(conversationId)
 

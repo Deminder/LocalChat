@@ -1,10 +1,4 @@
 import { createAction, props } from '@ngrx/store';
-import {
-  ActionCreator,
-  NotAllowedCheck,
-  Props,
-  TypedAction,
-} from '@ngrx/store/src/models';
 import { LoginTokenDto, UserDto } from '../../openapi/model/models';
 import { createApiActions } from './actions-creation';
 
@@ -31,9 +25,13 @@ export const getSelfActions = createApiActions('User', 'Get Self', {
   success: props<{ user: UserDto }>(),
 });
 
-export const listLoginTokensActions = createApiActions('User', 'List Login Tokens', {
-  success: props<{ tokens: LoginTokenDto[] }>(),
-});
+export const listLoginTokensActions = createApiActions(
+  'User',
+  'List Login Tokens',
+  {
+    success: props<{ tokens: LoginTokenDto[] }>(),
+  }
+);
 
 export const deleteTokenActions = createApiActions(
   'User',

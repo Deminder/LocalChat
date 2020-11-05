@@ -1,6 +1,11 @@
 <div *ngIf="activeConversation$ | async as conv">
-  <mat-accordion>
-    <mat-expansion-panel *ngFor="let member of members$ | async">
+  <mat-accordion multi>
+    <mat-expansion-panel
+      *ngFor="let member of members$ | async"
+      [expanded]="expandedMemberIds.has(member.userId)"
+      (opened)="expandedMemberIds.add(member.userId)"
+      (closed)="expandedMemberIds.delete(member.userId)"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ member.username }}
@@ -13,10 +18,11 @@
         <ng-template ngFor [ngForOf]="member.permission | keyvalue" let-p>
           <mat-checkbox
             [disabled]="!member.modifiablePermission.modify[p.key]"
-            [checked]="p.value"
+            [ngModel]="p.value"
             (ngModelChange)="changePermission(member, p.key, $event)"
-            >{{ p.key | titlecase }}</mat-checkbox
           >
+            {{ p.key | titlecase }}
+          </mat-checkbox>
         </ng-template>
         <button
           mat-icon-button

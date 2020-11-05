@@ -43,6 +43,7 @@ import { SearcherComponent } from './searcher/searcher.component';
 import { TokenTableComponent } from './settings/token-table/token-table.component';
 import { EditMessageComponent } from './shared/dialogs/edit-message/edit-message.component';
 import { VoiceVisualComponent } from './members/voice-visual/voice-visual.component';
+import { EnterKeyDownDirective } from './shared/enter-key-down.directive';
 
 registerLocaleData(localeDe);
 
@@ -66,6 +67,7 @@ export const metaReducers = [
   declarations: [
     AppComponent,
     ConversationComponent,
+    EnterKeyDownDirective,
     LoginComponent,
     AuthorizeComponent,
     RegisterComponent,
@@ -85,6 +87,7 @@ export const metaReducers = [
     TokenTableComponent,
     EditMessageComponent,
     VoiceVisualComponent,
+    EnterKeyDownDirective,
   ],
   imports: [
     BrowserModule,

@@ -6,13 +6,10 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
-  <small>{{ selfName$ | async }}</small>
-  <span class="example-spacer"></span>
   <ng-template [ngIf]="!(isSearching$ | async)">
     <span>{{ toolbarTitle$ | async }}</span>
     <span class="example-spacer"></span>
   </ng-template>
-
   <app-searcher *ngIf="isChatOpen$ | async"> </app-searcher>
   <ng-template [ngIf]="isSettingsOpen$ | async">
     <button mat-icon-button aria-label="Back" (click)="back()">
@@ -43,6 +40,7 @@
 
 <app-sidenav
   #sidenav
+  [title]="selfName$ | async"
   [opened]="isSideNavOpen$ | async"
   (openedChange)="sidenavChange($event)"
   (createConv)="addConversation()"

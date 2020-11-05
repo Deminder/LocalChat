@@ -3,6 +3,8 @@
   <mat-form-field>
     <mat-label>Conversation Name</mat-label>
     <input
+      appEnterKeydown
+      (enterKeydown)="nameControl.valid ? confirm() : null"
       matInput
       type="text"
       [formControl]="nameControl"

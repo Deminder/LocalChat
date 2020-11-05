@@ -85,11 +85,11 @@ class ConversationServiceImpl(
             conversationMessageRepository.countUnreadMessagesOfMember(uid(), conversationId)
 
 
-    override fun memberReadsConversation(conversationId: Long) {
+    override fun memberReadsConversation(conversationId: Long): Member =
         memberRepository.findByConvIdAndUserId(conversationId, uid())?.let {
             memberRepository.save(it.copy(lastRead = Instant.now()))
         } ?: error("Member not found!")
-    }
+
 
     override fun createConversation(conversationName: String,
                                     memberNames: Set<String>): Conversation =

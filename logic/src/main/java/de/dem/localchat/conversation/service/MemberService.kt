@@ -11,8 +11,6 @@ interface MemberService {
      */
     fun isMember(conversationId: Long, username: String, vararg authority: String): Boolean
 
-    fun updateLastRead(conversationMessageId: Long): Member
-
     /**
      * Change permission of user of specified userId.
      */

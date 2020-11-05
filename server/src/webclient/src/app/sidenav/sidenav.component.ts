@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {ConversationNameDto} from '../openapi/model/models';
 
 @Component({
   selector: 'app-sidenav',
@@ -8,7 +9,13 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class SidenavComponent implements OnInit {
 
   @Input()
-  conversations = [];
+  conversations: ConversationNameDto[] | null = [];
+
+  @Input()
+  title: string | null = 'Local Chat';
+
+  @Input()
+  subtitle: string | null = 'Conversations';
 
   @Input()
   conversationId = -1;

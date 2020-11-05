@@ -1,12 +1,15 @@
 <mat-form-field>
   <textarea
     #writer="ngModel"
+    appEnterKeydown
+    (enterKeydown)="enterKeydown($event)"
     matInput
     name="message"
     [disabled]="isHidden"
     [(ngModel)]="text"
-    (keydown)="keydown($event)"
     placeholder="Write message..."
   ></textarea>
 </mat-form-field>
-<button mat-icon-button (click)="submit()"><mat-icon>double_arrow</mat-icon></button>
+<button mat-icon-button [disabled]="!text" (click)="submit()">
+  <mat-icon>send</mat-icon>
+</button>

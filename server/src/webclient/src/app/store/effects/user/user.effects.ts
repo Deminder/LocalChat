@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
-import { EMPTY, merge, Observable, of } from 'rxjs';
+import { EMPTY, merge, Observable, of, from } from 'rxjs';
 import {
   catchError,
   map,
   mergeMap,
   switchMap,
   withLatestFrom,
+  filter,
 } from 'rxjs/operators';
 import {
   ConversationMessageDto,
@@ -37,6 +38,7 @@ import {
   getSelfActions,
   listenForEvents,
   listLoginTokensActions,
+  toggleDesktopNotifications,
 } from '../../actions/user.actions';
 import { selectedConversationId } from '../../reducers/router.reducer';
 import { UserService } from './user.service';
@@ -82,24 +84,25 @@ export class UserEffects {
                 const convMessage = event.message as ConvRef & {
                   message: ConversationMessageDto;
                 };
-                return cid === convMessage.conversationId
-                  ? of(messageUpserted(convMessage))
-                  : of(
-                      refreshConversationActions.request(convMessage as ConvRef)
-                    );
+                return this.messageListChange(
+                  cid === convMessage.conversationId,
+                  messageUpserted(convMessage),
+                  refreshConversationActions.request(convMessage as ConvRef)
+                );
               case 'delete-message':
                 const convMessageRef = event.message as MessageRef;
-                return convMessageRef.conversationId === cid
-                  ? of(messageDeleted(convMessageRef))
-                  : of(
-                      refreshConversationActions.request(convMessageRef as ConvRef)
-                    );
+                return this.messageListChange(
+                  convMessageRef.conversationId === cid,
+                  messageDeleted(convMessageRef),
+                  refreshConversationActions.request(convMessageRef as ConvRef)
+                );
               default:
                 console.log(JSON.stringify(event));
                 return EMPTY;
             }
           }),
           catchError((error: ErrorEvent) => {
+            console.error('[Event Source Error]', error);
             this.snackbar.open(error.message || 'Event source error!', '', {
               duration: 3000,
             });
@@ -130,6 +133,31 @@ export class UserEffects {
       return EMPTY;
     },
   });
+
+  desktopNotification$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(toggleDesktopNotifications),
+      filter((a) => a.enabled),
+      switchMap(() => from(this.notifyService.enableDesktopNotifications())),
+      filter((p) => p === 'denied'),
+      map(() => toggleDesktopNotifications({ enabled: false }))
+    )
+  );
+
+  private messageListChange(
+    isActive: boolean,
+    viewAction: Action,
+    fetchAction: Action
+  ): Observable<Action> {
+    const actions: Action[] = [];
+    if (isActive) {
+      actions.push(viewAction);
+    }
+    if (this.notifyService.isHidden() || !isActive) {
+      actions.push(fetchAction);
+    }
+    return from(actions);
+  }
 
   private createApiActionEffect<
     R extends object | void,

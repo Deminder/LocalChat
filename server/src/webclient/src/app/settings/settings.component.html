@@ -17,13 +17,13 @@
   </mat-accordion>
   <section class="options-section">
     <mat-checkbox
-      [checked]="desktopNotification$ | async"
-      (change)="enableNotifications($event)"
+      [ngModel]="desktopNotification$ | async"
+      (ngModelChange)="enableNotifications($event)"
       >Enable Desktop Notifications</mat-checkbox
     >
     <mat-checkbox
-      [checked]="soundAlerts$ | async"
-      (change)="enableSoundAlerts($event)"
+      [ngModel]="soundAlerts$ | async"
+      (ngModelChange)="enableSoundAlerts($event)"
       >Enable Sound Alerts</mat-checkbox
     >
   </section>

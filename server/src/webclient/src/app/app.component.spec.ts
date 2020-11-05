@@ -128,7 +128,4 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it(`should have as title 'Local Chat'`, () => {
-    expect(component.defaultTitle).toEqual('Local Chat');
-  });
 });

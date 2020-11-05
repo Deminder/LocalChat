@@ -68,6 +68,11 @@ export const removeMember = createAction(
 );
 
 // MESSAGES
+export const selfReadMessage = createAction(
+  '[Conversation] Self Read Message',
+  props<MessageRef>()
+);
+
 export const startLoadMoreMessages = createAction(
   '[Conversation] Start Load More Messages',
   props<ConvRef>()

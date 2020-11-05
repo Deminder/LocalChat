@@ -19,7 +19,8 @@ import {
   isPlaybackEnabled,
   selectVoiceChannel,
 } from '../../selectors/conversation.selectors';
-import { selectSelfName } from '../../selectors/user.selectors';
+import { selectSelfName, areDesktopNotificationsEnabled, areSoundAlertsEnabled } from '../../selectors/user.selectors';
+import {NotifyService} from 'src/app/shared/services/notify.service';
 
 @Injectable()
 export class RouterEffects {
@@ -84,10 +85,27 @@ export class RouterEffects {
     { dispatch: false }
   );
 
+  notifyInit$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ROOT_EFFECTS_INIT),
+        withLatestFrom(
+          this.store.select(areDesktopNotificationsEnabled),
+          this.store.select(areSoundAlertsEnabled),
+        ),
+        tap(([desktopNotify, soundNotify]) => {
+          this.notifyService.enableDesktopNotifications(desktopNotify)
+          this.notifyService.enableSoundAlerts(soundNotify);
+        })
+      ),
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private router: Router,
     private store: Store,
-    private voiceService: VoiceService
+    private voiceService: VoiceService,
+    private notifyService: NotifyService
   ) {}
 }

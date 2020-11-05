@@ -15,21 +15,23 @@ export class SseEventService {
 
   receiveEvents(): Observable<ConversationEvent> {
     const events$ = new Subject<ConversationEvent>();
-    if (this.source) {
-      this.source.close();
-    }
-    const source = new EventSource(this.endpoint);
-    source.onmessage = (event) =>
-      setTimeout(() =>
-        this.zone.run(() => events$.next(JSON.parse(event.data)))
-      );
-
-    source.onerror = (error) => {
-      if (source.readyState === EventSource.CLOSED) {
-        setTimeout(() => this.zone.run(() => events$.error(error)));
+    this.zone.runOutsideAngular(() => {
+      if (this.source) {
+        this.source.close();
       }
-    };
-    this.source = source;
+      const source = new EventSource(this.endpoint);
+      source.onmessage = (event) =>
+        this.zone.run(() =>
+          setTimeout(() => events$.next(JSON.parse(event.data)))
+        );
+
+      source.onerror = (error) => {
+        if (source.readyState === EventSource.CLOSED) {
+          this.zone.run(() => setTimeout(() => events$.error(error)));
+        }
+      };
+      this.source = source;
+    });
     return events$;
   }
 }

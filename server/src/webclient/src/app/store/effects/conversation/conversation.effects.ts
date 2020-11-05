@@ -14,6 +14,7 @@ import {
   take,
   withLatestFrom,
   tap,
+  debounceTime,
 } from 'rxjs/operators';
 import { MemberUpdateRequest } from 'src/app/openapi/model/models';
 import {
@@ -42,12 +43,15 @@ import {
   enableMicrophone,
   enablePlayback,
   switchVoiceConversation,
+  selfReadMessage,
 } from '../../actions/conversation.actions';
 import {
   isLastPage,
   isMessageSearching,
   selectLoadMoreConversationId,
   selectNextMessagePageRequest,
+  selectConversations,
+  selectConversationNameEntities,
 } from '../../selectors/conversation.selectors';
 import { selectSelfUserId } from '../../selectors/user.selectors';
 import { ConversationService } from './conversation.service';
@@ -56,6 +60,25 @@ import { VoiceService } from 'src/app/shared/services/voice.service';
 @Injectable()
 export class ConversationEffects {
   isMessageSearching$ = this.store.select(isMessageSearching);
+
+  readMessage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(selfReadMessage),
+      map((a) => a.conversationId),
+      debounceTime(500),
+      mergeMap((cid) =>
+        this.conversationService.updateLastRead(cid).pipe(
+          mergeMap((resp) =>
+            of(
+              conversationUpserted({ conv: resp.conversation }),
+              memberUpserted({ member: resp.member })
+            )
+          ),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
 
   refreshConversation$ = createEffect(() =>
     this.actions$.pipe(
@@ -210,34 +233,24 @@ export class ConversationEffects {
   addedSelfMember$ = createEffect(() =>
     this.actions$.pipe(
       ofType(memberUpserted),
-      mergeMap((a) =>
-        this.store
-          .select(selectSelfUserId)
-          .pipe(
-            mergeMap((userId) =>
-              userId === a.member.userId
-                ? of(listConversationsActions.request())
-                : EMPTY
-            )
-          )
-      )
+      withLatestFrom(
+        this.store.select(selectConversationNameEntities),
+        this.store.select(selectSelfUserId)
+      ),
+      filter(
+        ([a, convs, userId]) =>
+          a.member.userId === userId && !(a.member.convId in convs)
+      ),
+      map(() => listConversationsActions.request())
     )
   );
 
   removedSelfMember$ = createEffect(() =>
     this.actions$.pipe(
       ofType(memberDeleted),
-      mergeMap((a) =>
-        this.store
-          .select(selectSelfUserId)
-          .pipe(
-            mergeMap((userId) =>
-              userId === a.userId
-                ? of(conversationDeleted({ conversationId: a.conversationId }))
-                : EMPTY
-            )
-          )
-      )
+      withLatestFrom(this.store.select(selectSelfUserId)),
+      filter(([a, userId]) => a.userId === userId),
+      map(([a]) => conversationDeleted({ conversationId: a.conversationId }))
     )
   );
 
@@ -285,7 +298,6 @@ export class ConversationEffects {
       )
     )
   );
-
 
   /* VOICE */
 

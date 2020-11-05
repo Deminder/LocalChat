@@ -46,6 +46,8 @@ export class MembersComponent implements OnInit, OnDestroy {
   );
   memberGain$ = this.voiceService.gains$;
 
+  expandedMemberIds = new Set<number>();
+
   constructor(
     private store: Store,
     private dialog: MatDialog,
@@ -124,4 +126,6 @@ export class MembersComponent implements OnInit, OnDestroy {
   enablePlayback(enabled: boolean): void {
     this.store.dispatch(enablePlayback({ enabled }));
   }
+
+
 }

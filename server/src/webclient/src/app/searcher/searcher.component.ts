@@ -14,6 +14,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   withLatestFrom,
+  delay,
 } from 'rxjs/operators';
 import {
   changeMessageSearch,
@@ -38,6 +39,7 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
   searchCollapsed = true;
 
   shouldFocusOnSearchShow = true;
+
   searchText = '';
   regex = false;
 
@@ -58,6 +60,7 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(
         debounceTime(200, asyncScheduler),
         distinctUntilChanged(),
+        delay(0),
         withLatestFrom(this.conversationId$)
       )
       .subscribe(([[search, regex], conversationId]) => {
@@ -71,7 +74,10 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.sub.unsubscribe();
   }
 
-  searchUpdate(): void {
+  searchUpdate(refocus = true): void {
+    if (refocus) {
+      this.inputElement.nativeElement.focus();
+    }
     this.searchTexts.next([this.searchText, this.regex]);
   }
 
@@ -84,11 +90,17 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this.searchText === '';
   }
 
-  keydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      this.inputElement.nativeElement.blur();
-      event.preventDefault();
+  escapeKeydown(event: KeyboardEvent): void {
+    this.inputElement.nativeElement.blur();
+    event.preventDefault();
+  }
+  enterKeydown(event: KeyboardEvent): void {
+    if (event.shiftKey) {
+      this.previousItem();
+    } else {
+      this.nextItem();
     }
+    event.preventDefault();
   }
 
   previousItem(): void {

@@ -10,6 +10,7 @@ import {
   MessageSearchRequestReq,
   MessageUpsertRequest,
   ConversationMessageDto,
+  MarkReadResponse,
 } from 'src/app/openapi/model/models';
 import { catchError } from 'rxjs/operators';
 
@@ -18,6 +19,12 @@ import { catchError } from 'rxjs/operators';
 })
 export class ConversationService {
   endpoint = '/api/conversations';
+
+  updateLastRead(conversationId: number): Observable<MarkReadResponse> {
+    return this.http
+      .get<MarkReadResponse>(`${this.endpoint}/${conversationId}/mark-read`)
+      .pipe(catchError(this.handleAPIError));
+  }
 
   getOne(conversationId: number): Observable<ConversationNameDto> {
     return this.http
@@ -115,9 +122,9 @@ export class ConversationService {
   private handleAPIError(error: HttpErrorResponse): Observable<never> {
     const err = error.error;
     if (err instanceof ErrorEvent) {
-      console.error(`[Error Angular] ${err.message}`);
+      console.error('[API-Error Angular]', err);
     } else {
-      console.error(`[Error ${error.status}] ${err}`);
+      console.error('[API-Error ${error.status}]', err);
     }
     return throwError(err.message);
   }
