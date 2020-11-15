@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
+import {
+  Actions,
+  createEffect,
+  ofType,
+  ROOT_EFFECTS_INIT,
+} from '@ngrx/effects';
 import { ROUTER_NAVIGATED } from '@ngrx/router-store';
 import { Store } from '@ngrx/store';
 import { filter, map, tap, withLatestFrom } from 'rxjs/operators';
@@ -11,7 +16,10 @@ import {
 } from '../../actions/conversation.actions';
 import { routeBackToChat } from '../../actions/router.actions';
 import { getSelfActions } from '../../actions/user.actions';
-import { selectedConversationId } from '../../reducers/router.reducer';
+import {
+  selectedConversationId,
+  shouldLoadSelf,
+} from '../../reducers/router.reducer';
 import {
   areMembersNeeded,
   isFirstPageNeeded,
@@ -19,8 +27,12 @@ import {
   isPlaybackEnabled,
   selectVoiceChannel,
 } from '../../selectors/conversation.selectors';
-import { selectSelfName, areDesktopNotificationsEnabled, areSoundAlertsEnabled } from '../../selectors/user.selectors';
-import {NotifyService} from 'src/app/shared/services/notify.service';
+import {
+  selectSelfName,
+  areDesktopNotificationsEnabled,
+  areSoundAlertsEnabled,
+} from '../../selectors/user.selectors';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Injectable()
 export class RouterEffects {
@@ -51,8 +63,11 @@ export class RouterEffects {
   openedAnyPage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ROUTER_NAVIGATED),
-      withLatestFrom(this.store.select(selectSelfName)),
-      filter(([_, selfname]) => !selfname),
+      withLatestFrom(
+        this.store.select(selectSelfName),
+        this.store.select(shouldLoadSelf)
+      ),
+      filter(([_, selfname, loadSelf]) => !selfname && loadSelf),
       map(() => getSelfActions.request())
     )
   );
@@ -91,10 +106,10 @@ export class RouterEffects {
         ofType(ROOT_EFFECTS_INIT),
         withLatestFrom(
           this.store.select(areDesktopNotificationsEnabled),
-          this.store.select(areSoundAlertsEnabled),
+          this.store.select(areSoundAlertsEnabled)
         ),
         tap(([desktopNotify, soundNotify]) => {
-          this.notifyService.enableDesktopNotifications(desktopNotify)
+          this.notifyService.enableDesktopNotifications(desktopNotify);
           this.notifyService.enableSoundAlerts(soundNotify);
         })
       ),

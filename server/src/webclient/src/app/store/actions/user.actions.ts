@@ -22,7 +22,7 @@ export const toggleSoundAlerts = createAction(
 );
 
 export const getSelfActions = createApiActions('User', 'Get Self', {
-  success: props<{ user: UserDto }>(),
+  success: props<{ user: UserDto }>(), failure: props<{ error: ErrorEvent}>()
 });
 
 export const listLoginTokensActions = createApiActions(

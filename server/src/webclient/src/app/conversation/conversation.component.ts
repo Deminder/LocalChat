@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { animationFrameScheduler, Subscription, combineLatest } from 'rxjs';
+import { animationFrameScheduler, combineLatest, Subscription } from 'rxjs';
 import {
   auditTime,
   distinctUntilChanged,
@@ -22,14 +22,15 @@ import {
 } from 'rxjs/operators';
 import { ConversationMessageDto } from '../openapi/model/models';
 import { EditMessageComponent } from '../shared/dialogs/edit-message/edit-message.component';
+import { NotifyService } from '../shared/services/notify.service';
 import {
   changeMessageSearchCount,
   createMessage,
   deleteMessage,
   editMessage,
+  selfReadMessage,
   startLoadMoreMessages,
   stopLoadMoreMessages,
-  selfReadMessage,
 } from '../store/actions/conversation.actions';
 import { selectedConversationId } from '../store/reducers/router.reducer';
 import {
@@ -45,7 +46,6 @@ import {
 } from '../store/selectors/conversation.selectors';
 import { selectSelfUserId } from '../store/selectors/user.selectors';
 import { MessageListComponent } from './message-list/message-list.component';
-import { NotifyService } from '../shared/services/notify.service';
 
 @Component({
   selector: 'app-conversation',

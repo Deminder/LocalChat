@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { take, tap } from 'rxjs/operators';
+import { take, tap, debounceTime } from 'rxjs/operators';
 import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
 import { addConversation } from './store/actions/conversation.actions';
 import { routeBackToChat } from './store/actions/router.actions';
@@ -59,19 +59,27 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.titleUpdater = combineLatest([
-      this.conversations$,
-      this.store.select(selectAppTitle),
-    ]).subscribe(([convs, t]) => {
-      const unreadCount = convs
-        .map((c) => c.unreadCount)
-        .reduce((s, v) => s + v, 0);
-      this.title.setTitle(t + (unreadCount > 0 ? ` (${unreadCount})` : ''));
-    });
+    this.store
+      .select(selectAppTitle)
+      // required for stable initial load
+      .pipe(debounceTime(500), take(1))
+      .subscribe(() => {
+        this.titleUpdater = combineLatest([
+          this.conversations$,
+          this.store.select(selectAppTitle),
+        ]).subscribe(([convs, t]) => {
+          const unreadCount = convs
+            .map((c) => c.unreadCount)
+            .reduce((s, v) => s + v, 0);
+          this.title.setTitle(t + (unreadCount > 0 ? ` (${unreadCount})` : ''));
+        });
+      });
   }
 
   ngOnDestroy(): void {
-    this.titleUpdater.unsubscribe();
+    if (this.titleUpdater) {
+      this.titleUpdater.unsubscribe();
+    }
   }
 
   back(): void {

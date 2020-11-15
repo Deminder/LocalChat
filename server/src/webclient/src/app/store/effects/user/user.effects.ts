@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
-import { EMPTY, merge, Observable, of, from } from 'rxjs';
+import { EMPTY, from, merge, Observable, of } from 'rxjs';
 import {
   catchError,
+  debounceTime,
+  filter,
   map,
   mergeMap,
   switchMap,
   withLatestFrom,
-  filter,
 } from 'rxjs/operators';
 import {
   ConversationMessageDto,
@@ -24,13 +25,13 @@ import {
 import {
   conversationUpserted,
   ConvRef,
+  listConversationsActions,
   memberDeleted,
   MemberRef,
   memberUpserted,
   messageDeleted,
   MessageRef,
   messageUpserted,
-  listConversationsActions,
   refreshConversationActions,
 } from '../../actions/conversation.actions';
 import {
@@ -40,7 +41,10 @@ import {
   listLoginTokensActions,
   toggleDesktopNotifications,
 } from '../../actions/user.actions';
-import { selectedConversationId } from '../../reducers/router.reducer';
+import {
+  selectedConversationId,
+  shouldLoadSelf,
+} from '../../reducers/router.reducer';
 import { UserService } from './user.service';
 
 @Injectable()
@@ -103,13 +107,27 @@ export class UserEffects {
           }),
           catchError((error: ErrorEvent) => {
             console.error('[Event Source Error]', error);
-            this.snackbar.open(error.message || 'Event source error!', '', {
-              duration: 3000,
-            });
-            return of(getSelfActions.failure());
+            setTimeout(
+              () =>
+                this.snackbar.open(error.message || 'Event source error!', '', {
+                  duration: 3000,
+                }),
+              500
+            );
+            return of(getSelfActions.failure({ error }));
           })
         )
       )
+    )
+  );
+
+  getSelfFailure$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(getSelfActions.failure),
+      withLatestFrom(this.store.select(shouldLoadSelf)),
+      filter(([_, loadSelf]) => loadSelf),
+      debounceTime(4000),
+      map(() => getSelfActions.request())
     )
   );
 
@@ -186,10 +204,10 @@ export class UserEffects {
                 )
               )
             ),
-            catchError((e) => {
+            catchError((error) => {
               return merge(
-                calls.error ? calls.error(e) : EMPTY,
-                of(container.failure(e))
+                calls.error ? calls.error(error) : EMPTY,
+                of(container.failure({ error }))
               );
             })
           )

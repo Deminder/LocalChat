@@ -115,7 +115,7 @@ class MemberServiceImpl(
     }
 
     private fun <T> checkChangePermission(name: String, newValue: T, oldValue: T, changePermission: Boolean): T =
-            if (newValue != oldValue || changePermission) newValue else error("Not allowed to change '$name' permission!")
+            if (newValue == oldValue || changePermission) newValue else error("Not allowed to change '$name' permission!")
 
 
     override fun allowedRemoval(conversationId: Long, userId: Long) =
