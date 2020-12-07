@@ -99,7 +99,8 @@ internal class MemberServiceImplTest {
         val subjectMember = mockk<Member> {
             every { id } returns subjectId
             every { permission } returns prevPermission
-            every { copy(permission = any()) } returns changedSubject
+            every { color } returns null
+            every { copy(permission = any(), color = any()) } returns changedSubject
         }
 
         every { memberRepository.findByIdAndUsername(any(), user1) } returns authorMember
@@ -116,7 +117,7 @@ internal class MemberServiceImplTest {
 
         // remove write permission
         val reqPermission = Permission(read = true, write = false, voice = true)
-        val resMember = unit.upsertMember(cid, subjectId, reqPermission)
+        val resMember = unit.upsertMember(cid, subjectId, reqPermission, null)
 
         assertThat(resMember, equalTo(changedSubject))
 
@@ -316,7 +317,7 @@ internal class MemberServiceImplTest {
 
         try {
             // remove admin permission
-            unit.upsertMember(cid, 1L, Permission(read = true, write = true, voice = true, moderate = true))
+            unit.upsertMember(cid, 1L, Permission(read = true, write = true, voice = true, moderate = true), null)
             fail { "Last admin can not be removed when user remains!" }
         } catch (ex: IllegalStateException) {
             assertThat(ex.message, equalTo("Choose next admin before removing the current!"))
@@ -349,7 +350,7 @@ internal class MemberServiceImplTest {
 
 
         val reqPerm = Permission(read = true, write = true, voice = true, moderate = true)
-        assertThat(unit.upsertMember(cid, 1L, reqPerm), equalTo(authorMember))
+        assertThat(unit.upsertMember(cid, 1L, reqPerm, null), equalTo(authorMember))
 
         val perm = slot<Permission>()
         verify { authorMember.copy(permission = capture(perm)) }

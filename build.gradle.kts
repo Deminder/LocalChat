@@ -1,3 +1,4 @@
+
 plugins {
     idea
     id("org.springframework.boot") version "2.3.3.RELEASE"
@@ -39,7 +40,6 @@ tasks.jar {
 }
 
 
-
 allprojects {
     group = "de.dem.localchat"
     version = "1.0"
@@ -47,10 +47,13 @@ allprojects {
     repositories {
         mavenCentral()
     }
-
 }
 
-
+tasks.register("printVersion") {
+    doFirst {
+        println("version: $version")
+    }
+}
 
 subprojects {
 

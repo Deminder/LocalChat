@@ -31,7 +31,7 @@ copyFrontend {
     dependsOn(":server:webclient:build")
 }
 
-tasks.jar {
+tasks.assemble {
     dependsOn(copyFrontend)
 }
 
