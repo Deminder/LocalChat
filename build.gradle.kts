@@ -42,7 +42,7 @@ tasks.jar {
 
 allprojects {
     group = "de.dem.localchat"
-    version = "0.1-SNAPSHOT"
+    version = "1.0"
 
     repositories {
         mavenCentral()
