@@ -13,7 +13,7 @@ import { PermissionDtoReq } from './permissionDtoReq';
 
 
 export interface MemberUpdateRequest { 
-    color?: string;
+    color?: number;
     permission?: PermissionDtoReq;
 }
 

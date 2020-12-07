@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@import "~@angular/material/theming";
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -9,68 +9,111 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$candy-app-primary: mat-palette($mat-grey);
-$candy-app-accent:  mat-palette($mat-blue-grey, A200, A100, A400);
+$localchat-app-primary: mat-palette($mat-grey);
+$localchat-app-accent: mat-palette($mat-indigo, A200, A100, A400);
+$localchat-app-accent2: mat-palette($mat-deep-purple, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$candy-app-warn:    mat-palette($mat-orange);
+$localchat-app-warn: mat-palette($mat-orange);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as `color` or `typography`.
-$candy-app-theme: mat-dark-theme((
-  color: (
-    primary: $candy-app-primary,
-    accent: $candy-app-accent,
-    warn: $candy-app-warn,
+$localchat-app-theme: mat-dark-theme(
+  (
+    color: (
+      primary: $localchat-app-primary,
+      accent: $localchat-app-accent,
+      warn: $localchat-app-warn,
+    ),
   )
-));
+);
 
 .shaded-background {
-  background: mat-color($candy-app-primary, 800);
+  background-color: mat-color($localchat-app-primary, 800);
 }
 
 a:visited {
-  color: mat-color($candy-app-primary, 300);
+  color: mat-color($localchat-app-warn, 800);
 }
 a:visited:hover {
-  color: mat-color($candy-app-primary, 100);
+  color: mat-color($localchat-app-warn, 600);
 }
 
 a:link {
-  color: mat-color($candy-app-warn, 500);
+  color: mat-color($localchat-app-warn, 500);
 }
 
 a:link:hover {
-  color: mat-color($candy-app-warn, 300);
+  color: mat-color($localchat-app-warn, 300);
 }
 
- /* width */
+.msg-color-1 {
+  background-color: mat-color($localchat-app-accent2, 900);
+}
+
+.msg-color-2 {
+  background-color: mat-color($localchat-app-accent2, 700);
+}
+
+.msg-color-3 {
+  background-color: mat-color($localchat-app-primary, 600); }
+
+.msg-color-4 {
+  background-color: mat-color($localchat-app-primary, 700);
+}
+
+.msg-color-5 {
+  background-color: mat-color($localchat-app-primary, 800);
+}
+
+.msg-color-6 {
+  background-color: mat-color($localchat-app-primary, 900);
+}
+.msg-color-7 {
+  background-color: mat-color($localchat-app-accent, 700);
+}
+.msg-color-8 {
+  background-color: mat-color($localchat-app-accent, 800);
+}
+.msg-color-9 {
+  background-color: mat-color($localchat-app-accent, 900);
+}
+.msg-color-10 {
+  background-color: mat-color($localchat-app-accent, 400);
+}
+.msg-color-11 {
+  background-color: mat-color($localchat-app-accent, 500);
+}
+.msg-color-12 {
+  background-color: mat-color($localchat-app-accent, 600);
+}
+
+/* width */
 ::-webkit-scrollbar {
-  width: .5em;
+  width: 0.5em;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: mat-color($candy-app-primary, 800);
+  background: mat-color($localchat-app-primary, 800);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: mat-color($candy-app-primary, 600);
+  background: mat-color($localchat-app-primary, 600);
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: mat-color($candy-app-primary, 500);
+  background: mat-color($localchat-app-primary, 500);
 }
-
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($candy-app-theme);
+@include angular-material-theme($localchat-app-theme);
 
-@Import 'assets/google-web-font-local.css';
+@import "assets/google-web-font-local.css";
 
 body {
   margin: 0px;
@@ -79,12 +122,13 @@ body {
   right: 0px;
   bottom: 0px;
   top: 0px;
-  font-family: "Roboto",sans-serif;
+  font-family: "Roboto", sans-serif;
   scrollbar-width: thin;
-  scrollbar-color: mat-color($candy-app-primary, 600) mat-color($candy-app-primary, 800);
+  scrollbar-color: mat-color($localchat-app-primary, 600)
+    mat-color($localchat-app-primary, 800);
 }
 
 .localchat-image {
-  background-image: url('./favicon.ico');
+  background-image: url("./favicon.ico");
   background-size: cover;
 }

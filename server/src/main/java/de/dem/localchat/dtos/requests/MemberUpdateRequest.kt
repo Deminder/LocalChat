@@ -5,7 +5,7 @@ import javax.validation.Valid
 import javax.validation.constraints.Size
 
 data class MemberUpdateRequest(
-        val color: String?,
+        val color: Int?,
 
         @field:Valid
         val permission: PermissionDto?,

@@ -17,11 +17,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatBadgeModule } from '@angular/material/badge';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [],
   exports: [
     MatBadgeModule,
+    MatSelectModule,
     MatToolbarModule,
     MatTooltipModule,
     MatTableModule,

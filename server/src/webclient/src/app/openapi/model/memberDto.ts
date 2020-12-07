@@ -14,7 +14,7 @@ import { PermissionDtoRes } from './permissionDtoRes';
 
 
 export interface MemberDto { 
-    color?: string;
+    color?: number;
     convId: number;
     joinDate: number;
     modifiablePermission: MemberModifyPermissionDto;

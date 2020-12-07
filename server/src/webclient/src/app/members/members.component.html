@@ -15,25 +15,22 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <section class="control-section">
-        <div>
-          <mat-form-field>
-            <mat-label>Color:</mat-label>
-            <input
-              matInput
-              type="color"
-              [ngModel]="member.color ? member.color : '#000000'"
-              (ngModelChange)="changeColor(member, $event)"
-              [disabled]="member.userId !== (selfMember$ | async)?.userId"
-            />
-          </mat-form-field>
-          <button
-            *ngIf="member.color"
-            mat-icon-button
-            (click)="changeColor(member, null)"
+        <mat-form-field appearance="fill">
+          <mat-label>Color</mat-label>
+          <mat-select
+            [disabled]="member.userId !== (selfMember$ | async)?.userId"
+            [ngModel]="member.color"
+            (ngModelChange)="changeColor(member, $event)"
+            name="color"
           >
-            <mat-icon>clear</mat-icon>
-          </button>
-        </div>
+            <mat-option [value]="null">
+              Initial
+            </mat-option>
+            <mat-option *ngFor="let c of colors" [value]="c">
+              <div [class]="'msg-color-' + (c + 1)">Color {{ (c % 12) + 1 }}</div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
         <ng-template ngFor [ngForOf]="member.permission | keyvalue" let-p>
           <mat-checkbox
             [disabled]="!member.modifiablePermission.modify[p.key]"

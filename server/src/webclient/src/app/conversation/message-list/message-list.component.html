@@ -7,11 +7,13 @@
   <div *ngFor="let msg of messages" #message class="msg-item">
     <div
       [@highlight]="highlight === msg.id ? 'active' : null"
-      [ngClass]="messageClasses(msg)"
+      [ngClass]="
+        messageClasses(msg).concat(
+          'msg-color-' + (1 + (msg.authorUserId | authorColor: memberDict))
+        )
+      "
       (dblclick)="selectMessage(msg.id)"
       (blur)="selectMessage(-1)"
-      [style.background-color]="msg.authorUserId | authorColor: memberDict"
-      [class.darkFont]="luminance(msg.authorUserId | authorColor: memberDict) > 90"
     >
       <div *ngIf="selected === msg.id" class="tools-row">
         <button

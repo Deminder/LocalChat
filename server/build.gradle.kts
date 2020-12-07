@@ -31,7 +31,7 @@ copyFrontend {
     dependsOn(":server:webclient:build")
 }
 
-tasks.assemble {
+tasks.processResources {
     dependsOn(copyFrontend)
 }
 

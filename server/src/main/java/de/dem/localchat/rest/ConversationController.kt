@@ -101,9 +101,7 @@ class ConversationController(
             updateRequest.permission?.let {
                 toMemberDto(memberService.upsertMember(cid, uid,
                         it.toPermission(),
-                        updateRequest.color?.let {c ->
-                            c.replace("#", "").toIntOrNull(16)
-                        }
+                        updateRequest.color
                 ).also { member ->
                     eventSubscriptionService.notifyMembers(
                             ConversationEvent("upsert-member", member), cid, username())

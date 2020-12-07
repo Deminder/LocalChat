@@ -39,7 +39,7 @@ fun Member.toMemberDto(memberName: String, modifyPermissionDto: MemberModifyPerm
         convId = conversationId,
         modifiablePermission = modifyPermissionDto,
         permission = permission.toPermissionDto(),
-        color = color?.let { "#%06x".format(it and 0xFFffFF) },
+        color = color,
         joinDate = joinDate.toEpochMilli()
 )
 

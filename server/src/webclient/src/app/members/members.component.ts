@@ -48,6 +48,8 @@ export class MembersComponent implements OnInit, OnDestroy {
 
   expandedMemberIds = new Set<number>();
 
+  colors = [...Array(12).keys()];
+
   constructor(
     private store: Store,
     private dialog: MatDialog,
@@ -58,13 +60,13 @@ export class MembersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {}
 
-  changeColor(member: MemberDto,  color: string): void {
+  changeColor(member: MemberDto, color: number): void {
     this.store.dispatch(
       editMember({
         conversationId: member.convId,
         userId: member.userId,
         permission: member.permission,
-        color: color
+        color,
       })
     );
   }
@@ -74,6 +76,7 @@ export class MembersComponent implements OnInit, OnDestroy {
         conversationId: member.convId,
         userId: member.userId,
         permission: { ...member.permission, [permLabel]: value },
+        color: member.color,
       })
     );
   }
@@ -136,6 +139,4 @@ export class MembersComponent implements OnInit, OnDestroy {
   enablePlayback(enabled: boolean): void {
     this.store.dispatch(enablePlayback({ enabled }));
   }
-
-
 }
