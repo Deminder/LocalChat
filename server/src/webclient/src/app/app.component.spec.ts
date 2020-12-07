@@ -28,6 +28,8 @@ import {
   isSideNavOpen,
   selectSelfName,
 } from './store/selectors/user.selectors';
+import { NotifyService } from './shared/services/notify.service';
+import { of } from 'rxjs';
 
 export const convSamples: ConversationNameDto[] = [
   {
@@ -72,15 +74,27 @@ describe('AppComponent', () => {
   let mockIsSearchingSelector: MemoizedSelector<AppState, boolean>;
 
   let titleSpy: jasmine.SpyObj<Title>;
+  let notifySpy: jasmine.SpyObj<NotifyService>;
 
   beforeEach(
     waitForAsync(() => {
       titleSpy = jasmine.createSpyObj('title', ['setTitle']);
+      notifySpy = jasmine.createSpyObj(
+        'notifyService',
+        { isHidden: () => true },
+        {
+          hidden$: of(true, false),
+        }
+      );
 
       TestBed.configureTestingModule({
         imports: [RouterTestingModule, MaterialModule],
         declarations: [AppComponent, MockComponent(SidenavComponent)],
-        providers: [provideMockStore(), { provide: Title, useValue: titleSpy }],
+        providers: [
+          provideMockStore(),
+          { provide: Title, useValue: titleSpy },
+          { provide: NotifyService, useValue: notifySpy },
+        ],
       }).compileComponents();
       store = TestBed.inject(MockStore);
       mockConversationIdSelector = store.overrideSelector(
@@ -115,7 +129,10 @@ describe('AppComponent', () => {
       mockSettingsOpenSelector = store.overrideSelector(isSettingsOpen, false);
       mockMembersOpenSelector = store.overrideSelector(isMembersOpen, false);
       mockIsSidenavOpenSelector = store.overrideSelector(isSideNavOpen, false);
-      mockIsSearchingSelector = store.overrideSelector(isMessageSearching, false);
+      mockIsSearchingSelector = store.overrideSelector(
+        isMessageSearching,
+        false
+      );
 
       // component
       fixture = TestBed.createComponent(AppComponent);
@@ -127,5 +144,4 @@ describe('AppComponent', () => {
   it('should create the app', () => {
     expect(component).toBeTruthy();
   });
-
 });

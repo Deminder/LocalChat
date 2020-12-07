@@ -1,8 +1,9 @@
-<div class="switch-section" *ngIf="searchItemCount$ | async">
+<div class="switch-section" *ngIf="!isClear">
   <button
     mat-icon-button
     class="switch-button"
     aria-label="Next"
+    [disabled]="!(searchItemCount$ | async)"
     (click)="nextItem()"
   >
     <mat-icon>keyboard_arrow_up</mat-icon>
@@ -14,6 +15,7 @@
     mat-icon-button
     class="switch-button"
     aria-label="Previous"
+    [disabled]="!(searchItemCount$ | async)"
     (click)="previousItem()"
   >
     <mat-icon>keyboard_arrow_down</mat-icon>
@@ -25,7 +27,7 @@
   matTooltip="Enable Search by Regex"
   [(ngModel)]="regex"
   (ngModelChange)="searchUpdate()"
-  >Regex-Search</mat-checkbox
+  >{{ isClear ? "Regex-Search" : "" }}</mat-checkbox
 >
 <button
   mat-icon-button
@@ -35,22 +37,20 @@
 >
   <mat-icon>search</mat-icon>
 </button>
-<div class="search-section" [class.hidden]="searchCollapsed">
-  <mat-form-field>
-    <input
-      #searcher
-      name="searchField"
-      matInput
-      type="search"
-      appEnterKeydown
-      (focus)="focused = true"
-      (blur)="focused = false"
-      (enterKeydown)="enterKeydown($event)"
-      (escapeKeydown)="escapeKeydown($event)"
-      [(ngModel)]="searchText"
-      (ngModelChange)="searchUpdate(false)"
-    />
-  </mat-form-field>
+<mat-form-field class="search-field" [class.hidden]="searchCollapsed">
+  <input
+    #searcher
+    name="searchField"
+    matInput
+    type="search"
+    appEnterKeydown
+    (focus)="focused = true"
+    (blur)="focused = false"
+    (enterKeydown)="enterKeydown($event)"
+    (escapeKeydown)="escapeKeydown($event)"
+    [(ngModel)]="searchText"
+    (ngModelChange)="searchUpdate(false)"
+  />
   <button
     mat-icon-button
     [class.hidden]="isClear"
@@ -60,4 +60,4 @@
   >
     <mat-icon>clear</mat-icon>
   </button>
-</div>
+</mat-form-field>

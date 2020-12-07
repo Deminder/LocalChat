@@ -1,5 +1,11 @@
-.example-spacer {
+.spacer {
   flex: 1 1 auto;
+}
+
+.title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 

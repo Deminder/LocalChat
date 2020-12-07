@@ -6,11 +6,12 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
-  <ng-template [ngIf]="!(isSearching$ | async)">
-    <span>{{ toolbarTitle$ | async }}</span>
+  <ng-template [ngIf]="!saveSpace">
+    <span class="title">{{ toolbarTitle$ | async }}</span>
   </ng-template>
-  <span class="example-spacer"></span>
-  <app-searcher *ngIf="isChatOpen$ | async"> </app-searcher>
+  <span class="spacer"></span>
+  <app-searcher (toggle)="searchOpen = $event" *ngIf="isChatOpen$ | async">
+  </app-searcher>
   <ng-template [ngIf]="isSettingsOpen$ | async">
     <button mat-icon-button aria-label="Back" (click)="back()">
       <mat-icon>arrow_back</mat-icon>
@@ -21,7 +22,7 @@
       <mat-icon>arrow_back</mat-icon>
     </button>
   </ng-template>
-  <ng-template [ngIf]="!(isSettingsOpen$ | async) && !(isMembersOpen$ | async)">
+  <ng-template [ngIf]="(isChatOpen$ | async) && !saveSpace">
     <button
       [disabled]="(conversationId$ | async) === -1"
       mat-icon-button
@@ -31,7 +32,7 @@
       <mat-icon>list</mat-icon>
     </button>
   </ng-template>
-  <ng-template [ngIf]="!(isSettingsOpen$ | async)">
+  <ng-template [ngIf]="!(isSettingsOpen$ | async) && !saveSpace">
     <button mat-icon-button aria-label="Open settings" routerLink="/settings">
       <mat-icon>settings</mat-icon>
     </button>
@@ -46,6 +47,7 @@
   (createConv)="addConversation()"
   [conversationId]="conversationId$ | async"
   [conversations]="conversations$ | async"
+  [overlay]="smallLayout"
 >
   <mat-progress-bar
     *ngIf="isGlobalLoading$ | async"

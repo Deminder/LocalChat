@@ -1,34 +1,34 @@
 import { Location } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { take, tap, debounceTime } from 'rxjs/operators';
+import { combineLatest, Subscription } from 'rxjs';
+import { startWith, take } from 'rxjs/operators';
 import { AddConversationComponent } from './shared/dialogs/add-conversation/add-conversation.component';
+import { NotifyService } from './shared/services/notify.service';
 import { addConversation } from './store/actions/conversation.actions';
 import { routeBackToChat } from './store/actions/router.actions';
+import { sidenavToggle } from './store/actions/user.actions';
 import {
+  isChatOpen,
   isMembersOpen,
   isSettingsOpen,
   selectedConversationId,
-  isChatOpen,
 } from './store/reducers/router.reducer';
-import {
-  selectActiveConversation,
-  selectConversations,
-  isMessageSearching,
-} from './store/selectors/conversation.selectors';
-import { isGlobalLoading } from './store/selectors/progress.selectors';
-import {
-  selectSelfName,
-  isSideNavOpen,
-} from './store/selectors/user.selectors';
 import {
   selectAppTitle,
   selectAppToolbar,
 } from './store/selectors/app.selectors';
-import { sidenavToggle } from './store/actions/user.actions';
-import { Subscription, zip, combineLatest } from 'rxjs';
+import {
+  isMessageSearching,
+  selectConversations,
+} from './store/selectors/conversation.selectors';
+import { isGlobalLoading } from './store/selectors/progress.selectors';
+import {
+  isSideNavOpen,
+  selectSelfName,
+} from './store/selectors/user.selectors';
 
 @Component({
   selector: 'app-root',
@@ -51,29 +51,32 @@ export class AppComponent implements OnInit, OnDestroy {
 
   titleUpdater: Subscription;
 
+  smallLayout: boolean;
+  searchOpen: boolean;
+  
+
   constructor(
     private store: Store,
     private location: Location,
     private title: Title,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notifyService: NotifyService
   ) {}
 
   ngOnInit(): void {
-    this.store
-      .select(selectAppTitle)
-      // required for stable initial load
-      .pipe(debounceTime(500), take(1))
-      .subscribe(() => {
-        this.titleUpdater = combineLatest([
-          this.conversations$,
-          this.store.select(selectAppTitle),
-        ]).subscribe(([convs, t]) => {
-          const unreadCount = convs
-            .map((c) => c.unreadCount)
-            .reduce((s, v) => s + v, 0);
-          this.title.setTitle(t + (unreadCount > 0 ? ` (${unreadCount})` : ''));
-        });
-      });
+    this.updateSidenavOverlay();
+    this.titleUpdater = combineLatest([
+      this.conversations$,
+      this.store.select(selectAppTitle),
+      this.notifyService.hidden$.pipe(startWith(this.notifyService.isHidden())),
+    ]).subscribe(([convs, t, h]) => {
+      const unreadCount = convs
+        .map((c) => c.unreadCount)
+        .reduce((s, v) => s + v, 0);
+      if (unreadCount > 0 || !h) {
+        this.title.setTitle((unreadCount > 0 ? `(${unreadCount}) ` : '') + t);
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -107,5 +110,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   sidenavChange(enabled: boolean): void {
     this.store.dispatch(sidenavToggle({ enabled }));
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.updateSidenavOverlay();
+  }
+
+  get saveSpace(): boolean {
+    return this.smallLayout && this.searchOpen;
+  }
+
+  private updateSidenavOverlay(): void {
+    this.smallLayout = window.innerWidth < 624;
   }
 }

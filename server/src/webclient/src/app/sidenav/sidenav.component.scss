@@ -5,14 +5,23 @@
 
 .mat-sidenav {
   width: 15em;
+  max-width: 15em;
 }
 
-:host ::ng-deep.mat-list-text {
-  overflow: visible !important;
+:host ::ng-deep.mat-badge-content {
+  right: 11px !important;
+  top: 11px !important;
 }
 
 .mat-sidenav-container {
   width: 100%;
-  min-height: 30em;
   min-width: 20em;
+}
+
+.entry-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+  font-weight: bold;
 }

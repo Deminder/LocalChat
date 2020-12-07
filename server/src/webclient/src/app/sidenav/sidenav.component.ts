@@ -23,6 +23,9 @@ export class SidenavComponent implements OnInit {
   @Input()
   opened: boolean;
 
+  @Input()
+  overlay = false;
+
   @Output()
   openedChange = new EventEmitter<boolean>();
 

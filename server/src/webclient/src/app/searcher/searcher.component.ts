@@ -7,6 +7,8 @@ import {
   OnInit,
   SimpleChanges,
   ViewChild,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject, Subscription, asyncScheduler } from 'rxjs';
@@ -32,6 +34,9 @@ import {
   styleUrls: ['./searcher.component.scss'],
 })
 export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
+  @Output()
+  toggle = new EventEmitter<boolean>();
+
   conversationId$ = this.store.select(selectedConversationId);
   searchItemIndex$ = this.store.select(selectMessageSearchIndex);
   searchItemCount$ = this.store.select(selectMessageSearchCount);
@@ -68,6 +73,7 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
           changeMessageSearch({ conversationId, search, regex })
         );
       });
+    this.toggle.emit(false);
   }
 
   ngOnDestroy(): void {
@@ -82,8 +88,11 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   focusSearch(): void {
-    this.shouldFocusOnSearchShow = true;
-    this.searchCollapsed = false;
+    if (this.searchCollapsed) {
+      this.toggle.emit(true);
+      this.searchCollapsed = false;
+      this.shouldFocusOnSearchShow = true;
+    }
   }
 
   get isClear(): boolean {
@@ -128,6 +137,7 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
         setTimeout(() => {
           if (!this.focused) {
             this.searchCollapsed = true;
+            this.toggle.emit(false);
           }
         }, 500);
       }

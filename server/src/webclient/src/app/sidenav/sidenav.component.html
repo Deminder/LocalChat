@@ -1,5 +1,5 @@
-<mat-sidenav-container class="example-container">
-  <mat-sidenav #sidenav mode="side" [(opened)]="opened">
+<mat-sidenav-container>
+  <mat-sidenav [mode]="overlay ? 'over' : 'side'" [(opened)]="opened">
     <mat-card>
       <mat-card-header>
         <div mat-card-avatar class="localchat-image"></div>
@@ -10,16 +10,15 @@
     <mat-selection-list [multiple]="false">
       <ng-template ngFor let-conv [ngForOf]="conversations">
         <mat-list-option
+          class="list-option"
           [selected]="conversationId === conv.id"
           [routerLink]="'/chat/' + conv.id"
           [value]="conv.id"
+          [matBadge]="conv.unreadCount"
+          [matBadgeHidden]="conv.unreadCount === 0"
+          matBadgeColor="accent"
         >
-          <span
-            [matBadge]="conv.unreadCount"
-            [matBadgeHidden]="conv.unreadCount === 0"
-            matBadgeColor="accent"
-            >{{ conv.name }}</span
-          >
+          <span class="entry-text">{{ conv.name }}</span>
         </mat-list-option>
         <mat-divider></mat-divider>
       </ng-template>
