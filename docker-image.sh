@@ -8,7 +8,7 @@ fi
 
 PROJECT_VERSION=$2
 if [ -z "$PROJECT_VERSION" ]; then
-  PROJECT_VERSION=$(gradle printVersion --console=plain -q | grep "^version:" | awk '{print $2}')
+  PROJECT_VERSION=$(./gradlew printVersion --console=plain -q | grep "^version:" | awk '{print $2}')
 fi
 
 docker build \
