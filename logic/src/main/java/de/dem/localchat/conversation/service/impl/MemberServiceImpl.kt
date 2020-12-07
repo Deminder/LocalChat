@@ -5,14 +5,12 @@ import de.dem.localchat.conversation.dataaccess.ConversationRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
-import de.dem.localchat.conversation.exception.ConversationException
 import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.security.dataacess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import java.util.Collections.max
 
 @Service
 class MemberServiceImpl(
@@ -45,6 +43,11 @@ class MemberServiceImpl(
                 conversationMessageRepository.findByIdAndAuthorId(messageId, it.userId) != null
             } ?: false
 
+    override fun setColor(cid: Long, username: String, color: Int?): Member =
+            memberRepository.findByIdAndUsername(cid, username)?.let {
+                memberRepository.save(it.copy(color = color))
+            } ?: error("Not a member!")
+
 
     private fun authorizedMember(cid: Long) = SecurityContextHolder.getContext().authentication?.let {
         memberRepository.findByIdAndUsername(cid, it.name)
@@ -65,11 +68,12 @@ class MemberServiceImpl(
             } ?: error("Requesting user must be member of conversation $cid!")
 
 
-    override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission): Member =
+    override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission, color: Int?): Member =
             subjectAndAuthorPair(conversationId, userId).let { (subject, author) ->
                 subject.copy(
                         permission = authorizedPermissionModify(subject.id == author.id,
-                                subject.permission, newPermission, author.permission))
+                                subject.permission, newPermission, author.permission),
+                        color = if (subject.id == author.id) color else subject.color)
                         .let {
                             if (adminMembersOf(conversationId).minus(subject).isNotEmpty())
                                 memberRepository.save(it)

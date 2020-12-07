@@ -2,7 +2,13 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
+  flex-flow: row wrap;
 }
+
+.control-section * {
+  margin: .5em;
+}
+
 
 .voice-visualizers {
   width: 100%;

@@ -11,6 +11,7 @@
       (dblclick)="selectMessage(msg.id)"
       (blur)="selectMessage(-1)"
       [style.background-color]="msg.authorUserId | authorColor: memberDict"
+      [class.darkFont]="luminance(msg.authorUserId | authorColor: memberDict) > 90"
     >
       <div *ngIf="selected === msg.id" class="tools-row">
         <button

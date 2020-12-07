@@ -7,6 +7,7 @@ data class MemberDto(
         val username: String,
         val convId: Long,
         val permission: PermissionDto,
+        val color: String?,
         val modifiablePermission: MemberModifyPermissionDto,
         val joinDate: Long
 )

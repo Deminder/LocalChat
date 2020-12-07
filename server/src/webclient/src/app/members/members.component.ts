@@ -58,6 +58,16 @@ export class MembersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {}
 
+  changeColor(member: MemberDto,  color: string): void {
+    this.store.dispatch(
+      editMember({
+        conversationId: member.convId,
+        userId: member.userId,
+        permission: member.permission,
+        color: color
+      })
+    );
+  }
   changePermission(member: MemberDto, permLabel: string, value: boolean): void {
     this.store.dispatch(
       editMember({

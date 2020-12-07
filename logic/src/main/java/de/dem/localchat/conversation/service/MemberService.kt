@@ -14,7 +14,7 @@ interface MemberService {
     /**
      * Change permission of user of specified userId.
      */
-    fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission): Member
+    fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission, color: Int?): Member
     fun removeMember(conversationId: Long, userId: Long)
 
     /**
@@ -33,4 +33,6 @@ interface MemberService {
     fun memberName(cid: Long, userId: Long): String
 
     fun wroteMessage(cid: Long, username: String, messageId: Long): Boolean
+
+    fun setColor(cid: Long, username: String, color: Int?): Member
 }

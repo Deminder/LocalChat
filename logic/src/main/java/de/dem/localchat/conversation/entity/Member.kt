@@ -13,6 +13,8 @@ data class Member(
 
         val conversationId: Long,
 
+        val color: Int? = null,
+
         @Embedded.Empty
         val permission: Permission = Permission(),
 

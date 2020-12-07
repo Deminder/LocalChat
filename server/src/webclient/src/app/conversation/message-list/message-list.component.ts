@@ -168,4 +168,23 @@ export class MessageListComponent
     }
     this.lengthUpdate.emit(this.heightFingerprint);
   }
+
+  /**
+   * Luminance of hex color 0-255
+   */
+  luminance(h: string): number {
+    let l = 0;
+    // 6 digits
+    if (h.length === 7) {
+      const r = Number('0x' + h[1] + h[2]);
+      const g = Number('0x' + h[3] + h[4]);
+      const b = Number('0x' + h[5] + h[6]);
+      const cmin = Math.min(r, g, b);
+      const cmax = Math.max(r, g, b);
+      l = (cmin + cmax) / (2);
+    } else {
+      l = 0;
+    }
+    return l;
+  }
 }

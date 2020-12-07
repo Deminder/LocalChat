@@ -99,11 +99,16 @@ class ConversationController(
             @PathVariable("uid") uid: Long,
             @Valid @RequestBody updateRequest: MemberUpdateRequest): MemberDto =
             updateRequest.permission?.let {
-                toMemberDto(memberService.upsertMember(cid, uid, it.toPermission())).also { member ->
+                toMemberDto(memberService.upsertMember(cid, uid,
+                        it.toPermission(),
+                        updateRequest.color?.let {c ->
+                            c.replace("#", "").toIntOrNull(16)
+                        }
+                ).also { member ->
                     eventSubscriptionService.notifyMembers(
                             ConversationEvent("upsert-member", member), cid, username())
-                }
-            } ?: error("Permission not specified. Color change not yet implemented!")
+                })
+            } ?: error("Permission not specified!")
 
 
     @DeleteMapping("/{cid}/members/{uid}")
