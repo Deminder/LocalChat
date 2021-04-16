@@ -10,8 +10,8 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $localchat-app-primary: mat-palette($mat-grey);
-$localchat-app-accent: mat-palette($mat-indigo, A200, A100, A400);
-$localchat-app-accent2: mat-palette($mat-deep-purple, A200, A100, A400);
+$localchat-app-accent: mat-palette($mat-blue-grey, A200, A100, A400);
+$localchat-app-accent2: mat-palette($mat-indigo, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
 $localchat-app-warn: mat-palette($mat-orange);
@@ -33,18 +33,19 @@ $localchat-app-theme: mat-dark-theme(
 }
 
 a:visited {
-  color: mat-color($localchat-app-warn, 800);
+  color: mat-color($localchat-app-warn, 100);
 }
 a:visited:hover {
-  color: mat-color($localchat-app-warn, 600);
+  color: mat-color($localchat-app-warn, 200);
 }
 
 a:link {
   color: mat-color($localchat-app-warn, 500);
+  text-shadow: 1px 1px darkslategray;
 }
 
 a:link:hover {
-  color: mat-color($localchat-app-warn, 300);
+  color: mat-color($localchat-app-warn, 700);
 }
 
 .msg-color-1 {
@@ -56,30 +57,31 @@ a:link:hover {
 }
 
 .msg-color-3 {
-  background-color: mat-color($localchat-app-primary, 600); }
+  background-color: mat-color($localchat-app-accent2, 500);
+}
 
 .msg-color-4 {
-  background-color: mat-color($localchat-app-primary, 700);
+  background-color: mat-color($localchat-app-primary, 600);
 }
 
 .msg-color-5 {
-  background-color: mat-color($localchat-app-primary, 800);
+  background-color: mat-color($localchat-app-primary, 700);
 }
 
 .msg-color-6 {
+  background-color: mat-color($localchat-app-primary, 800);
+}
+.msg-color-6 {
   background-color: mat-color($localchat-app-primary, 900);
 }
-.msg-color-7 {
+.msg-color-8 {
   background-color: mat-color($localchat-app-accent, 700);
 }
-.msg-color-8 {
+.msg-color-9 {
   background-color: mat-color($localchat-app-accent, 800);
 }
-.msg-color-9 {
-  background-color: mat-color($localchat-app-accent, 900);
-}
 .msg-color-10 {
-  background-color: mat-color($localchat-app-accent, 400);
+  background-color: mat-color($localchat-app-accent, 900);
 }
 .msg-color-11 {
   background-color: mat-color($localchat-app-accent, 500);
