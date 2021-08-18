@@ -1,5 +1,5 @@
-#LocalChat2
-Simple client-server chatting web app with Spring Boot and Angular. Intended as a learning aid and personal reference. **Unsafe for production**.
+# Local Chat
+Simple local network client-server chatting web app with Spring Boot and Angular. Intended as a learning aid and personal reference. **Unsafe for production**.
 
 ## Stack
 
