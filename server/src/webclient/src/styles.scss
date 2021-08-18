@@ -115,7 +115,8 @@ a:link:hover {
 // that you are using.
 @include angular-material-theme($localchat-app-theme);
 
-@import "assets/google-web-font-local.css";
+//@import "assets/google-web-font-local.css";
+@import "assets/google-web-font-gstatic.css";
 
 body {
   margin: 0px;
