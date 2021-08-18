@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# cd to the repo root
+cd "$( cd "$( dirname "$0" )" && pwd )/.."
+
 if [ "$1" = "prod" ];then
 	cp server-prod.env server.env
 else
