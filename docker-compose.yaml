@@ -2,6 +2,7 @@ version: '3.7'
 services:
   server:
     image: localchat2
+    restart: unless-stopped
     build:
       context: ./
       dockerfile: Dockerfile
@@ -13,6 +14,7 @@ services:
       - postgres
   db:
     image: postgres:12
+    restart: unless-stopped
     env_file:
       - server.env
     environment:

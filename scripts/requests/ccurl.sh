@@ -1,10 +1,8 @@
 #!/bin/bash
-HOST="localhost:9432"
+if [ -z "$LC_BASE_URL" ]; then
+	LC_BASE_URL="http://localhost:9432"
+fi
 URL_PATH="$1"
 shift
-if [[ "$1" == "https" ]];then
-    URL="https://$HOST$URL_PATH"
-else
-    URL="http://$HOST$URL_PATH"
-fi
-curl --insecure -b cookies.txt -c cookies.txt -v "$@" "$URL"
+curl --insecure -b cookies.txt -c cookies.txt -v "$@" "${LC_BASE_URL}${URL_PATH}"
+echo
