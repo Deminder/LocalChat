@@ -1,33 +1,3 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
-    username: admin
-    password: secret
-  flyway:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
-    user: admin
-    password: secret
-
-
-encrypt:
-  key-store:
-    location: classpath:/server-dev.p12
-    password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
-    alias: localchat
-
-manage:
-  admin:
-    password: 'ENC(yT7KGUoZr8dPCbmYYCmNR4WpJ+h9/VX+nAQI7WtC8mUejVtAPhLmVdLX33//2tIC)'
-
-server:
-  ssl:
-    enabled: false
-    key-store: classpath:server-dev.p12
-    key-store-password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
-    key-store-type: pkcs12
-    key-alias: localchat
-    key-password: 'ENC(cFQcCCMyKtaZi3lzoaeefKz7HXcBsI06P5u16nAJlyQFxdRhST2NptADeLRa9a+GX28joWA0duRd7J4/4HFXkVToltybHQq2NrGBaHA1N3o=)'
-
 logging:
   level:
     org:

@@ -12,12 +12,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpSession
 
 @Controller
 class ConversationEventsController(
-        @Autowired val requestThreadPool: ExecutorService,
-        @Autowired val eventSubscriptionService: EventSubscriptionService
+    @Autowired val requestThreadPool: ExecutorService,
+    @Autowired val eventSubscriptionService: EventSubscriptionService
 ) {
     private var identifier: Int = 0;
 
@@ -25,7 +25,7 @@ class ConversationEventsController(
     fun handleSse(session: HttpSession): SseEmitter {
         val emitter = SseEmitter(-1L)
         val username = SecurityContextHolder.getContext().authentication?.name
-                ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not logged in user!")
+            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not logged in user!")
         val sessionId = session.id + "#${String.format("%085X", identifier++)}"
         requestThreadPool.execute {
             try {

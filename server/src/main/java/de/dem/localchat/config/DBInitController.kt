@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DBInitController(
-        @Autowired val userRegistrationService: UserService
+    @Autowired val userRegistrationService: UserService
 ) {
 
 

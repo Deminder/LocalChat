@@ -1,12 +1,11 @@
 package de.dem.localchat.dtos.requests
 
 import de.dem.localchat.dtos.PermissionDto
-import javax.validation.Valid
-import javax.validation.constraints.Size
+import jakarta.validation.Valid
 
 data class MemberUpdateRequest(
-        val color: Int?,
+    val color: Int?,
 
-        @field:Valid
-        val permission: PermissionDto?,
+    @field:Valid
+    val permission: PermissionDto?,
 )

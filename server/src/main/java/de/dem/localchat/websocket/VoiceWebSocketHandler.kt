@@ -12,8 +12,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
 class VoiceWebSocketHandler(
-        private val voiceChannelService: VoiceChannelService,
-        private val executorService: ExecutorService,
+    private val voiceChannelService: VoiceChannelService,
+    private val executorService: ExecutorService,
 ) : BinaryWebSocketHandler() {
 
     private var socketWorkers: Map<String, Future<*>> = emptyMap()
@@ -27,8 +27,9 @@ class VoiceWebSocketHandler(
                         it.take().let { buffer ->
                             val nameArray = buffer.username.toByteArray()
                             val b = ByteBuffer.allocate(
-                                    Integer.BYTES + nameArray.size + buffer.length)
-                                    .order(ByteOrder.LITTLE_ENDIAN)
+                                Integer.BYTES + nameArray.size + buffer.length
+                            )
+                                .order(ByteOrder.LITTLE_ENDIAN)
                             b.putInt(nameArray.size)
                             b.put(nameArray)
                             b.put(buffer.data)
@@ -55,12 +56,12 @@ class VoiceWebSocketHandler(
     }
 
     private fun queryToConversationId(query: String) =
-            if (query.startsWith("cid=")) query.substring("cid=".length).toLong() else null
+        if (query.startsWith("cid=")) query.substring("cid=".length).toLong() else null
 
     private fun withCidAndUsername(session: WebSocketSession, procedure: (cid: Long, username: String) -> Unit) =
-            session.principal?.name?.let { username ->
-                session.uri?.query?.let { queryToConversationId(it) }?.let { cid ->
-                    procedure(cid, username)
-                }
-            } ?: session.close(CloseStatus.PROTOCOL_ERROR)
+        session.principal?.name?.let { username ->
+            session.uri?.query?.let { queryToConversationId(it) }?.let { cid ->
+                procedure(cid, username)
+            }
+        } ?: session.close(CloseStatus.PROTOCOL_ERROR)
 }

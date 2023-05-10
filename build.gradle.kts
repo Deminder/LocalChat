@@ -1,15 +1,10 @@
-
 plugins {
     idea
-    id("org.springframework.boot") version "2.3.3.RELEASE"
-    id("io.spring.dependency-management") version "1.0.10.RELEASE"
-    kotlin("jvm") version "1.4.0"
-    kotlin("plugin.spring") version "1.4.0"
-    id("com.palantir.docker") version "0.25.0"
-}
-
-docker {
-    name = "${project.name}:${project.version}"
+    id("org.springframework.boot") version "3.0.1"
+    id("io.spring.dependency-management") version "1.1.0"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.spring") version "1.8.0"
+    id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
 }
 
 idea {
@@ -19,16 +14,8 @@ idea {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
-extra["springCloudVersion"] = "Hoxton.SR8"
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-    }
+kotlin {
+    jvmToolchain(17)
 }
 
 tasks.bootJar {
@@ -39,10 +26,9 @@ tasks.jar {
     enabled = false
 }
 
-
 allprojects {
     group = "de.dem.localchat"
-    version = "1.0"
+    version = "1.1"
 
     repositories {
         mavenCentral()
@@ -66,35 +52,61 @@ configure(subprojects.filter { it.name != "webclient" }) {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 
-
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
         implementation("org.springframework.boot:spring-boot-starter-security")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-        implementation(kotlin("reflect"))
-        implementation(kotlin("stdlib-jdk8"))
-        implementation("org.springframework.cloud:spring-cloud-starter-sleuth:2.2.5.RELEASE")
-        implementation("javax.validation:validation-api:2.0.1.Final")
-        implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
-        implementation("org.springframework:spring-context-support:5.2.6.RELEASE")
+        implementation("org.jetbrains.kotlin:kotlin-reflect")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
         runtimeOnly("org.postgresql:postgresql")
-        testImplementation("com.ninja-squad:springmockk:2.0.2")
+        testImplementation("com.ninja-squad:springmockk:4.0.0")
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.3")
         testImplementation("org.springframework.security:spring-security-test")
-        testImplementation("io.zonky.test:embedded-database-spring-test:1.5.5")
+        testImplementation("io.zonky.test:embedded-database-spring-test:2.2.0")
     }
 
     tasks.test {
         useJUnitPlatform()
     }
+
+    ext {
+        set("testcontainersVersion", "1.16.3")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
+        }
+    }
+
+    fun String.runCommand(
+        workingDir: File = File("."),
+        timeoutAmount: Long = 60,
+        timeoutUnit: TimeUnit = TimeUnit.SECONDS
+    ): String? = runCatching {
+        ProcessBuilder("\\s".toRegex().split(this))
+            .directory(workingDir)
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .redirectError(ProcessBuilder.Redirect.PIPE)
+            .start().also { it.waitFor(timeoutAmount, timeoutUnit) }
+            .inputStream.bufferedReader().readText()
+    }.onFailure { it.printStackTrace() }.getOrNull()
+
+    tasks.withType<Test> {
+        // alias docker-machine="podman machine"
+        val podmanSocket = "/run/user/${"id -u".runCommand()?.trimEnd()}/podman/podman.sock"
+        environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", podmanSocket)
+        environment("DOCKER_HOST", "unix://${podmanSocket}")
+        environment("TESTCONTAINERS_RYUK_DISABLED", "true")
+    }
+
     tasks.compileKotlin {
         kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "11"
+            jvmTarget = "17"
+            freeCompilerArgs += "-Xjsr305=strict"
         }
     }
 }

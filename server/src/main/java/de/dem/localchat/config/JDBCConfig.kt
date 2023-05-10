@@ -38,7 +38,7 @@ class JDBCConfig : AbstractJdbcConfiguration() {
     fun transactionManager(dataSource: DataSource) = DataSourceTransactionManager(dataSource)
 
     override fun jdbcCustomConversions() =
-            JdbcCustomConversions(listOf(StringSetReader.INSTANCE))
+        JdbcCustomConversions(listOf(StringSetReader.INSTANCE))
 
 
     @ReadingConverter
@@ -47,9 +47,9 @@ class JDBCConfig : AbstractJdbcConfiguration() {
         INSTANCE;
 
         override fun convert(source: String): Set<String> = source
-                .subSequence(1,source.length-1)
-                .split(",")
-                .toSet()
+            .subSequence(1, source.length - 1)
+            .split(",")
+            .toSet()
     }
 
 }

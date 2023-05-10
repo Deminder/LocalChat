@@ -9,18 +9,18 @@ import org.springframework.core.env.Profiles
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
-import javax.naming.AuthenticationException
-import javax.servlet.FilterChain
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpFilter
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpFilter
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.security.core.AuthenticationException
 
 
 @Component
 class SecurityTokenFilter(
-        @Autowired val authenticationProvider: AuthenticationProvider,
-        @Autowired val env: Environment
+    @Autowired val authenticationProvider: AuthenticationProvider,
+    @Autowired val env: Environment
 ) : HttpFilter() {
 
     val cookieName = "API-Token"
@@ -49,11 +49,12 @@ class SecurityTokenFilter(
         val addC = auth != null && auth.isAuthenticated && auth is TokenRefToken
         val remC = reqCookie != null && (auth == null || !auth.isAuthenticated)
         if (addC || remC) {
-            response.addCookie(Cookie(cookieName,
-                    if (auth is TokenRefToken) auth.token.token else "x"
+            response.addCookie(Cookie(
+                cookieName,
+                if (auth is TokenRefToken) auth.token.token else "x"
             ).apply {
                 isHttpOnly = true
-                secure = env.acceptsProfiles( Profiles.of("prod") )
+                secure = env.acceptsProfiles(Profiles.of("prod"))
                 path = "/api"
                 maxAge = if (addC && auth is TokenRefToken) auth.maxAge else 0
             })

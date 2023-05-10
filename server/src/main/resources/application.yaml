@@ -1,18 +1,42 @@
-
 server:
   port: 9432
+  ssl:
+    enabled: false
+    key-store: classpath:${KEY_STORE_PKCS_FILE:server-dev.p12}
+    key-store-password: ${KEY_STORE_PASSWORD:changeme}
+    key-store-type: pkcs12
+    key-alias: localchat
+    key-password: ${KEY_STORE_PASSWORD:changeme}
 
 autoconfigure:
   exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
 
-jasypt.encryptor:
-  iv-generator-classname: org.jasypt.iv.RandomIvGenerator
-  algorithm: PBEWITHHMACSHA256ANDAES_128
+springdoc:
+  packagesToScan: de.dem.localchat.rest
+  pathsToMatch:
+    - /v1
+    - /api/**
 
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    username: admin
+    password: ${POSTGRES_PASSWORD:secret}
   flyway:
     schemas: public
     locations: classpath:db/migration
     enabled: true
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    user: admin
+    password: ${POSTGRES_PASSWORD:secret}
+
+encrypt:
+  key-store:
+    location: classpath:/server-dev.p12
+    password: ${KEY_STORE_PASSWORD:changeme}
+    alias: localchat
+
+manage:
+  admin:
+    password: ${ADMIN_PASSWORD:secret}

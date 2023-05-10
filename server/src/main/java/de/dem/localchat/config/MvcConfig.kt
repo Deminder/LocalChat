@@ -1,5 +1,8 @@
 package de.dem.localchat.config
 
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.info.License
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer
@@ -18,13 +21,24 @@ class MvcConfig : WebMvcConfigurer {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry
-                .addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/")
+            .addResourceHandler("/**")
+            .addResourceLocations("classpath:/static/")
     }
 
     @Bean
     fun requestThreadPool(): ExecutorService {
         return Executors.newCachedThreadPool()
+    }
+
+    @Bean
+    fun localChatOpenAPI(): OpenAPI {
+        return OpenAPI()
+            .info(
+                Info().title("Local Chat API")
+                    .description("Local network chatting application")
+                    .version("v1.1.0")
+                    .license(License().name("MIT").url("https://github.com/Deminder/LocalChat"))
+            )
     }
 
 }

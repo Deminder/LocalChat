@@ -1,5 +1,5 @@
 plugins {
-    id("org.flywaydb.flyway") version "6.5.5"
+    id("org.flywaydb.flyway") version "9.8.1"
 }
 
 flyway {
@@ -39,20 +39,14 @@ tasks.clean {
     delete(staticDir)
 }
 
-
-springBoot {
-    mainClassName = "de.dem.localchat.LocalChatApplicationKt"
-}
-
 dependencies {
     runtimeOnly(project(":server:webclient"))
     implementation(project(":logic"))
-    implementation("org.flywaydb:flyway-core:6.5.5")
+    implementation("org.flywaydb:flyway-core:9.8.1")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("io.springfox:springfox-boot-starter:3.0.0")
-    implementation("io.springfox:springfox-swagger-ui:3.0.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 }
 
 

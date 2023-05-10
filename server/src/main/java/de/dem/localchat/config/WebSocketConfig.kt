@@ -24,7 +24,7 @@ class WebSocketConfig : WebSocketConfigurer {
 
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry.addHandler(VoiceWebSocketHandler(voiceChannelService, executorService), "/api/voice")
-                .addInterceptors(HttpSessionHandshakeInterceptor())
+            .addInterceptors(HttpSessionHandshakeInterceptor())
     }
 
 }

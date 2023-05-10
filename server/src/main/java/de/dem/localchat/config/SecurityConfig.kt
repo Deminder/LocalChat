@@ -4,18 +4,19 @@ import de.dem.localchat.filter.SecurityTokenFilter
 import de.dem.localchat.security.service.impl.TokenAuthProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter
 
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-class SecurityConfig : WebSecurityConfigurerAdapter() {
+@Configuration
+class SecurityConfig {
 
     @Autowired
     private lateinit var tokenAuthProvider: TokenAuthProvider
@@ -26,29 +27,34 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var env: Environment
 
+    @Primary
+    @Bean
     @Throws(Exception::class)
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(tokenAuthProvider)
+    fun tokenAuthManager(auth: AuthenticationManagerBuilder): AuthenticationManagerBuilder {
+        return auth.authenticationProvider(tokenAuthProvider)
     }
 
+    @Bean
     @Throws(Exception::class)
-    override fun configure(http: HttpSecurity) {
-        if (env.acceptsProfiles(Profiles.of("prod"))) {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        return if (env.acceptsProfiles(Profiles.of("prod"))) {
             http
-                    .requiresChannel()
-                    .anyRequest()
-                    .requiresSecure()
-        }
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/manage/**").hasRole("MANAGER")
-                .antMatchers("/api/user/**").permitAll()
-                .antMatchers("/api/**").authenticated()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .anyRequest().permitAll()
+                .requiresChannel()
+                .anyRequest()
+                .requiresSecure()
                 .and()
-                .addFilterAt(securityTokenFilter, RememberMeAuthenticationFilter::class.java)
+        } else {
+            http
+        }.csrf().disable()
+            .authorizeHttpRequests {
+                it.requestMatchers("/api/manage/**").hasAnyRole("ADMIN", "MANAGER")
+                    .requestMatchers("/api/user/**").permitAll()
+                    .requestMatchers("/api/**").authenticated()
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .anyRequest().permitAll()
+            }
+            .addFilterAt(securityTokenFilter, RememberMeAuthenticationFilter::class.java)
+            .build()
     }
 
 
