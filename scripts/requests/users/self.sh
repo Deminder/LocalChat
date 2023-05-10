@@ -1,2 +1,2 @@
 #!/bin/bash
-./ccurl.sh /api/user/self/
+./ccurl.sh /api/user/self
