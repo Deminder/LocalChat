@@ -19,3 +19,11 @@ data class User(
         @CreatedDate
         val registerDate: Instant = Instant.EPOCH
 )
+
+/**
+ * Cleanup authorities strings.
+ *
+ * WORKAROUND: spring data bug for Set<String>: {ADMIN,MANAGER} -> ["{ADMIN","MANAGER}"]
+ */
+fun User.clean(): User =
+        this.copy(authorities = this.authorities.map {it.replace(Regex("\\{|\\}"), "")}.toSet())

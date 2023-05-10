@@ -4,6 +4,7 @@ import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.security.dataacess.UserTokenRepository
 import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User
+import de.dem.localchat.security.entity.clean
 import de.dem.localchat.security.model.TokenRef
 import de.dem.localchat.security.model.TokenRefToken
 import de.dem.localchat.security.service.UserService
@@ -20,24 +21,25 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl(
-        @Autowired val userRepository: UserRepository,
-        @Autowired val userTokenRepository: UserTokenRepository,
-        @Value("\${manage.admin.password:admin}") val adminPassword: String,
-        @Autowired val authProvider: AuthenticationProvider,
-        val passwordEncoder: PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder(),
+    @Autowired val userRepository: UserRepository,
+    @Autowired val userTokenRepository: UserTokenRepository,
+    @Value("\${manage.admin.password:admin}") val adminPassword: String,
+    @Autowired val authProvider: AuthenticationProvider,
+    val passwordEncoder: PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder(),
 ) : UserService {
 
     @Transactional
     override fun registerUser(name: String, password: String): User =
-            if (isRegistered(name))
-                error("User '${name}' already exists!")
-            else
-                userRepository.save(
-                        User(
-                                username = name,
-                                password = enc(password),
-                                authorities = setOf("USER"))
+        if (isRegistered(name))
+            error("User '${name}' already exists!")
+        else
+            userRepository.save(
+                User(
+                    username = name,
+                    password = enc(password),
+                    authorities = setOf("USER")
                 )
+            )
 
 
     override fun changePassword(password: String, oldPassword: String) {
@@ -58,14 +60,17 @@ class UserServiceImpl(
 
     @Transactional
     override fun initAdmin() {
-        (userRepository.findByUsername("admin")?.copy(password = enc(adminPassword))
+        userRepository.save(
+            userRepository.findByUsername("admin")
+                ?.copy(password = enc(adminPassword))
+                ?.clean()
                 ?: User(
-                        username = "admin",
-                        password = enc(adminPassword),
-                        enabled = true,
-                        authorities = mutableSetOf("ADMIN", "MANAGER"))).let {
-            userRepository.save(it)
-        }
+                    username = "admin",
+                    password = enc(adminPassword),
+                    enabled = true,
+                    authorities = setOf("ADMIN", "MANAGER")
+                )
+        )
 
     }
 
@@ -74,19 +79,19 @@ class UserServiceImpl(
     override fun userByName(username: String) = userRepository.findByUsername(username)
 
     override fun searchVisibleUsers(username: String, search: String) =
-            userRepository.findVisibleUsersOf(username, search)
+        userRepository.findVisibleUsersOf(username, search)
 
 
     override fun login(username: String, password: String, description: String): TokenRef =
-            authProvider.authenticate(
-                    UsernamePasswordAuthenticationToken(username, password).also {
-                        it.details = description
-                    }
-            ).also { auth ->
-                SecurityContextHolder.getContext().authentication = auth
-            }.let {
-                (it as TokenRefToken).token
+        authProvider.authenticate(
+            UsernamePasswordAuthenticationToken(username, password).also {
+                it.details = description
             }
+        ).also { auth ->
+            SecurityContextHolder.getContext().authentication = auth
+        }.let {
+            (it as TokenRefToken).token
+        }
 
     override fun logout() {
         SecurityContextHolder.getContext().authentication?.let {
@@ -102,7 +107,7 @@ class UserServiceImpl(
     }
 
     override fun listUserTokens(username: String): List<LoginToken> =
-            userTokenRepository.findAllByUsername(username)
+        userTokenRepository.findAllByUsername(username)
 
-    private fun enc(password: String) = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password)
+    private fun enc(password: String) = passwordEncoder.encode(password)
 }

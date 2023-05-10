@@ -4,8 +4,10 @@ import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.security.dataacess.UserTokenRepository
 import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User
+import de.dem.localchat.security.entity.clean
 import de.dem.localchat.security.model.TokenRef
 import de.dem.localchat.security.model.TokenRefToken
+import de.dem.localchat.security.exception.*;
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -15,7 +17,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
-import javax.naming.AuthenticationException
 
 @Service
 class TokenAuthProvider(
@@ -29,7 +30,7 @@ class TokenAuthProvider(
             when (authentication) {
                 is UsernamePasswordAuthenticationToken -> normalLogin(authentication)
                 is TokenRefToken -> autoLogin(authentication)
-                else -> throw AuthenticationException("Not supported!")
+                else -> throw TokenAuthException("Not Supported!")
             }
 
     private fun normalLogin(token: UsernamePasswordAuthenticationToken): Authentication =
@@ -39,7 +40,7 @@ class TokenAuthProvider(
                 if (passwordEncoder.matches(token.credentials.toString(), u.password))
                     successToken(TokenRef(token = createToken(u, token.details as String).token), u)
                 else null
-            } ?: throw AuthenticationException("Username or Password invalid!")
+            } ?: throw TokenAuthException("Invalid username or password!")
 
 
     private fun autoLogin(token: TokenRefToken): Authentication =
@@ -47,7 +48,7 @@ class TokenAuthProvider(
                 checkEnabled(it)
             }?.let { u ->
                 successToken(token.token, u)
-            } ?: throw AuthenticationException("Login token invalid!")
+            } ?: throw TokenAuthException("Login token invalid!")
 
 
     private fun successToken(token: TokenRef, u: User) = TokenRefToken(
@@ -56,12 +57,12 @@ class TokenAuthProvider(
     }
 
     private fun useToken(tokenRef: TokenRef): User? =
-            userTokenRepository.userByToken(tokenRef.token)?.also {
+            userTokenRepository.userByToken(tokenRef.token)?.clean()?.also {
                 userTokenRepository.updateLastUsed(tokenRef.token)
             }
 
     private fun checkEnabled(user: User) {
-        if (!user.enabled) throw AuthenticationException("User is not enabled!")
+        if (!user.enabled) throw TokenAuthException("User is not enabled!")
     }
 
     private fun createToken(user: User, description: String) =

@@ -14,8 +14,7 @@ const val BASE_QUERY = "SELECT m.* FROM conversation_message m WHERE " +
 const val SORT_QUERY = "ORDER BY m.author_date DESC LIMIT :limit OFFSET :offset"
 
 @Repository
-interface ConversationMessageRepository : PagingAndSortingRepository<ConversationMessage, Long> {
-
+interface ConversationMessageRepository : PagingAndSortingRepository<ConversationMessage, Long>  {
 
     fun findAllByConversationId(conversationId: Long, pageable: Pageable): List<ConversationMessage>
 
@@ -52,4 +51,8 @@ interface ConversationMessageRepository : PagingAndSortingRepository<Conversatio
             "AND mem.conversation_id = m.conversation_id AND m.conversation_id = :cid " +
             "AND mem.last_read < m.author_date")
     fun countUnreadMessagesOfMember(@Param("uid") userId: Long, @Param("cid") conversationId: Long): Int
+
+    fun save(entity: ConversationMessage): ConversationMessage
+
+    fun delete(entity: ConversationMessage)
 }
