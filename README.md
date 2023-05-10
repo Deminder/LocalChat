@@ -5,7 +5,6 @@ Simple local network client-server chatting web app with Spring Boot and Angular
 
 - Kotlin backend: Spring Boot 2.3.3
   - PostgreSQL (with Flyway migrations)
-  - Jasypt credentials
   - Swagger codegen (openapi)
   - SSL certificate
   - WebSockets
@@ -16,7 +15,7 @@ Simple local network client-server chatting web app with Spring Boot and Angular
   - Audio worklets + WebSockets (for basic voice transmission)
   - Karma tests
 - Deployment: Podman (Docker)
-  - Build with _gradle_ and run on _openjdk:14-jdk-alpine_ image
+  - Build with _gradle_ and run on _openjdk:17-jdk-alpine_ image
   - Dev and prod profiles for _docker-compose.yaml_ (via _.env_ files)
 
 ## Features
@@ -37,12 +36,8 @@ Simple local network client-server chatting web app with Spring Boot and Angular
 ## Development
 Generate `server-dev.p12` keystore:
 ```shell
-./scripts/ssl/init-keystore.sh "CN=localhost,OU=?,O=?,L=?,ST=?,C=?" server-dev
-```
-Encrypt/Decrypt secrets for `server/src/resources/application-*.yaml` with password which is provided via `jasypt.encryptor.password` at runtime:
-```shell
-CIPHERTEXT=`./scripts/credentials/sec_encrypt.sh "$SECRET" "$PASSWORD"`
-./scripts/credentials/sec_decrypt.sh "$CIPHERTEXT" "$PASSWORD"
+CN=localhost OU=localchat-dev O=localchat-dev L=dev ST=dev C=DE ./scripts/ssl/init-keystore.sh server-dev
+mv server-dev.p12 server/src/main/resources/
 ```
 Build with _gradle_ (server JAR in `server/build/libs/server-1.0.jar`):
 ```shell
