@@ -8,6 +8,7 @@ import de.dem.localchat.rest.ConversationController
 import de.dem.localchat.rest.ConversationEventsController
 import de.dem.localchat.security.dataacess.UserRepository
 import de.dem.localchat.security.entity.User
+import de.dem.localchat.security.entity.clean
 import de.dem.localchat.security.model.TokenRef
 import de.dem.localchat.security.model.TokenRefToken
 import io.mockk.every
@@ -15,6 +16,7 @@ import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.verify
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
+import io.zonky.test.db.provider.postgres.PostgreSQLContainerCustomizer
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -26,11 +28,22 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpSession
+import org.springframework.context.annotation.Bean
+import org.springframework.test.context.ActiveProfiles
 
-@SpringBootTest
+@ActiveProfiles(profiles = ["test"])
+@SpringBootTest(classes = [LocalChatApplication::class, LocalChatApplicationTest.ContextConfiguration::class])
 @AutoConfigureEmbeddedDatabase
 internal class LocalChatApplicationTest {
+
+    class ContextConfiguration {
+        @Bean
+        fun posgresContainerCustomizers(): List<PostgreSQLContainerCustomizer> =
+            listOf(PostgreSQLContainerCustomizer {
+                Runtime.getRuntime().addShutdownHook(Thread(it::stop))
+            })
+    }
 
     @Autowired
     lateinit var userRepository: UserRepository
@@ -51,8 +64,8 @@ internal class LocalChatApplicationTest {
     @BeforeEach
     fun setup() {
         users = listOf(
-                User(username = otherUsername, password = "encodedString", enabled = true),
-                User(username = username, password = "encodedString", enabled = true)
+            User(username = otherUsername, password = "encodedString", enabled = true),
+            User(username = username, password = "encodedString", enabled = true)
         ).map { userRepository.save(it) }
     }
 
@@ -64,9 +77,9 @@ internal class LocalChatApplicationTest {
     private fun authAs(username: String?) {
         SecurityContextHolder.getContext().authentication = username?.let {
             TokenRefToken(
-                    token = TokenRef(token = "ababababa"),
-                    userName = it,
-                    auths = listOf("USER").map { GrantedAuthority { "ROLE_${it}" } }).apply {
+                token = TokenRef(token = "ababababa"),
+                userName = it,
+                auths = listOf("USER").map { GrantedAuthority { "ROLE_${it}" } }).apply {
                 isAuthenticated = true
             }
         }
@@ -76,7 +89,7 @@ internal class LocalChatApplicationTest {
     @Test
     fun adminInitialized() {
         val admin = userRepository.findByUsername("admin")
-        assertThat(admin?.authorities, hasItem("ADMIN"))
+        assertThat(admin?.clean()?.authorities, hasItem("ADMIN"))
     }
 
     @Test
@@ -105,10 +118,13 @@ internal class LocalChatApplicationTest {
 
         authAs(username)
         val newConv = conversationController.createConversation(
-                ConversationCreateRequest(name = "conv1", setOf(otherUsername)))
+            ConversationCreateRequest(name = "conv1", setOf(otherUsername))
+        )
 
-        assertThat(memberRepository.findAllByConversationId(newConv.id)
-                .mapNotNull { userRepository.findByIdOrNull(it.userId)?.username }, hasItems(username, otherUsername))
+        assertThat(
+            memberRepository.findAllByConversationId(newConv.id)
+                .mapNotNull { userRepository.findByIdOrNull(it.userId)?.username }, hasItems(username, otherUsername)
+        )
 
 
         assertThat(sendMessages.size, equalTo(1))

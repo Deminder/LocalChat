@@ -177,7 +177,7 @@ internal class ConversationServiceImplTest {
             )
         }
 
-        every { memberRepository.saveAll(any()) } returns mockk {}
+        every { memberRepository.saveAll<Member>(any()) } returns mockk {}
 
         val conv = unit.createConversation(convName, memberNames)
         assertThat(conv.id, equalTo(cid))

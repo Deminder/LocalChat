@@ -36,10 +36,10 @@ import java.time.Instant
 
 @ActiveProfiles(profiles = ["test"])
 @WebMvcTest(
-        controllers = [ConversationController::class]
+    controllers = [ConversationController::class]
 )
 internal class ConversationControllerTest(
-        @Autowired val webApplicationContext: WebApplicationContext
+    @Autowired val webApplicationContext: WebApplicationContext
 ) {
 
     @Configuration
@@ -73,23 +73,25 @@ internal class ConversationControllerTest(
     fun allConversationsOfUser() {
 
         every { conversationService.listConversations() } returns
-                listOf(Conversation(
+                listOf(
+                    Conversation(
                         id = 0,
                         name = "conv1",
                         creator = "user1",
                         createDate = Instant.now()
-                ), Conversation(
+                    ), Conversation(
                         id = 1,
                         name = "conv2",
                         creator = "user2",
                         createDate = Instant.now()
-                ))
+                    )
+                )
 
         mockMvc.perform(get("/api/conversations"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("\$[0].name").value("conv1"))
-                .andExpect(jsonPath("\$[1].name").value("conv2"))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$[0].name").value("conv1"))
+            .andExpect(jsonPath("\$[1].name").value("conv2"))
     }
 
     @WithMockUser(username = "user1", password = "pwd", authorities = ["USER"])
@@ -99,22 +101,26 @@ internal class ConversationControllerTest(
         val cname = "newConv"
         every { conversationService.createConversation(any(), any()) } returns
                 Conversation(
-                        id = cid,
-                        name = cname,
-                        creator = "user1",
-                        createDate = Instant.now(),
+                    id = cid,
+                    name = cname,
+                    creator = "user1",
+                    createDate = Instant.now(),
                 )
 
         every { eventSubscriptionService.notifyMembers(any(), any(), any()) } answers {}
 
         mockMvc.perform(
-                post("/api/conversations")
-                        .content(json.writeValueAsString(
-                                ConversationCreateRequest(cname, setOf("user2", "user3"))))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("\$.name").value(cname))
+            post("/api/conversations")
+                .content(
+                    json.writeValueAsString(
+                        ConversationCreateRequest(cname, setOf("user2", "user3"))
+                    )
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.name").value(cname))
 
         val eventSlot = slot<ConversationEvent>()
         verify { eventSubscriptionService.notifyMembers(capture(eventSlot), cid, *anyVararg()) }
@@ -128,22 +134,26 @@ internal class ConversationControllerTest(
         val newName = "newName"
         every { conversationService.changeConversationName(cid, newName) } returns
                 Conversation(
-                        id = cid,
-                        name = newName,
-                        creator = "user1",
-                        createDate = Instant.now(),
+                    id = cid,
+                    name = newName,
+                    creator = "user1",
+                    createDate = Instant.now(),
                 )
 
         every { eventSubscriptionService.notifyMembers(any(), any(), any()) } answers {}
 
         mockMvc.perform(
-                post("/api/conversations/rename")
-                        .content(json.writeValueAsString(
-                                ConversationRenameRequest(cid, newName)))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("\$.name").value(newName))
+            post("/api/conversations/rename")
+                .content(
+                    json.writeValueAsString(
+                        ConversationRenameRequest(cid, newName)
+                    )
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.name").value(newName))
 
         val eventSlot = slot<ConversationEvent>()
         verify { eventSubscriptionService.notifyMembers(capture(eventSlot), cid, *anyVararg()) }
@@ -158,23 +168,27 @@ internal class ConversationControllerTest(
         val text = "textText"
         every { conversationService.upsertMessage(cid, any(), text) } returns
                 ConversationMessage(
-                        id = mid,
-                        conversationId = cid,
-                        text = text,
-                        authorId = 1,
+                    id = mid,
+                    conversationId = cid,
+                    text = text,
+                    authorId = 1,
                 )
 
         every { eventSubscriptionService.notifyMembers(any(), any(), any()) } answers {}
 
         mockMvc.perform(
-                put("/api/conversations/${cid}/messages")
-                        .content(json.writeValueAsString(
-                                MessageUpsertRequest(cid, text)))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("\$.id").value(mid))
-                .andExpect(jsonPath("\$.text").value(text))
+            put("/api/conversations/${cid}/messages")
+                .content(
+                    json.writeValueAsString(
+                        MessageUpsertRequest(cid, text)
+                    )
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.id").value(mid))
+            .andExpect(jsonPath("\$.text").value(text))
 
         val eventSlot = slot<ConversationEvent>()
         verify { eventSubscriptionService.notifyMembers(capture(eventSlot), cid, *anyVararg()) }
