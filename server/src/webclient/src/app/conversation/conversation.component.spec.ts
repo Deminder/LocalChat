@@ -58,26 +58,26 @@ describe('ConversationComponent', () => {
   let component: ConversationComponent;
   let fixture: ComponentFixture<ConversationComponent>;
   let store: MockStore;
-  let mockConversationIdSelector: MemoizedSelector<AppState, number>;
-  let mockSelfUserIdSelector: MemoizedSelector<AppState, number>;
-  let mockConversationMessagesSelector: MemoizedSelector<
+  let _mockConversationIdSelector: MemoizedSelector<AppState, number>;
+  let _mockSelfUserIdSelector: MemoizedSelector<AppState, number>;
+  let _mockConversationMessagesSelector: MemoizedSelector<
     AppState,
     ConversationMessageDto[]
   >;
-  let mockConversationMemberEntitiesSelector: MemoizedSelector<
+  let _mockConversationMemberEntitiesSelector: MemoizedSelector<
     AppState,
     Dictionary<MemberDto>
   >;
-  let mockIsFirstPageSelector: MemoizedSelector<AppState, boolean>;
-  let mockIsLastPageSelector: MemoizedSelector<AppState, boolean>;
-  let mockSelfMemberSelector: MemoizedSelector<AppState, MemberDto>;
-  let mockIsLoadingMoreMessagesSelector: MemoizedSelector<AppState, boolean>;
-  let mockNewestConversationMessageSelector: MemoizedSelector<
+  let _mockIsFirstPageSelector: MemoizedSelector<AppState, boolean>;
+  let _mockIsLastPageSelector: MemoizedSelector<AppState, boolean>;
+  let _mockSelfMemberSelector: MemoizedSelector<AppState, MemberDto | undefined>;
+  let _mockIsLoadingMoreMessagesSelector: MemoizedSelector<AppState, boolean>;
+  let _mockNewestConversationMessageSelector: MemoizedSelector<
     AppState,
-    ConversationMessageDto
+    ConversationMessageDto | null
   >;
-  let mockMessageSearchSelector: MemoizedSelector<AppState, MessageSearch>;
-  let mockMessageSearchIndexSelector: MemoizedSelector<AppState, number>;
+  let _mockMessageSearchSelector: MemoizedSelector<AppState, MessageSearch>;
+  let _mockMessageSearchIndexSelector: MemoizedSelector<AppState, number>;
 
   beforeEach(
     waitForAsync(() => {
@@ -104,40 +104,40 @@ describe('ConversationComponent', () => {
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);
-    mockConversationIdSelector = store.overrideSelector(
+    _mockConversationIdSelector = store.overrideSelector(
       selectedConversationId,
       1
     );
-    mockSelfUserIdSelector = store.overrideSelector(selectSelfUserId, 2);
-    mockConversationMessagesSelector = store.overrideSelector(
+    _mockSelfUserIdSelector = store.overrideSelector(selectSelfUserId, 2);
+    _mockConversationMessagesSelector = store.overrideSelector(
       selectConversationMessages,
       sampleConversationMessages
     );
-    mockConversationMemberEntitiesSelector = store.overrideSelector(
+    _mockConversationMemberEntitiesSelector = store.overrideSelector(
       selectConversationMemberEntities,
       {}
     );
-    mockIsFirstPageSelector = store.overrideSelector(isFirstPage, true);
-    mockIsLastPageSelector = store.overrideSelector(isLastPage, true);
-    mockSelfMemberSelector = store.overrideSelector(
+    _mockIsFirstPageSelector = store.overrideSelector(isFirstPage, true);
+    _mockIsLastPageSelector = store.overrideSelector(isLastPage, true);
+    _mockSelfMemberSelector = store.overrideSelector(
       selectSelfMember,
       sampleMemberDtos[0]
     );
 
-    mockIsLoadingMoreMessagesSelector = store.overrideSelector(
+    _mockIsLoadingMoreMessagesSelector = store.overrideSelector(
       isLoadingMoreMessages,
       false
     );
 
-    mockNewestConversationMessageSelector = store.overrideSelector(
+    _mockNewestConversationMessageSelector = store.overrideSelector(
       selectNewestMessage,
       sampleConversationMessages[0]
     );
-    mockMessageSearchSelector = store.overrideSelector(selectMessageSearch, {
+    _mockMessageSearchSelector = store.overrideSelector(selectMessageSearch, {
       search: '',
       regex: false,
     });
-    mockMessageSearchIndexSelector = store.overrideSelector(
+    _mockMessageSearchIndexSelector = store.overrideSelector(
       selectMessageSearchIndex,
       -1
     );

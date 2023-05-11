@@ -10,7 +10,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <app-token-table
-        [tokens]="tokens$ | async"
+        [tokens]="(tokens$ | async) ?? []"
         (delete)="deleteToken($event)"
       ></app-token-table>
     </mat-expansion-panel>

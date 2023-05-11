@@ -18,14 +18,14 @@ import { NotifyService } from './notify.service';
 describe('NotifyService', () => {
   let service: NotifyService;
   let store: MockStore;
-  let mockConversationIdSelector: MemoizedSelector<AppState, number>;
-  //let mockDesktopNotificationSelector: MemoizedSelector<AppState, boolean>;
-  //let mockAlertSoundsSelector: MemoizedSelector<AppState, boolean>;
-  let mockMemberEntitesSelector: MemoizedSelector<
+  let _mockConversationIdSelector: MemoizedSelector<AppState, number>;
+  //let _mockDesktopNotificationSelector: MemoizedSelector<AppState, boolean>;
+  //let _mockAlertSoundsSelector: MemoizedSelector<AppState, boolean>;
+  let _mockMemberEntitesSelector: MemoizedSelector<
     AppState,
     Dictionary<MemberDto>
   >;
-  let mockConversationNameEntitiesSelector: MemoizedSelector<
+  let _mockConversationNameEntitiesSelector: MemoizedSelector<
     AppState,
     Dictionary<ConversationNameDto>
   >;
@@ -46,17 +46,17 @@ describe('NotifyService', () => {
     });
     store = TestBed.inject(MockStore);
     service = TestBed.inject(NotifyService);
-    mockConversationIdSelector = store.overrideSelector(
+    _mockConversationIdSelector = store.overrideSelector(
       selectedConversationId,
       1
     );
 
-    mockMemberEntitesSelector = store.overrideSelector(
+    _mockMemberEntitesSelector = store.overrideSelector(
       selectConversationMemberEntities,
       { [sampleMemberDtos[0].userId]: sampleMemberDtos[0] }
     );
 
-    mockConversationNameEntitiesSelector = store.overrideSelector(
+    _mockConversationNameEntitiesSelector = store.overrideSelector(
       selectConversationNameEntities,
       { [convSamples[0].id]: convSamples[0] }
     );

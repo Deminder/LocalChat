@@ -67,7 +67,7 @@ export class RouterEffects {
         this.store.select(selectSelfName),
         this.store.select(shouldLoadSelf)
       ),
-      filter(([_, selfname, loadSelf]) => !selfname && loadSelf),
+      filter(([_, selfname, loadSelf]) => !selfname && Boolean(loadSelf)),
       map(() => getSelfActions.request())
     )
   );

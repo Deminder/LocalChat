@@ -53,17 +53,17 @@ describe('MembersComponent', () => {
   let fixture: ComponentFixture<MembersComponent>;
   let store: MockStore;
 
-  let mockConversationMembersSelector: MemoizedSelector<AppState, MemberDto[]>;
-  let mockActiveConversationSelector: MemoizedSelector<
+  let _mockConversationMembersSelector: MemoizedSelector<AppState, MemberDto[]>;
+  let _mockActiveConversationSelector: MemoizedSelector<
     AppState,
-    ConversationNameDto
+    ConversationNameDto | undefined
   >;
-  let mockConversationIdSelector: MemoizedSelector<AppState, number>;
-  let mockSelfMemberSelector: MemoizedSelector<AppState, MemberDto>;
+  let _mockConversationIdSelector: MemoizedSelector<AppState, number>;
+  let _mockSelfMemberSelector: MemoizedSelector<AppState, MemberDto | undefined>;
 
-  let mockVoiceChannelSelector: MemoizedSelector<AppState, ConvRef>;
-  let mockIsMicEnabledSelector: MemoizedSelector<AppState, boolean>;
-  let mockIsPlaybackEnabledSelector: MemoizedSelector<AppState, boolean>;
+  let _mockVoiceChannelSelector: MemoizedSelector<AppState, ConvRef>;
+  let _mockIsMicEnabledSelector: MemoizedSelector<AppState, boolean>;
+  let _mockIsPlaybackEnabledSelector: MemoizedSelector<AppState, boolean>;
 
   let voiceServiceSpy: jasmine.SpyObj<VoiceService>;
 
@@ -88,32 +88,32 @@ describe('MembersComponent', () => {
         ],
       }).compileComponents();
       store = TestBed.inject(MockStore);
-      mockConversationMembersSelector = store.overrideSelector(
+      _mockConversationMembersSelector = store.overrideSelector(
         selectConversationMembers,
         convMembers
       );
-      mockSelfMemberSelector = store.overrideSelector(
+      _mockSelfMemberSelector = store.overrideSelector(
         selectSelfMember,
         convMembers[0]
       );
-      mockConversationIdSelector = store.overrideSelector(
+      _mockConversationIdSelector = store.overrideSelector(
         selectedConversationId,
         1
       );
-      mockActiveConversationSelector = store.overrideSelector(
+      _mockActiveConversationSelector = store.overrideSelector(
         selectActiveConversation,
         convSamples[0]
       );
 
-      mockVoiceChannelSelector = store.overrideSelector(selectVoiceChannel, {
+      _mockVoiceChannelSelector = store.overrideSelector(selectVoiceChannel, {
         conversationId: convSamples[0].id,
       });
 
-      mockIsMicEnabledSelector = store.overrideSelector(
+      _mockIsMicEnabledSelector = store.overrideSelector(
         isMicrohponeEnabled,
         false
       );
-      mockIsPlaybackEnabledSelector = store.overrideSelector(
+      _mockIsPlaybackEnabledSelector = store.overrideSelector(
         isPlaybackEnabled,
         false
       );

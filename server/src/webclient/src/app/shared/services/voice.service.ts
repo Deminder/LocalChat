@@ -13,8 +13,8 @@ import {
 export class VoiceService {
   endpoint = '/api/voice';
 
-  micAudioContext: AudioContext;
-  playBackAudioContext: AudioContext;
+  micAudioContext: AudioContext | null = null;
+  playBackAudioContext: AudioContext | null = null;
 
   samplesPerFrame = 512;
   silentFrameGap = 0;
@@ -299,7 +299,7 @@ export class VoiceService {
     const param: AudioParam = (node.parameters as any).get('samplesPerFrame');
     param.setValueAtTime(this.samplesPerFrame, audioContext.currentTime);
 
-    let previousFrame: Float32Array = null;
+    let previousFrame: Float32Array | null = null;
     node.port.onmessage = (event) => {
       // Handling data from the processor.
       const frame = event.data;
@@ -308,7 +308,7 @@ export class VoiceService {
         this.silentFrameGap++;
       } else {
         // silent -> active : send previous silent frame
-        if (this.silentFrameGap > 0) {
+        if (this.silentFrameGap > 0 && previousFrame !== null) {
           this.sendVoiceFrame(previousFrame);
         }
         this.silentFrameGap = 0;

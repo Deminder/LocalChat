@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {ConversationNameDto} from '../openapi/model/models';
 
 @Component({
@@ -6,7 +6,7 @@ import {ConversationNameDto} from '../openapi/model/models';
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss'],
 })
-export class SidenavComponent implements OnInit {
+export class SidenavComponent {
 
   @Input()
   conversations: ConversationNameDto[] | null = [];
@@ -21,7 +21,7 @@ export class SidenavComponent implements OnInit {
   conversationId = -1;
 
   @Input()
-  opened: boolean;
+  opened = false;
 
   @Input()
   overlay = false;
@@ -31,10 +31,6 @@ export class SidenavComponent implements OnInit {
 
   @Output()
   createConv = new EventEmitter<void>();
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   toggle(): void {
     this.opened = !this.opened;

@@ -3,12 +3,9 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnDestroy,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChildren,
-  Query,
   QueryList,
   AfterViewChecked,
   ElementRef,
@@ -42,30 +39,29 @@ function escapeRegExp(value: string): string {
   templateUrl: './message-list.component.html',
   styleUrls: ['./message-list.component.scss'],
 })
-export class MessageListComponent
-  implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
+export class MessageListComponent implements OnChanges, AfterViewChecked {
   @Input()
-  messages: ConversationMessageDto[];
+  messages: ConversationMessageDto[] = [];
 
   @Input()
-  showSpinner: boolean;
+  showSpinner = false;
 
   @Input()
-  selfUserId: number;
+  selfUserId = -1;
 
   @Input()
-  memberDict: Dictionary<MemberDto>;
+  memberDict: Dictionary<MemberDto> = {};
 
   /* highlighted message id */
   @Input()
-  highlight: number;
+  highlight = -1;
 
-  searchMatcher: RegExp | null;
+  searchMatcher: RegExp | null = null;
   searchResult: { [msgId: number]: boolean } = {};
 
   @Input()
-  set search(s: MessageSearch) {
-    if (s.search !== '') {
+  set search(s: MessageSearch | null) {
+    if (s !== null && s.search !== '') {
       this.searchMatcher = new RegExp(
         s.regex ? s.search : escapeRegExp(s.search),
         'i'
@@ -76,13 +72,13 @@ export class MessageListComponent
   }
 
   @ViewChildren('message')
-  messageElements: QueryList<ElementRef>;
+  messageElements!: QueryList<ElementRef>;
 
   @Output()
-  delete = new EventEmitter<{ messageId: number }>();
+  delete = new EventEmitter<ConversationMessageDto>();
 
   @Output()
-  edit = new EventEmitter<{ messageId: number }>();
+  edit = new EventEmitter<ConversationMessageDto>();
 
   @Output()
   searchTopOffsets = new EventEmitter<{ [msgId: number]: number }>();
@@ -91,7 +87,7 @@ export class MessageListComponent
   searchSize = new EventEmitter<number>();
 
   @Output()
-  lengthUpdate = new EventEmitter<any>();
+  lengthUpdate = new EventEmitter<[boolean, number]>();
 
   selected = -1;
 
@@ -99,21 +95,20 @@ export class MessageListComponent
     return [this.selected >= 0, this.messages.length];
   }
 
-  constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes.showSpinner ||
-      (changes.messages &&
-        changes.messages.previousValue?.length !==
-          changes.messages.currentValue.length)
+      changes['showSpinner'] ||
+      (changes['messages'] &&
+        changes['messages'].previousValue?.length !==
+          changes['messages'].currentValue.length)
     ) {
       this.lengthUpdate.emit(this.heightFingerprint);
     }
-    if (this.searchMatcher && (changes.messages || changes.search)) {
-      this.searchResult = this.messages.reduce((res, msg) => {
-        res[msg.id] = this.searchMatcher.test(msg.text);
-        return res;
-      }, {});
+    const sRegex = this.searchMatcher;
+    if (sRegex !== null && (changes['messages'] || changes['search'])) {
+      this.searchResult = Object.fromEntries(
+        this.messages.map((msg) => [msg.id, sRegex.test(msg.text)])
+      );
       this.searchSize.emit(
         Object.values(this.searchResult).filter((v) => v).length
       );
@@ -122,19 +117,14 @@ export class MessageListComponent
 
   ngAfterViewChecked(): void {
     this.searchTopOffsets.emit(
-      this.messageElements.reduce((offsets, ele, i) => {
-        const msgId = Object.keys(this.searchResult)[i];
-        if (this.searchResult[msgId]) {
-          offsets[msgId] = ele.nativeElement.offsetTop;
-        }
-        return offsets;
-      }, {})
+      Object.fromEntries(
+        this.messageElements
+          .map((element, i) => [this.searchResult[i], element, i])
+          .filter(([r]) => r)
+          .map(([_, e, i]) => [i, e])
+      )
     );
   }
-
-  ngOnDestroy(): void {}
-
-  ngOnInit(): void {}
 
   isOutgoing(msg: ConversationMessageDto): boolean {
     return this.selfUserId === msg.authorUserId;
@@ -156,7 +146,7 @@ export class MessageListComponent
   deletePermission(userId: number): boolean {
     return (
       userId === this.selfUserId ||
-      this.memberDict[this.selfUserId].permission.moderate
+      (this.memberDict[this.selfUserId]?.permission.moderate ?? false)
     );
   }
 
@@ -181,7 +171,7 @@ export class MessageListComponent
       const b = Number('0x' + h[5] + h[6]);
       const cmin = Math.min(r, g, b);
       const cmax = Math.max(r, g, b);
-      l = (cmin + cmax) / (2);
+      l = (cmin + cmax) / 2;
     } else {
       l = 0;
     }

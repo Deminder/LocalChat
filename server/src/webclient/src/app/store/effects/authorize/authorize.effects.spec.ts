@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, of, EMPTY } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { AuthorizeEffects } from './authorize.effects';
 import { login, Credentials } from '../../actions/authorize.actions';
 import { progressStopAll, progressStart } from '../../actions/progress.actions';
-import { hot, cold } from 'jasmine-marbles';
+import { hot } from 'jasmine-marbles';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthorizeService } from './authorize.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -52,7 +52,7 @@ describe('AuthEffects', () => {
 
   it('should reroute after login success', () => {
     const creds = { username: 'user1', password: 'pwd' } as Credentials;
-    authorizeServiceSpy.login.and.returnValue(of(null));
+    authorizeServiceSpy.login.and.returnValue(of(undefined));
     actions$ = hot('--a-', {
       a: login({ creds }),
     });

@@ -53,25 +53,25 @@ describe('AppComponent', () => {
   let component: AppComponent;
   let store: MockStore;
 
-  let mockConversationIdSelector: MemoizedSelector<AppState, number>;
-  let mockSelfNameSelector: MemoizedSelector<AppState, string>;
-  let mockConversationMessagesSelector: MemoizedSelector<
+  let _mockConversationIdSelector: MemoizedSelector<AppState, number>;
+  let _mockSelfNameSelector: MemoizedSelector<AppState, string>;
+  let _mockConversationMessagesSelector: MemoizedSelector<
     AppState,
     ConversationMessageDto[]
   >;
-  let mockConversationsSelector: MemoizedSelector<
+  let _mockConversationsSelector: MemoizedSelector<
     AppState,
     ConversationNameDto[]
   >;
-  let mockActiveConversationSelector: MemoizedSelector<
+  let _mockActiveConversationSelector: MemoizedSelector<
     AppState,
-    ConversationNameDto
+    ConversationNameDto | undefined
   >;
-  let mockGlobalLoadingSelector: MemoizedSelector<AppState, boolean>;
-  let mockSettingsOpenSelector: MemoizedSelector<AppState, boolean>;
-  let mockMembersOpenSelector: MemoizedSelector<AppState, boolean>;
-  let mockIsSidenavOpenSelector: MemoizedSelector<AppState, boolean>;
-  let mockIsSearchingSelector: MemoizedSelector<AppState, boolean>;
+  let _mockGlobalLoadingSelector: MemoizedSelector<AppState, boolean>;
+  let _mockSettingsOpenSelector: MemoizedSelector<AppState, boolean>;
+  let _mockMembersOpenSelector: MemoizedSelector<AppState, boolean>;
+  let _mockIsSidenavOpenSelector: MemoizedSelector<AppState, boolean>;
+  let _mockIsSearchingSelector: MemoizedSelector<AppState, boolean>;
 
   let titleSpy: jasmine.SpyObj<Title>;
   let notifySpy: jasmine.SpyObj<NotifyService>;
@@ -97,12 +97,12 @@ describe('AppComponent', () => {
         ],
       }).compileComponents();
       store = TestBed.inject(MockStore);
-      mockConversationIdSelector = store.overrideSelector(
+      _mockConversationIdSelector = store.overrideSelector(
         selectedConversationId,
         1
       );
-      mockSelfNameSelector = store.overrideSelector(selectSelfName, 'user1');
-      mockConversationMessagesSelector = store.overrideSelector(
+      _mockSelfNameSelector = store.overrideSelector(selectSelfName, 'user1');
+      _mockConversationMessagesSelector = store.overrideSelector(
         selectConversationMessages,
         [
           {
@@ -114,22 +114,22 @@ describe('AppComponent', () => {
           },
         ]
       );
-      mockConversationsSelector = store.overrideSelector(
+      _mockConversationsSelector = store.overrideSelector(
         selectConversations,
         convSamples
       );
-      mockActiveConversationSelector = store.overrideSelector(
+      _mockActiveConversationSelector = store.overrideSelector(
         selectActiveConversation,
         convSamples[0]
       );
-      mockGlobalLoadingSelector = store.overrideSelector(
+      _mockGlobalLoadingSelector = store.overrideSelector(
         isGlobalLoading,
         false
       );
-      mockSettingsOpenSelector = store.overrideSelector(isSettingsOpen, false);
-      mockMembersOpenSelector = store.overrideSelector(isMembersOpen, false);
-      mockIsSidenavOpenSelector = store.overrideSelector(isSideNavOpen, false);
-      mockIsSearchingSelector = store.overrideSelector(
+      _mockSettingsOpenSelector = store.overrideSelector(isSettingsOpen, false);
+      _mockMembersOpenSelector = store.overrideSelector(isMembersOpen, false);
+      _mockIsSidenavOpenSelector = store.overrideSelector(isSideNavOpen, false);
+      _mockIsSearchingSelector = store.overrideSelector(
         isMessageSearching,
         false
       );

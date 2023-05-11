@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import {
-  FunctionWithParametersType,
+  ActionCreator,
+  NotAllowedCheck,
   TypedAction,
 } from '@ngrx/store/src/models';
 import { Observable, of } from 'rxjs';
@@ -53,12 +54,12 @@ export class AuthorizeEffects {
   );
 
   createAuthEffect<
-    AC extends FunctionWithParametersType<P, R & TypedAction<T>> &
-      TypedAction<T>,
-    P extends any[],
-    R extends object,
-    T extends string = string,
-    S = void
+    S,
+    P extends object,
+    AC extends ActionCreator<
+      string,
+      (props: P & NotAllowedCheck<P>) => P & TypedAction<string>
+    >
   >(
     actionCreator: AC,
     serviceCall: (action: ReturnType<AC>) => Observable<S>,

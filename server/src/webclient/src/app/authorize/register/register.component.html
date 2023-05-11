@@ -37,7 +37,7 @@
     >
       <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
     </button>
-    <mat-error *ngIf="registerForm.errors?.unmatchingPassword"
+    <mat-error *ngIf="registerForm.errors?.['unmatchingPassword']"
       >Passwords do not match!</mat-error
     >
   </mat-form-field>

@@ -3,19 +3,19 @@
     mat-icon-button
     class="switch-button"
     aria-label="Next"
-    [disabled]="!(searchItemCount$ | async)"
+    [disabled]="(searchItemCount$ | async) ?? 0"
     (click)="nextItem()"
   >
     <mat-icon>keyboard_arrow_up</mat-icon>
   </button>
   <span
-    >{{ (searchItemIndex$ | async) + 1 }}/{{ searchItemCount$ | async }}</span
+    >{{ ((searchItemIndex$ | async) ?? -1) + 1 }}/{{ (searchItemCount$ | async) ?? 0 }}</span
   >
   <button
     mat-icon-button
     class="switch-button"
     aria-label="Previous"
-    [disabled]="!(searchItemCount$ | async)"
+    [disabled]="(searchItemCount$ | async) ?? 0"
     (click)="previousItem()"
   >
     <mat-icon>keyboard_arrow_down</mat-icon>

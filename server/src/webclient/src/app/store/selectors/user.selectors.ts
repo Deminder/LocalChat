@@ -1,10 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { UserState, userKey } from '../reducers/user.reducer';
-import {
-  isChatOpen,
-  isMembersOpen,
-  isSettingsOpen,
-} from '../reducers/router.reducer';
 
 const selectUser = createFeatureSelector<UserState>(userKey);
 

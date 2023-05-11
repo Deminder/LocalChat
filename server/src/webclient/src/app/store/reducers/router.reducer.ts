@@ -8,7 +8,6 @@ export interface RouterState {
 }
 
 export const selectRouter = createFeatureSelector<
-  RouterState,
   fromRouter.RouterReducerState<any>
 >(routerKey);
 
@@ -32,7 +31,7 @@ export const selectedConversationId = createSelector(
 
 export const shouldLoadSelf = createSelector(
   selectUrl,
-  (data) => data && !data.startsWith('/authorize')
+  (data) => data !== undefined && !data.startsWith('/authorize')
 );
 
 export const isSettingsOpen = createSelector(
@@ -42,10 +41,10 @@ export const isSettingsOpen = createSelector(
 
 export const isMembersOpen = createSelector(
   selectUrl,
-  (data) => data && data.startsWith('/members/')
+  (data) => data !== undefined &&data.startsWith('/members/')
 );
 
 export const isChatOpen = createSelector(
   selectUrl,
-  (data) => data && data.startsWith('/chat/')
+  (data) => data !== undefined && data.startsWith('/chat/')
 );

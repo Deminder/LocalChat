@@ -13,9 +13,9 @@ describe('SearcherComponent', () => {
   let store: MockStore;
   let component: SearcherComponent;
   let fixture: ComponentFixture<SearcherComponent>;
-  let mockConversationIdSelector: MemoizedSelector<AppState, number>;
-  let mockSearchItemIndexSelector: MemoizedSelector<AppState, number>;
-  let mockSearchItemCountSelector: MemoizedSelector<AppState, number>;
+  let _mockConversationIdSelector: MemoizedSelector<AppState, number>;
+  let _mockSearchItemIndexSelector: MemoizedSelector<AppState, number>;
+  let _mockSearchItemCountSelector: MemoizedSelector<AppState, number>;
 
   beforeEach(
     waitForAsync(() => {
@@ -29,15 +29,15 @@ describe('SearcherComponent', () => {
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);
-    mockConversationIdSelector = store.overrideSelector(
+    _mockConversationIdSelector = store.overrideSelector(
       selectedConversationId,
       1
     );
-    mockSearchItemIndexSelector = store.overrideSelector(
+    _mockSearchItemIndexSelector = store.overrideSelector(
       selectMessageSearchIndex,
       -1
     );
-    mockSearchItemCountSelector = store.overrideSelector(
+    _mockSearchItemCountSelector = store.overrideSelector(
       selectMessageSearchCount,
       0
     );

@@ -1,24 +1,15 @@
-@import "~@angular/material/theming";
-// Plus imports for other components in your app.
+@use "@angular/material" as mat;
+// See https://material.angular.io/guide/theming
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat.core();
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$localchat-app-primary: mat-palette($mat-grey);
-$localchat-app-accent: mat-palette($mat-blue-grey, A200, A100, A400);
-$localchat-app-accent2: mat-palette($mat-indigo, A200, A100, A400);
+$localchat-app-primary: mat.define-palette(mat.$grey-palette, 500);
+$localchat-app-accent: mat.define-palette( mat.$blue-grey-palette, A200, A100, A400);
+$localchat-app-accent2: mat.define-palette( mat.$indigo-palette, A200, A100, A400);
 
-// The warn palette is optional (defaults to red).
-$localchat-app-warn: mat-palette($mat-orange);
+$localchat-app-warn: mat.define-palette(mat.$orange-palette);
 
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as `color` or `typography`.
-$localchat-app-theme: mat-dark-theme(
+$localchat-app-theme: mat.define-dark-theme(
   (
     color: (
       primary: $localchat-app-primary,
@@ -29,65 +20,65 @@ $localchat-app-theme: mat-dark-theme(
 );
 
 .shaded-background {
-  background-color: mat-color($localchat-app-primary, 800);
+  background-color: mat.get-color-from-palette($localchat-app-primary, 800);
 }
 
 a:visited {
-  color: mat-color($localchat-app-warn, 100);
+  color: mat.get-color-from-palette($localchat-app-warn, 100);
 }
 a:visited:hover {
-  color: mat-color($localchat-app-warn, 200);
+  color: mat.get-color-from-palette($localchat-app-warn, 200);
 }
 
 a:link {
-  color: mat-color($localchat-app-warn, 500);
+  color: mat.get-color-from-palette($localchat-app-warn, 500);
   text-shadow: 1px 1px darkslategray;
 }
 
 a:link:hover {
-  color: mat-color($localchat-app-warn, 700);
+  color: mat.get-color-from-palette($localchat-app-warn, 700);
 }
 
 .msg-color-1 {
-  background-color: mat-color($localchat-app-accent2, 900);
+  background-color: mat.get-color-from-palette($localchat-app-accent2, 900);
 }
 
 .msg-color-2 {
-  background-color: mat-color($localchat-app-accent2, 700);
+  background-color: mat.get-color-from-palette($localchat-app-accent2, 700);
 }
 
 .msg-color-3 {
-  background-color: mat-color($localchat-app-accent2, 500);
+  background-color: mat.get-color-from-palette($localchat-app-accent2, 500);
 }
 
 .msg-color-4 {
-  background-color: mat-color($localchat-app-primary, 600);
+  background-color: mat.get-color-from-palette($localchat-app-primary, 600);
 }
 
 .msg-color-5 {
-  background-color: mat-color($localchat-app-primary, 700);
+  background-color: mat.get-color-from-palette($localchat-app-primary, 700);
 }
 
 .msg-color-6 {
-  background-color: mat-color($localchat-app-primary, 800);
+  background-color: mat.get-color-from-palette($localchat-app-primary, 800);
 }
 .msg-color-6 {
-  background-color: mat-color($localchat-app-primary, 900);
+  background-color: mat.get-color-from-palette($localchat-app-primary, 900);
 }
 .msg-color-8 {
-  background-color: mat-color($localchat-app-accent, 700);
+  background-color: mat.get-color-from-palette($localchat-app-accent, 700);
 }
 .msg-color-9 {
-  background-color: mat-color($localchat-app-accent, 800);
+  background-color: mat.get-color-from-palette($localchat-app-accent, 800);
 }
 .msg-color-10 {
-  background-color: mat-color($localchat-app-accent, 900);
+  background-color: mat.get-color-from-palette($localchat-app-accent, 900);
 }
 .msg-color-11 {
-  background-color: mat-color($localchat-app-accent, 500);
+  background-color: mat.get-color-from-palette($localchat-app-accent, 500);
 }
 .msg-color-12 {
-  background-color: mat-color($localchat-app-accent, 600);
+  background-color: mat.get-color-from-palette($localchat-app-accent, 600);
 }
 
 /* width */
@@ -97,23 +88,23 @@ a:link:hover {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: mat-color($localchat-app-primary, 800);
+  background: mat.get-color-from-palette($localchat-app-primary, 800);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: mat-color($localchat-app-primary, 600);
+  background: mat.get-color-from-palette($localchat-app-primary, 600);
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: mat-color($localchat-app-primary, 500);
+  background: mat.get-color-from-palette($localchat-app-primary, 500);
 }
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($localchat-app-theme);
+@include mat.all-component-themes($localchat-app-theme);
 
 //@import "assets/google-web-font-local.css";
 @import "assets/google-web-font-gstatic.css";
@@ -127,8 +118,7 @@ body {
   top: 0px;
   font-family: "Roboto", sans-serif;
   scrollbar-width: thin;
-  scrollbar-color: mat-color($localchat-app-primary, 600)
-    mat-color($localchat-app-primary, 800);
+  scrollbar-color: mat.get-color-from-palette($localchat-app-primary, 600) mat.get-color-from-palette($localchat-app-primary, 800);
 }
 
 .localchat-image {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddConversationComponent } from '../add-conversation/add-conversation.component';
 import { ConversationMessageDto } from 'src/app/openapi/model/models';
@@ -8,7 +8,7 @@ import { ConversationMessageDto } from 'src/app/openapi/model/models';
   templateUrl: './edit-message.component.html',
   styleUrls: ['./edit-message.component.scss'],
 })
-export class EditMessageComponent implements OnInit {
+export class EditMessageComponent {
 
   text: string;
 
@@ -19,8 +19,6 @@ export class EditMessageComponent implements OnInit {
 
     this.text = this.data.message.text;
   }
-
-  ngOnInit(): void {}
 
   confirm(): void {
     this.dialogRef.close(this.text);

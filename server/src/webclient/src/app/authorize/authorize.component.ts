@@ -28,11 +28,11 @@ export class AuthorizeComponent implements OnInit, AfterViewInit, OnDestroy {
   registerErrors$ = this.notifyService.select('register-errors');
   initialUsername$ = this.store.select(selectRegisteredUsername);
 
-  @ViewChild(MatTabGroup) tabs: MatTabGroup;
-  @ViewChild(LoginComponent) loginForm: LoginComponent;
-  @ViewChild(RegisterComponent) registerForm: RegisterComponent;
+  @ViewChild(MatTabGroup) tabs!: MatTabGroup;
+  @ViewChild(LoginComponent) loginForm!: LoginComponent;
+  @ViewChild(RegisterComponent) registerForm!: RegisterComponent;
 
-  successReact: Subscription;
+  successReact!: Subscription;
 
   constructor(private store: Store, private notifyService: NotifyService) {}
 

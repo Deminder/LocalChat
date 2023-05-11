@@ -2,10 +2,8 @@ import {
   AfterViewChecked,
   Component,
   ElementRef,
-  OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges,
   ViewChild,
   Output,
   EventEmitter,
@@ -54,9 +52,9 @@ export class SearcherComponent implements OnInit, OnDestroy, AfterViewChecked {
   searchTexts = new Subject<[string, boolean]>();
 
   @ViewChild('searcher', { static: true })
-  inputElement: ElementRef<HTMLElement>;
+  inputElement!: ElementRef<HTMLElement>;
 
-  sub: Subscription;
+  sub!: Subscription;
 
   constructor(private store: Store) {}
 

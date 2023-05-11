@@ -1,0 +1,46 @@
+---
+parser: '@typescript-eslint/parser'
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
+  - 'prettier'
+plugins:
+  - '@typescript-eslint'
+root: true
+rules:
+  "@typescript-eslint/no-unused-vars":
+    - warn
+    - argsIgnorePattern: '^_'
+  "@typescript-eslint/no-explicit-any": 'off'
+overrides:
+  - files: ['*.ts']
+    parserOptions:
+      project: ['tsconfig.json', 'e2e/tsconfig.json']
+      createDefaultProgram: true
+    extends:
+      - 'plugin:@angular-eslint/recommended'
+      - 'plugin:@angular-eslint/template/process-inline-templates'
+    rules:
+      "@angular-eslint/component-selector":
+        - error
+        - prefix: app
+          style: kebab-case
+          type: element
+      "@angular-eslint/directive-selector":
+        - error
+        - prefix: app
+          style: camelCase
+          type: attribute
+  - files: ['*.spec.ts']
+    rules:
+      "@typescript-eslint/no-unused-vars":
+        - warn
+        - argsIgnorePattern: '^_'
+          varsIgnorePattern: '^_'
+  - files: ['*.html']
+    extends:
+      - 'plugin:@angular-eslint/template/recommended'
+    rules: {}
+
+parserOptions:
+  ecmaVersion: 2022

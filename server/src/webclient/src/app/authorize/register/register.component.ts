@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -12,9 +12,9 @@ import { Credentials } from 'src/app/store/actions/authorize.actions';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   @Input()
-  errors: {defaultMessage: string, field: string}[] = null;
+  errors: {defaultMessage: string, field: string}[] = [];
 
   @Output()
   register: EventEmitter<Credentials> = new EventEmitter();
@@ -36,8 +36,8 @@ export class RegisterComponent implements OnInit {
     },
     {
       validators: (control: FormGroup): ValidationErrors | null => {
-        return control.get('password').value !==
-          control.get('passwordRepeat').value
+        return control.get('password')?.value !==
+          control.get('passwordRepeat')?.value
           ? { unmatchingPassword: true }
           : null;
       },
@@ -47,12 +47,10 @@ export class RegisterComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {}
-
   onSubmit(): void {
     this.register.emit({
-      username: this.registerForm.get('username').value,
-      password: this.registerForm.get('password').value,
+      username: this.registerForm.get('username')?.value ?? '',
+      password: this.registerForm.get('password')?.value ?? '',
     });
   }
 

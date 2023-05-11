@@ -2,11 +2,11 @@
   <app-message-list
     class="list"
     cdkScrollable
-    [messages]="conversationMessages$ | async"
-    [selfUserId]="selfUserId$ | async"
-    [memberDict]="memberEntites$ | async"
-    [showSpinner]="loadingMoreMessages$ | async"
-    [search]="messageSearch$ | async"
+    [messages]="(conversationMessages$ | async) ?? []"
+    [selfUserId]="(selfUserId$ | async) ?? -1"
+    [memberDict]="(memberEntites$ | async) ?? {}"
+    [showSpinner]="(loadingMoreMessages$ | async) ?? false"
+    [search]="(messageSearch$ | async) ?? null"
     [highlight]="searchHighlight"
     (lengthUpdate)="keepScrollRelativeToBottom()"
     (delete)="deleteMessage(cid, $event)"
@@ -16,7 +16,7 @@
   ></app-message-list>
   <app-writer
     class="writer shaded-background"
-    [member]="selfMember$ | async"
+    [member]="(selfMember$ | async) ?? null"
     (send)="sendMessage(cid, $event)"
     (hidden)="keepScrollRelativeToBottom()"
   ></app-writer>

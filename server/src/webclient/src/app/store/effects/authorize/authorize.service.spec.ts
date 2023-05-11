@@ -43,7 +43,7 @@ describe('AuthorizeService', () => {
       const mockReq = http.expectOne(`${service.endpoint}/login`);
       expect(mockReq.cancelled).toBeFalsy();
       expect(mockReq.request.body).toEqual(creds);
-      mockReq.error(new ErrorEvent('mocked error'), { status: 404 });
+      mockReq.error(new ProgressEvent('mocked not found response'), { status: 404 });
 
       http.verify();
     })

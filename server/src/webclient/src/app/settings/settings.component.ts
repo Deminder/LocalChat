@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LoginTokenDto } from '../openapi/model/models';
 import { logout } from '../store/actions/authorize.actions';
@@ -20,15 +20,13 @@ import {
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent {
   selfName$ = this.store.select(selectSelfName);
   tokens$ = this.store.select(selectLoginTokens);
   desktopNotification$ = this.store.select(areDesktopNotificationsEnabled);
   soundAlerts$ = this.store.select(areSoundAlertsEnabled);
 
   constructor(private store: Store) {}
-
-  ngOnInit(): void {}
 
   doLogout(): void {
     this.store.dispatch(logout());

@@ -96,16 +96,16 @@ export const isFirstPage = createSelector(
   selectPreviousMessagePage,
   selectNewestMessage,
   (cid, prevPage, newestMessage) =>
-    prevPage &&
+    prevPage !== undefined &&
     prevPage.convId === cid &&
-    newestMessage &&
+    newestMessage !== null &&
     prevPage.request.olderThan > newestMessage.authorDate
 );
 
 export const isLastPage = createSelector(
   selectedConversationId,
   selectPreviousMessagePage,
-  (cid, prevPage) => prevPage && prevPage.convId === cid && prevPage.last
+  (cid, prevPage) => prevPage !== undefined && prevPage.convId === cid && prevPage.last
 );
 
 /* SEARCHING */

@@ -4,7 +4,7 @@ import { SettingsComponent } from './settings.component';
 import { MaterialModule } from '../material/material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Store, MemoizedSelector, DefaultProjectorFn } from '@ngrx/store';
+import { MemoizedSelector } from '@ngrx/store';
 import { AppState } from '../store/reducers/app.reducer';
 import {
   selectSelfName,
@@ -31,8 +31,8 @@ describe('SettingsComponent', () => {
   let component: SettingsComponent;
   let fixture: ComponentFixture<SettingsComponent>;
   let store: MockStore;
-  let mockSelfNameSelector: MemoizedSelector<AppState, string>;
-  let mockTokensSelector: MemoizedSelector<AppState, LoginTokenDto[]>;
+  let _mockSelfNameSelector: MemoizedSelector<AppState, string>;
+  let _mockTokensSelector: MemoizedSelector<AppState, LoginTokenDto[]>;
 
   beforeEach(
     waitForAsync(() => {
@@ -55,8 +55,8 @@ describe('SettingsComponent', () => {
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);
-    mockSelfNameSelector = store.overrideSelector(selectSelfName, 'user1');
-    mockTokensSelector = store.overrideSelector(
+    _mockSelfNameSelector = store.overrideSelector(selectSelfName, 'user1');
+    _mockTokensSelector = store.overrideSelector(
       selectLoginTokens,
       sampleLoginTokens
     );

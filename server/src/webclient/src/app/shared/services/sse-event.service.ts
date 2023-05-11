@@ -9,7 +9,7 @@ export type ConversationEvent = { subject: string; message: any };
 export class SseEventService {
   endpoint = '/api/events';
 
-  source: EventSource;
+  source: EventSource | null = null;
 
   constructor(private zone: NgZone) {}
 

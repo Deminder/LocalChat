@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
 
@@ -7,7 +7,7 @@ import { FormControl, Validators } from '@angular/forms';
   templateUrl: './add-conversation.component.html',
   styleUrls: ['./add-conversation.component.scss'],
 })
-export class AddConversationComponent implements OnInit {
+export class AddConversationComponent {
   nameControl = new FormControl('', Validators.required);
 
   title: string;
@@ -22,8 +22,6 @@ export class AddConversationComponent implements OnInit {
 
     this.nameControl.setValue(data.name);
   }
-
-  ngOnInit(): void {}
 
   confirm(): void {
     this.dialogRef.close(this.nameControl.value);

@@ -50,7 +50,6 @@ import {
   isMessageSearching,
   selectLoadMoreConversationId,
   selectNextMessagePageRequest,
-  selectConversations,
   selectConversationNameEntities,
 } from '../../selectors/conversation.selectors';
 import { selectSelfUserId } from '../../selectors/user.selectors';
@@ -133,10 +132,11 @@ export class ConversationEffects {
       delay(100),
       withLatestFrom(this.store.select(selectLoadMoreConversationId)),
       filter(
-        ([a, scid]) => !a.messagePage.last && a.messagePage.convId === scid
+        ([a, conversationId]) => !a.messagePage.last && conversationId !== undefined &&
+          a.messagePage.convId === conversationId
       ),
       map(([_, conversationId]) =>
-        listNextMessagesActions.request({ conversationId })
+        listNextMessagesActions.request({ conversationId: conversationId as number })
       )
     )
   );

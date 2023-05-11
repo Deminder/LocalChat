@@ -1,7 +1,7 @@
 <mat-tab-group>
   <mat-tab label="Login">
     <app-login
-      [initialUsername]="initialUsername$ | async"
+      [initialUsername]="(initialUsername$ | async) ?? ''"
       [errors]="loginErrors$ | async"
       (login)="onLogin($event)"
     ></app-login>

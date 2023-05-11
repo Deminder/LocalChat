@@ -32,7 +32,7 @@
       <mat-icon>list</mat-icon>
     </button>
   </ng-template>
-  <ng-template [ngIf]="!(isSettingsOpen$ | async) && !saveSpace">
+  <ng-template [ngIf]="(isSettingsOpen$ | async) === false && !saveSpace">
     <button mat-icon-button aria-label="Open settings" routerLink="/settings">
       <mat-icon>settings</mat-icon>
     </button>
@@ -42,10 +42,10 @@
 <app-sidenav
   #sidenav
   [title]="selfName$ | async"
-  [opened]="isSideNavOpen$ | async"
+  [opened]="(isSideNavOpen$ | async) === true"
   (openedChange)="sidenavChange($event)"
   (createConv)="addConversation()"
-  [conversationId]="conversationId$ | async"
+  [conversationId]="(conversationId$ | async) ?? -1"
   [conversations]="conversations$ | async"
   [overlay]="smallLayout"
 >

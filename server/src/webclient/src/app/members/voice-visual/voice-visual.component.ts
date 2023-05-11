@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   Input,
   ChangeDetectionStrategy,
   ViewChild,
@@ -16,21 +15,17 @@ import {
   styleUrls: ['./voice-visual.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VoiceVisualComponent implements OnInit, OnChanges, AfterViewInit {
+export class VoiceVisualComponent implements OnChanges, AfterViewInit {
   @Input()
   voiceAnalyser: AnalyserNode | null = null;
 
   @Input()
   gain: GainNode | null = null;
 
-  dataArray: Uint8Array;
+  dataArray: Uint8Array | null = null;
 
   @ViewChild('wavecanvas')
-  canvas: ElementRef<HTMLCanvasElement>;
-
-  constructor() {}
-
-  ngOnInit(): void {}
+  canvas!: ElementRef<HTMLCanvasElement>;
 
   ngAfterViewInit(): void {
     this.startDrawing();
@@ -42,10 +37,12 @@ export class VoiceVisualComponent implements OnInit, OnChanges, AfterViewInit {
     }
     const canvas = this.canvas.nativeElement;
     const canvasCtx = canvas.getContext('2d');
+    if (!canvasCtx) {
+      return;
+    }
 
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
-
 
     canvasCtx.fillStyle = 'rgb(255, 255, 255)';
     canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -54,11 +51,15 @@ export class VoiceVisualComponent implements OnInit, OnChanges, AfterViewInit {
     canvasCtx.strokeStyle = 'rgb(255, 255, 255)';
 
     const draw = () => {
-      if (this.willStopDrawing()) {
+      if (this.voiceAnalyser === null) {
+        // Stop drawing if not voice analyser is attached
         canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
         return;
       }
       window.requestAnimationFrame(draw);
+      if (this.dataArray === null) {
+        return;
+      }
 
       this.voiceAnalyser.getByteTimeDomainData(this.dataArray);
       const bufferLength = this.dataArray.length;
@@ -93,16 +94,14 @@ export class VoiceVisualComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.voiceAnalyser) {
+    if (changes['voiceAnalyser']) {
       if (this.voiceAnalyser !== null) {
         this.voiceAnalyser.fftSize = 2048;
         this.dataArray = new Uint8Array(this.voiceAnalyser.fftSize);
         this.startDrawing();
+      } else {
+        this.dataArray = null;
       }
     }
-  }
-
-  willStopDrawing(): boolean {
-    return this.voiceAnalyser === null;
   }
 }

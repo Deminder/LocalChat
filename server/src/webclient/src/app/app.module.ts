@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
-import { StoreModule, Action, ActionReducer } from '@ngrx/store';
+import { StoreModule, ActionReducer } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -47,7 +47,7 @@ import { EnterKeyDownDirective } from './shared/enter-key-down.directive';
 
 registerLocaleData(localeDe);
 
-export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
+export function debug<T>(reducer: ActionReducer<T>): ActionReducer<T> {
   return (state, action) => {
     console.log('state', state);
     console.log('action', action);

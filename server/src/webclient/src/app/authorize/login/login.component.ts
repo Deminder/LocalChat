@@ -30,18 +30,18 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.loginForm.get('username').setValue(this.initialUsername);
+    this.loginForm.get('username')?.setValue(this.initialUsername);
   }
 
   onSubmit(): void {
     this.login.emit({
-      username: this.loginForm.get('username').value,
-      password: this.loginForm.get('password').value,
+      username: this.loginForm.get('username')?.value ?? '?',
+      password: this.loginForm.get('password')?.value ?? '?',
     });
   }
 
-  reset(username: string = ''): void {
+  reset(username = ''): void {
     this.loginForm.reset();
-    this.loginForm.get('username').setValue(username);
+    this.loginForm.get('username')?.setValue(username);
   }
 }

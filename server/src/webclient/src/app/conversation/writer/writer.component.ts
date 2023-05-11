@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   EventEmitter,
   Output,
   OnChanges,
@@ -15,11 +14,11 @@ import { MemberDto } from 'src/app/openapi/model/models';
   templateUrl: './writer.component.html',
   styleUrls: ['./writer.component.scss'],
 })
-export class WriterComponent implements OnInit, OnChanges {
+export class WriterComponent implements OnChanges {
   text = '';
 
   @Input()
-  member: MemberDto | null;
+  member: MemberDto | null = null;
 
   @Output()
   send = new EventEmitter<string>();
@@ -27,9 +26,8 @@ export class WriterComponent implements OnInit, OnChanges {
   @Output()
   hidden = new EventEmitter<boolean>();
 
-  constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
-    const mem = changes.member;
+    const mem = changes['member'];
     if (
       mem &&
       this.canWrite(mem.currentValue) !== this.canWrite(mem.previousValue)
@@ -37,8 +35,6 @@ export class WriterComponent implements OnInit, OnChanges {
       this.hidden.emit(this.isHidden);
     }
   }
-
-  ngOnInit(): void {}
 
   enterKeydown(event: KeyboardEvent): void {
     if (!event.shiftKey && this.text) {

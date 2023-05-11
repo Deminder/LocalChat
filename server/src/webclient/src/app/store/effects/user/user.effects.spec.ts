@@ -6,7 +6,7 @@ import { UserEffects } from './user.effects';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { SseEventService } from 'src/app/shared/services/sse-event.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { provideMockStore } from '@ngrx/store/testing';
 import { userKey } from '../../reducers/user.reducer';
 

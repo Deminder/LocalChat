@@ -3,7 +3,7 @@ import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Howl } from 'howler';
-import { fromEvent, Observable, Subject, zip, combineLatest } from 'rxjs';
+import { fromEvent, Observable, Subject, combineLatest } from 'rxjs';
 import { map, take, startWith } from 'rxjs/operators';
 import { ConversationMessageDto } from 'src/app/openapi/model/models';
 import { selectedConversationId } from 'src/app/store/reducers/router.reducer';
@@ -29,7 +29,7 @@ export class NotifyService {
 
   beepSound = new Howl({
     src: '../../../assets/audio/beep.wav',
-    preload: false,
+    preload: true,
   });
 
   hidden$ = fromEvent(this.doc, 'visibilitychange').pipe(

@@ -1,40 +1,60 @@
-import { createAction } from '@ngrx/store';
+import { Action, createAction } from '@ngrx/store';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   ActionCreator,
+  ActionCreatorProps,
   NotAllowedCheck,
-  Props,
   TypedAction,
 } from '@ngrx/store/src/models';
+import { EMPTY, merge, Observable, of } from 'rxjs';
+import { catchError, mergeMap, switchMap } from 'rxjs/operators';
 
-type CProps<T> = T extends object ? Props<T> & NotAllowedCheck<T> : never;
+type CProps<P> = P extends object
+  ? ActionCreatorProps<P> & NotAllowedCheck<P>
+  : never;
 
 export type APIActionCreator<T> = ActionCreator<
   string,
   T extends object
-    ? (props: T & NotAllowedCheck<T>) => T & TypedAction<string>
+    ? (props: T) => T & TypedAction<string>
     : () => TypedAction<string>
 >;
-export type APIActionCreatorContainer<R, S, F> = {
+
+export function apiActionInstance<
+  T extends object | undefined,
+  AC extends APIActionCreator<T>
+>(creator: AC, props: T): ReturnType<AC> {
+  if (props === undefined) {
+    return (creator as () => TypedAction<string>)() as ReturnType<AC>;
+  } else {
+    return creator(props) as ReturnType<AC>;
+  }
+}
+export type APIActionCreatorContainer<
+  R extends object | undefined = undefined,
+  S extends object | undefined = undefined,
+  F extends { error: any } | undefined = undefined
+> = {
   request: APIActionCreator<R>;
   success: APIActionCreator<S>;
   failure: APIActionCreator<F>;
 };
 
-export function createApiAction<P extends object>(
+export function createApiAction<P>(
   s: string,
-  ps: CProps<P>
-): any {
-  if (ps) {
-    return createAction(s, ps);
+  ps?: CProps<P>
+): APIActionCreator<P> {
+  if (ps !== undefined) {
+    return createAction(s, ps) as APIActionCreator<P>;
   } else {
-    return createAction(s);
+    return createAction(s) as APIActionCreator<P>;
   }
 }
 
 export function createApiActions<
-  R extends object | void = void,
-  S extends object | void = void,
-  F extends object | void = void
+  R extends object | undefined = undefined,
+  S extends object | undefined = undefined,
+  F extends { error: any } | undefined = undefined
 >(
   topic: string,
   phrase: string,
@@ -52,4 +72,49 @@ export function createApiActions<
     success: createApiAction(prefix + ' Success', properties.success),
     failure: createApiAction(prefix + ' Failure', properties.failure),
   } as APIActionCreatorContainer<R, S, F>;
+}
+
+export function createApiActionEffect<
+  R extends object | undefined = undefined,
+  S extends object | undefined = undefined,
+  F extends { error: any } | undefined = undefined
+>(
+  actions$: Actions,
+  container: APIActionCreatorContainer<R, S, F>,
+  calls: {
+    service: (action: ReturnType<APIActionCreator<R>>) => Observable<S>;
+    success?: (res: S) => Observable<Action>;
+    error?: (error: any) => Observable<Action>;
+  }
+): Observable<Action> {
+  return createEffect(() =>
+    actions$.pipe(
+      // Handle a API request action
+      ofType(container.request),
+      switchMap((r) =>
+        // Call service function
+        calls.service(r).pipe(
+          mergeMap((s) =>
+            merge(
+              calls.success ? calls.success(s) : EMPTY,
+              // Create a success action
+              of(apiActionInstance(container.success, s))
+            )
+          ),
+          catchError((error) => {
+            return merge(
+              calls.error ? calls.error(error) : EMPTY,
+              // Create a failure action
+              of(
+                apiActionInstance(
+                  container.failure,
+                  error === undefined ? undefined : { error }
+                )
+              )
+            );
+          })
+        )
+      )
+    )
+  );
 }

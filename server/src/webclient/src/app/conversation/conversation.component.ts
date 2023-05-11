@@ -6,7 +6,6 @@ import {
   Component,
   NgZone,
   OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -53,7 +52,7 @@ import { MessageListComponent } from './message-list/message-list.component';
   styleUrls: ['./conversation.component.scss'],
 })
 export class ConversationComponent
-  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+  implements OnDestroy, AfterViewInit, AfterViewChecked {
   conversationId$ = this.store.select(selectedConversationId);
   selfUserId$ = this.store.select(selectSelfUserId);
   conversationMessages$ = this.store.select(selectConversationMessages);
@@ -67,29 +66,29 @@ export class ConversationComponent
   messageSearchIndex$ = this.store.select(selectMessageSearchIndex);
 
   newMessageId$ = this.newestConversationMessage$.pipe(
-    filter((msg) => msg !== null),
-    map((msg) => msg.id),
+    map((msg) => msg?.id ?? -1),
+    filter((id) => id > 0),
     distinctUntilChanged()
   );
 
   @ViewChild(MessageListComponent)
-  messageList: MessageListComponent;
+  messageList!: MessageListComponent;
 
   @ViewChild(overlay.CdkScrollable)
-  messageScrollable: overlay.CdkScrollable;
+  messageScrollable!: overlay.CdkScrollable;
 
-  downScroller: Subscription;
+  downScroller!: Subscription;
   scrollToLowestMsgIds = -1;
   keepPreviousScrollPosition = false;
   firstPage = false;
   searchTopOffsets: { [msgId: number]: number } = {};
 
-  updater: Subscription;
+  updater!: Subscription;
 
   searchHighlight = -1;
-  searchJumper: Subscription;
+  searchJumper!: Subscription;
 
-  readInformer: Subscription;
+  readInformer!: Subscription;
 
   constructor(
     private store: Store,
@@ -98,14 +97,12 @@ export class ConversationComponent
     private notifyService: NotifyService
   ) {}
 
-  ngOnInit(): void {}
-
   ngAfterViewInit(): void {
     this.downScroller = this.newMessageId$
       .pipe(withLatestFrom(this.isFirstPage$))
       .subscribe(([msgId, firstPage]) => {
         this.scrollToLowestMsgIds = msgId;
-        this.firstPage = firstPage;
+        this.firstPage = firstPage ?? false;
       });
 
     this.readInformer = combineLatest([

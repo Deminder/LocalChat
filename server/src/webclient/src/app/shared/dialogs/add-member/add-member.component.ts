@@ -1,15 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  FormControl,
-  Validators,
-  AbstractControl,
-  AsyncValidatorFn,
-} from '@angular/forms';
+import { FormControl, Validators, AsyncValidatorFn } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Dictionary } from '@ngrx/entity';
 import { MemberDto } from 'src/app/openapi/model/models';
 import { UserService } from 'src/app/store/effects/user/user.service';
-import { Subject } from 'rxjs';
 import {
   debounceTime,
   switchMap,
@@ -17,6 +11,7 @@ import {
   distinctUntilChanged,
   first,
 } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-add-member',
@@ -31,7 +26,7 @@ export class AddMemberComponent implements OnInit {
     this.createUsernameChecker()
   );
 
-  suggestions: string[];
+  suggestions: string[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AddMemberComponent>,
@@ -44,9 +39,10 @@ export class AddMemberComponent implements OnInit {
     this.nameControl.valueChanges
       .pipe(
         debounceTime(1000),
-        switchMap(() =>
-          this.userService.search({ search: this.nameControl.value })
-        )
+        switchMap(() => {
+          const search = this.nameControl.value;
+          return search ? this.userService.search({ search }) : EMPTY;
+        })
       )
       .subscribe((resp) => {
         this.suggestions = resp.usernames;
@@ -54,9 +50,10 @@ export class AddMemberComponent implements OnInit {
   }
 
   confirm(): void {
-    this.userService
-      .getUserId({ username: this.nameControl.value })
-      .subscribe((resp) => this.dialogRef.close(resp.id));
+    const username = this.nameControl.value;
+    (username ? this.userService.getUserId({ username }) : EMPTY).subscribe(
+      (resp) => this.dialogRef.close(resp.id)
+    );
   }
 
   createUsernameChecker(): AsyncValidatorFn {

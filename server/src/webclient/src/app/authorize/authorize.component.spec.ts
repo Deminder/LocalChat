@@ -20,7 +20,7 @@ describe('AuthorizeComponent', () => {
   let store: MockStore;
   const initialState = {};
 
-  let mockInitialUsernameSelector: MemoizedSelector<AppState, string>;
+  let _mockInitialUsernameSelector: MemoizedSelector<AppState, string | undefined>;
 
   let notifyServiceSpy: jasmine.SpyObj<NotifyService>;
 
@@ -49,9 +49,9 @@ describe('AuthorizeComponent', () => {
     store = TestBed.inject(MockStore);
     fixture.detectChanges();
 
-    mockInitialUsernameSelector = store.overrideSelector(
+    _mockInitialUsernameSelector = store.overrideSelector(
       selectRegisteredUsername,
-      null
+      undefined
     );
   });
 

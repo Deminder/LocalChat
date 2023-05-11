@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
-import { EMPTY, from, merge, Observable, of } from 'rxjs';
+import { EMPTY, from, Observable, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -18,10 +18,7 @@ import {
 } from 'src/app/openapi/model/models';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { SseEventService } from '../../../shared/services/sse-event.service';
-import {
-  APIActionCreator,
-  APIActionCreatorContainer,
-} from '../../actions/actions-creation';
+import { createApiActionEffect } from '../../actions/actions-creation';
 import {
   conversationUpserted,
   ConvRef,
@@ -49,7 +46,7 @@ import { UserService } from './user.service';
 
 @Injectable()
 export class UserEffects {
-  getSelf$ = this.createApiActionEffect(getSelfActions, {
+  getSelf$ = createApiActionEffect(this.actions$, getSelfActions, {
     service: () => this.userService.getSelf().pipe(map((user) => ({ user }))),
     success: () => of(listConversationsActions.request(), listenForEvents()),
     error: (message) => {
@@ -68,19 +65,22 @@ export class UserEffects {
           withLatestFrom(this.store.select(selectedConversationId)),
           mergeMap(([event, cid]) => {
             switch (event.subject) {
-              case 'upsert-conv':
+              case 'upsert-conv': {
                 return of(conversationUpserted({ conv: event.message }));
-              case 'upsert-member':
+              }
+              case 'upsert-member': {
                 const member = event.message as MemberDto;
                 return cid === member.convId
                   ? of(memberUpserted({ member }))
                   : EMPTY;
-              case 'delete-member':
+              }
+              case 'delete-member': {
                 const memberRef = event.message as MemberRef;
                 return cid === memberRef.conversationId
                   ? of(memberDeleted(memberRef))
                   : EMPTY;
-              case 'upsert-message':
+              }
+              case 'upsert-message': {
                 this.notifyService.incomingMessage(
                   event.message.conversationId,
                   event.message.message
@@ -93,16 +93,19 @@ export class UserEffects {
                   messageUpserted(convMessage),
                   refreshConversationActions.request(convMessage as ConvRef)
                 );
-              case 'delete-message':
+              }
+              case 'delete-message': {
                 const convMessageRef = event.message as MessageRef;
                 return this.messageListChange(
                   convMessageRef.conversationId === cid,
                   messageDeleted(convMessageRef),
                   refreshConversationActions.request(convMessageRef as ConvRef)
                 );
-              default:
+              }
+              default: {
                 console.log(JSON.stringify(event));
                 return EMPTY;
+              }
             }
           }),
           catchError((error: ErrorEvent) => {
@@ -131,7 +134,7 @@ export class UserEffects {
     )
   );
 
-  listLoginTokens$ = this.createApiActionEffect(listLoginTokensActions, {
+  listLoginTokens$ = createApiActionEffect(this.actions$, listLoginTokensActions, {
     service: () => this.userService.listLoginTokens(),
     error: (message) => {
       this.snackbar.open(message || 'Login Tokens unavailable!', '', {
@@ -141,8 +144,8 @@ export class UserEffects {
     },
   });
 
-  deleteToken$ = this.createApiActionEffect(deleteTokenActions, {
-    service: (a) => this.userService.deleteLoginToken(a.tokenId),
+  deleteToken$ = createApiActionEffect(this.actions$, deleteTokenActions, {
+    service: (a) => this.userService.deleteLoginToken(a.tokenId).pipe(map(() => undefined)),
     success: () => of(listLoginTokensActions.request()),
     error: (message) => {
       this.snackbar.open(message || 'Delete Token failed!', '', {
@@ -175,45 +178,6 @@ export class UserEffects {
       actions.push(fetchAction);
     }
     return from(actions);
-  }
-
-  private createApiActionEffect<
-    R extends object | void,
-    S extends object | void,
-    F extends object | void
-  >(
-    container: APIActionCreatorContainer<R, S, F>,
-    calls: {
-      service: (action: ReturnType<APIActionCreator<R>>) => Observable<S>;
-      success?: (res: S) => Observable<Action>;
-      error?: (error: any) => Observable<Action>;
-    }
-  ): Observable<Action> {
-    return createEffect(() =>
-      this.actions$.pipe(
-        ofType(container.request),
-        switchMap((r) =>
-          calls.service(r).pipe(
-            mergeMap((s) =>
-              merge(
-                calls.success ? calls.success(s) : EMPTY,
-                of(
-                  s instanceof Object
-                    ? container.success(s)
-                    : container.success(null)
-                )
-              )
-            ),
-            catchError((error) => {
-              return merge(
-                calls.error ? calls.error(error) : EMPTY,
-                of(container.failure({ error }))
-              );
-            })
-          )
-        )
-      )
-    );
   }
 
   constructor(

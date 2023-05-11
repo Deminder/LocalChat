@@ -47,13 +47,13 @@ export class AppComponent implements OnInit, OnDestroy {
   conversationId$ = this.store.select(selectedConversationId);
   isSearching$ = this.store.select(isMessageSearching);
 
+  appTitle$ = this.store.select(selectAppTitle);
   toolbarTitle$ = this.store.select(selectAppToolbar);
 
-  titleUpdater: Subscription;
+  titleUpdater!: Subscription;
 
-  smallLayout: boolean;
-  searchOpen: boolean;
-  
+  smallLayout = false;
+  searchOpen = false;
 
   constructor(
     private store: Store,
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.updateSidenavOverlay();
     this.titleUpdater = combineLatest([
       this.conversations$,
-      this.store.select(selectAppTitle),
+      this.appTitle$,
       this.notifyService.hidden$.pipe(startWith(this.notifyService.isHidden())),
     ]).subscribe(([convs, t, h]) => {
       const unreadCount = convs

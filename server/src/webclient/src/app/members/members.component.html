@@ -52,22 +52,22 @@
   </mat-accordion>
   <button
     mat-icon-button
-    [disabled]="!(selfMember$ | async)?.permission.moderate"
+    [disabled]="(selfMember$ | async)?.permission?.moderate === false"
     (click)="addMember(conv)"
   >
     <mat-icon>add</mat-icon>
   </button>
   <button
     mat-button
-    [disabled]="!(selfMember$ | async)?.permission.administrate"
+    [disabled]="(selfMember$ | async)?.permission?.administrate === false"
     (click)="renameConversation(conv)"
   >
     Rename Conversation
   </button>
   <button
-    *ngIf="(voiceChannel$ | async).conversationId !== conv.id; else leaveButton"
+    *ngIf="(voiceChannel$ | async)?.conversationId !== conv.id; else leaveButton"
     mat-button
-    [disabled]="!(selfMember$ | async)?.permission.voice"
+    [disabled]="(selfMember$ | async)?.permission?.voice === false"
     (click)="joinVoice(conv)"
   >
     Join Voice

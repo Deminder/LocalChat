@@ -5,7 +5,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 describe('ConversationService', () => {
   let service: ConversationService;
-  let http: HttpTestingController;
+  let _http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -13,7 +13,7 @@ describe('ConversationService', () => {
       providers: [ConversationService],
     });
     service = TestBed.inject(ConversationService);
-    http = TestBed.inject(HttpTestingController);
+    _http = TestBed.inject(HttpTestingController);
   });
 
   it('should be created', () => {

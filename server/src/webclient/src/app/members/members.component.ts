@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { map, take } from 'rxjs/operators';
@@ -30,7 +30,7 @@ import {
   templateUrl: './members.component.html',
   styleUrls: ['./members.component.scss'],
 })
-export class MembersComponent implements OnInit, OnDestroy {
+export class MembersComponent {
   members$ = this.store.select(selectConversationMembers);
   activeConversation$ = this.store.select(selectActiveConversation);
   conversationId$ = this.store.select(selectedConversationId);
@@ -55,10 +55,6 @@ export class MembersComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private voiceService: VoiceService
   ) {}
-
-  ngOnInit(): void {}
-
-  ngOnDestroy(): void {}
 
   changeColor(member: MemberDto, color: number): void {
     this.store.dispatch(

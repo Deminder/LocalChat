@@ -10,8 +10,6 @@ export class EnterKeyDownDirective {
   @Output()
   escapeKeydown = new EventEmitter<KeyboardEvent>();
 
-  constructor() {}
-
   @HostListener('keydown', ['$event'])
   onKeydown(ev: KeyboardEvent): void {
     if (ev.key === 'Enter') {

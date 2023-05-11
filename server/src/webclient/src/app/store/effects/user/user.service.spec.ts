@@ -8,7 +8,7 @@ import {
 
 describe('UserService', () => {
   let service: UserService;
-  let http: HttpTestingController;
+  let _http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -16,7 +16,7 @@ describe('UserService', () => {
       providers: [UserService],
     });
     service = TestBed.inject(UserService);
-    http = TestBed.inject(HttpTestingController);
+    _http = TestBed.inject(HttpTestingController);
   });
 
   it('should be created', () => {
