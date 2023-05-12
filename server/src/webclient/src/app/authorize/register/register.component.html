@@ -1,4 +1,4 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+<form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <app-field-error [errors]="errors" field="username"></app-field-error>
   <mat-form-field>
     <mat-label>Username</mat-label>

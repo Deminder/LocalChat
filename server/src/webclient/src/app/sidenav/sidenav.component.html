@@ -1,5 +1,9 @@
 <mat-sidenav-container>
-  <mat-sidenav [mode]="overlay ? 'over' : 'side'" [(opened)]="opened">
+  <mat-sidenav
+    class="sidenav"
+    [mode]="overlay ? 'over' : 'side'"
+    [(opened)]="opened"
+  >
     <mat-card>
       <mat-card-header>
         <div mat-card-avatar class="localchat-image"></div>
@@ -7,27 +11,29 @@
         <mat-card-subtitle>{{ subtitle }}</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
-    <mat-selection-list [multiple]="false">
+    <mat-nav-list>
       <ng-template ngFor let-conv [ngForOf]="conversations">
-        <mat-list-option
-          class="list-option"
-          [selected]="conversationId === conv.id"
+        <a
+          mat-list-item
+          class="conversation-link-item"
+          [disableRipple]="true"
+          [activated]="conversationId === conv.id"
           [routerLink]="'/chat/' + conv.id"
-          [value]="conv.id"
+          lines="1"
+          matListItemTitle
           [matBadge]="conv.unreadCount"
           [matBadgeHidden]="conv.unreadCount === 0"
           matBadgeColor="accent"
         >
-          <span class="entry-text">{{ conv.name }}</span>
-        </mat-list-option>
+          {{ conv.name }}
+        </a>
         <mat-divider></mat-divider>
       </ng-template>
-      <mat-list-option (click)="createConv.emit()">
-        <span style="text-align: center; font-weight: bold;"
-          ><mat-icon>add</mat-icon></span
-        >
-      </mat-list-option>
-    </mat-selection-list>
+    </mat-nav-list>
+    <a mat-button class="conversation-add-button" (click)="createConv.emit()">
+      <span><mat-icon>add</mat-icon></span
+      >
+    </a>
   </mat-sidenav>
 
   <mat-sidenav-content>

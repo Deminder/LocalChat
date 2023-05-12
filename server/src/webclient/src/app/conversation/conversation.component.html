@@ -1,6 +1,6 @@
 <div class="main-column" *ngIf="conversationId$ | async as cid">
   <app-message-list
-    class="list"
+    class="message-list"
     cdkScrollable
     [messages]="(conversationMessages$ | async) ?? []"
     [selfUserId]="(selfUserId$ | async) ?? -1"

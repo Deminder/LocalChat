@@ -1,27 +1,33 @@
 :host {
-  display: flex;
   flex-grow: 1;
 }
 
-.mat-sidenav {
-  width: 15em;
-  max-width: 15em;
-}
-
-:host ::ng-deep.mat-badge-content {
-  right: 11px !important;
-  top: 11px !important;
-}
-
 .mat-sidenav-container {
-  width: 100%;
-  min-width: 20em;
+  height: 100%;
 }
 
-.entry-text {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  text-align: left;
+.sidenav {
+  width: 15em;
+  display: flex;
+  flex-flow: column;
+
+}
+
+.conversation-link-item, .conversation-add-button {
+  width: 100%;
+}
+
+.conversation-add-button span {
+  text-align: center;
   font-weight: bold;
+}
+
+a .mat-mdc-list-item--activated {
+  color: inherit;
+  background-color: inherit;
+}
+
+:host ::ng-deep .mat-badge-content {
+  right: 17px !important;
+  top: 14px !important;
 }

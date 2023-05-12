@@ -8,14 +8,14 @@
   display: none;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   flex: 1;
   margin-top: .5em;
   margin-left: 1em;
   margin-right: 1em;
 }
 
-textarea.mat-input-element {
+textarea.mat-mdc-input-element {
   max-height: 15em;
   height: 6em;
   min-height: 1em;
@@ -24,11 +24,11 @@ textarea.mat-input-element {
 }
 
 @media screen and (max-height: 50em) {
-  textarea.mat-input-element {
+  textarea.mat-mdc-input-element {
     height: 1.5em;
   }
 
-  .mat-form-field {
+  .mat-mdc-form-field {
     margin-top: .25em;
     margin-left: .5em;
     margin-right: .5em;

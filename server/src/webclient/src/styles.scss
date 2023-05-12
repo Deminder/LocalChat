@@ -3,7 +3,7 @@
 
 @include mat.core();
 
-$localchat-app-primary: mat.define-palette(mat.$grey-palette, 500);
+$localchat-app-primary: mat.define-palette(mat.$grey-palette, 500, 100, 700, 100);
 $localchat-app-accent: mat.define-palette( mat.$blue-grey-palette, A200, A100, A400);
 $localchat-app-accent2: mat.define-palette( mat.$indigo-palette, A200, A100, A400);
 
@@ -23,19 +23,19 @@ $localchat-app-theme: mat.define-dark-theme(
   background-color: mat.get-color-from-palette($localchat-app-primary, 800);
 }
 
-a:visited {
+.message-list a:visited {
   color: mat.get-color-from-palette($localchat-app-warn, 100);
 }
-a:visited:hover {
+.message-list a:visited:hover {
   color: mat.get-color-from-palette($localchat-app-warn, 200);
 }
 
-a:link {
+.message-list a:link {
   color: mat.get-color-from-palette($localchat-app-warn, 500);
   text-shadow: 1px 1px darkslategray;
 }
 
-a:link:hover {
+.message-list a:link:hover {
   color: mat.get-color-from-palette($localchat-app-warn, 700);
 }
 
@@ -101,12 +101,8 @@ a:link:hover {
   background: mat.get-color-from-palette($localchat-app-primary, 500);
 }
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
 @include mat.all-component-themes($localchat-app-theme);
 
-//@import "assets/google-web-font-local.css";
 @import "assets/google-web-font-gstatic.css";
 
 body {

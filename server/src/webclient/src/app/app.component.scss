@@ -8,11 +8,6 @@
   overflow: hidden;
 }
 
-
-:host ::ng-deep .mat-drawer-content {
-  overflow: hidden;
-}
-
 :host {
   display: flex;
   height: 100%;
@@ -20,4 +15,8 @@
   flex-flow: column;
 }
 
-
+/*
+:host ::ng-deep .mat-mdc-drawer-content {
+  overflow: hidden;
+}
+*/

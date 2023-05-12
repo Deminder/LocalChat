@@ -1,4 +1,11 @@
-.mat-form-field {
-  width: 100%;
+
+.register-form {
+  display: flex;
+  flex-flow: column;
+}
+
+
+.mat-mdc-form-field {
+  flex-grow: 1;
 }
 
