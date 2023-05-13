@@ -1,14 +1,14 @@
-import * as fromRouter from '@ngrx/router-store';
+import { getRouterSelectors, RouterReducerState } from '@ngrx/router-store';
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 
 export const routerKey = 'router';
 
 export interface RouterState {
-  router: fromRouter.RouterReducerState<any>;
+  router: RouterReducerState<any>;
 }
 
 export const selectRouter = createFeatureSelector<
-  fromRouter.RouterReducerState<any>
+  RouterReducerState<any>
 >(routerKey);
 
 export const {
@@ -20,7 +20,7 @@ export const {
   selectRouteParam, // factory function to select a route param
   selectRouteData, // select the current route data
   selectUrl, // select the current url
-} = fromRouter.getSelectors(selectRouter);
+} = getRouterSelectors();
 
 export const selectRegisteredUsername = selectQueryParam('registered');
 
@@ -31,7 +31,7 @@ export const selectedConversationId = createSelector(
 
 export const shouldLoadSelf = createSelector(
   selectUrl,
-  (data) => data !== undefined && !data.startsWith('/authorize')
+  (data) => typeof data === 'string' && !data.startsWith('/authorize')
 );
 
 export const isSettingsOpen = createSelector(
@@ -41,10 +41,10 @@ export const isSettingsOpen = createSelector(
 
 export const isMembersOpen = createSelector(
   selectUrl,
-  (data) => data !== undefined &&data.startsWith('/members/')
+  (data) => typeof data === 'string' && data.startsWith('/members/')
 );
 
 export const isChatOpen = createSelector(
   selectUrl,
-  (data) => data !== undefined && data.startsWith('/chat/')
+  (data) => typeof data === 'string' && data.startsWith('/chat/')
 );
