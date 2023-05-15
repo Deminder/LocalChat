@@ -1,11 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-
-  spring:
-    flyway:
-      schemas: public
-
   security:
     user:
       name: admin

@@ -3,8 +3,10 @@ plugins {
 }
 
 frontend {
-  nodeDistributionProvided.set(false)
-  nodeVersion.set("18.15.0")
+  nodeDistributionProvided.set(true)
   yarnEnabled.set(true)
   yarnVersion.set("1.22.5")
+  assembleScript.set("run assemble")
+  checkScript.set("run check")
+  cleanScript.set("run clean")
 }

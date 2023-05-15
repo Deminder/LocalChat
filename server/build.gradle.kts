@@ -28,7 +28,7 @@ val copyFrontend by tasks.registering {
 }
 
 copyFrontend {
-    dependsOn(":server:webclient:build")
+    dependsOn(":server:webclient:assembleFrontend")
 }
 
 tasks.processResources {

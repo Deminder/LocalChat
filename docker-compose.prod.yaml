@@ -1,0 +1,12 @@
+
+services:
+  server:
+    environment:
+      spring_profiles_active: prod
+      KEY_STORE_PKCS_FILE: server-prod.p12
+      KEY_STORE_PASSWORD: changeme
+      POSTGRES_PASSWORD: secret
+      ADMIN_PASSWORD: secret
+  db:
+    environment:
+      POSTGRES_PASSWORD: secret

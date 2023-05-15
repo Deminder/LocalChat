@@ -1,0 +1,14 @@
+FROM gradle:7.6.1-jdk17-alpine AS builder
+RUN apk add --update npm
+WORKDIR /app
+COPY ./ ./
+RUN gradle assemble \
+&& cp server/build/libs/server-1.1.jar /home/gradle/localchat.jar \
+&& gradle clean
+
+FROM openjdk:17-jdk-alpine
+RUN adduser -S localchat
+USER localchat
+EXPOSE 9432
+COPY --from=builder /home/gradle/localchat.jar home/localchat/localchat.jar
+ENTRYPOINT [ "java", "-jar", "/home/localchat/localchat.jar" ]

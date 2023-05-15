@@ -20,20 +20,20 @@ springdoc:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    url: jdbc:postgresql://${POSTGRES_HOST:db}:${POSTGRES_PORT:5432}/postgres?currentSchema=public
     username: admin
     password: ${POSTGRES_PASSWORD:secret}
   flyway:
     schemas: public
     locations: classpath:db/migration
     enabled: true
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    url: jdbc:postgresql://${POSTGRES_HOST:db}:${POSTGRES_PORT:5432}/postgres?currentSchema=public
     user: admin
     password: ${POSTGRES_PASSWORD:secret}
 
 encrypt:
   key-store:
-    location: classpath:/server-dev.p12
+    location: classpath:/${KEY_STORE_PKCS_FILE:server-dev.p12}
     password: ${KEY_STORE_PASSWORD:changeme}
     alias: localchat
 

@@ -34,19 +34,29 @@ Simple local network client-server chatting web app with Spring Boot and Angular
   - Basic voice transmission via WebSockets (not using WebRTC)
 
 ## Development
-Generate `server-dev.p12` keystore:
+Generate a key store for the `dev` profile:
 ```shell
-CN=localhost OU=localchat-dev O=localchat-dev L=dev ST=dev C=DE ./scripts/ssl/init-keystore.sh server-dev
-mv server-dev.p12 server/src/main/resources/
+./gen-keystore.sh dev
 ```
-Build with _gradle_ (server JAR in `server/build/libs/server-1.0.jar`):
+Run the backend api at `localhost:9432` without assembling the webclient:
 ```shell
-./gradlew build
+docker-compose up -d db pgadmin
+POSTGRES_HOST=localhost ./gradlew server:bootRun -x :server:webclient:assembleFrontend
+```
+Then, run the webclient in `development` configuration at `localhost:4200`:
+```shell
+cd server/src/webclient && yarn install
+yarn start
 ```
 
 ## Deployment
-Configure deployment (`java -jar server-1.0.jar`) with environment variables (see `server-dev.env`).
-Setup `server.env` and endpoints in `docker-compose.yaml` and deploy via:
+Generate a key store for the `prod` profile:
 ```shell
-docker-compose up -d
+./gen-keystore.sh prod
 ```
+Then, configure `docker-compose.prod.yaml` and startup an instance:
+```shell
+./gradlew build
+docker-compose up -f docker-compose.yaml -f docker-compose.prod.yaml -d
+```
+Note that by default `server.ssl.enabled: false` and some existing reverse proxy configuration is expected for SSL.

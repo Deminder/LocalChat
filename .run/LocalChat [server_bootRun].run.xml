@@ -6,6 +6,8 @@
           <entry key="ADMIN_PASSWORD" value="secret" />
           <entry key="KEY_STORE_PASSWORD" value="changeme" />
           <entry key="KEY_STORE_PKCS_FILE" value="server-dev.p12" />
+          <entry key="POSTGRES_HOST" value="localhost" />
+          <entry key="POSTGRES_PORT" value="5432" />
           <entry key="POSTGRES_PASSWORD" value="secret" />
           <entry key="spring.profiles.active" value="dev" />
         </map>
