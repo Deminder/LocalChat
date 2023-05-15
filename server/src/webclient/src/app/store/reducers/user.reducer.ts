@@ -6,7 +6,6 @@ import {
   listLoginTokensActions,
   sidenavToggle,
   toggleDesktopNotifications,
-  toggleSoundAlerts,
 } from '../actions/user.actions';
 
 export const userKey = 'user';
@@ -15,7 +14,6 @@ export interface UserState {
   selfUser: UserDto;
   sidenavOpen: boolean;
   desktopNotifications: boolean;
-  soundAlerts: boolean;
   loginTokens: LoginTokenDto[];
 }
 
@@ -27,7 +25,6 @@ export const initialUserState: UserState = {
   },
   sidenavOpen: true,
   desktopNotifications: false,
-  soundAlerts: true,
   loginTokens: [],
 };
 
@@ -52,7 +49,4 @@ export const userReducer = createReducer(
   on(toggleDesktopNotifications, (state, action) => {
     return { ...state, desktopNotifications: action.enabled };
   }),
-  on(toggleSoundAlerts, (state, action) => {
-    return { ...state, soundAlerts: action.enabled };
-  })
 );

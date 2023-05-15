@@ -22,11 +22,6 @@ export const areDesktopNotificationsEnabled = createSelector(
   (state) => state.desktopNotifications
 );
 
-export const areSoundAlertsEnabled = createSelector(
-  selectUser,
-  (state) => state.soundAlerts
-);
-
 export const isSideNavOpen = createSelector(
   selectUser,
   (state) => state.sidenavOpen

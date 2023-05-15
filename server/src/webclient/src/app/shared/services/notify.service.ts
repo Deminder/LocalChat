@@ -2,7 +2,6 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Howl } from 'howler';
 import { fromEvent, Observable, Subject, combineLatest } from 'rxjs';
 import { map, take, startWith } from 'rxjs/operators';
 import { ConversationMessageDto } from 'src/app/openapi/model/models';
@@ -13,7 +12,6 @@ import {
 } from 'src/app/store/selectors/conversation.selectors';
 import {
   areDesktopNotificationsEnabled,
-  areSoundAlertsEnabled,
 } from 'src/app/store/selectors/user.selectors';
 import { AuthorNamePipe } from '../author-name.pipe';
 
@@ -23,14 +21,8 @@ import { AuthorNamePipe } from '../author-name.pipe';
 export class NotifyService {
   conversationId$ = this.store.select(selectedConversationId);
   desktopNotification$ = this.store.select(areDesktopNotificationsEnabled);
-  alertSounds$ = this.store.select(areSoundAlertsEnabled);
   memberEntites$ = this.store.select(selectConversationMemberEntities);
   conversationNameEntities$ = this.store.select(selectConversationNameEntities);
-
-  beepSound = new Howl({
-    src: '../../../assets/audio/beep.wav',
-    preload: true,
-  });
 
   hidden$ = fromEvent(this.doc, 'visibilitychange').pipe(
     startWith(this.isHidden()),
@@ -95,11 +87,6 @@ export class NotifyService {
               });
           }
         });
-      this.alertSounds$.pipe(take(1)).subscribe((enabled) => {
-        if (enabled) {
-          this.beepSound.play();
-        }
-      });
     }
   }
 
@@ -112,14 +99,6 @@ export class NotifyService {
       return Notification.requestPermission();
     }
     return Promise.resolve(Notification.permission);
-  }
-
-  enableSoundAlerts(enabled: boolean): void {
-    if (enabled) {
-      this.beepSound.load();
-    } else {
-      this.beepSound.unload();
-    }
   }
 
   constructor(

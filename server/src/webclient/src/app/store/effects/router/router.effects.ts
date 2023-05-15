@@ -30,7 +30,6 @@ import {
 import {
   selectSelfName,
   areDesktopNotificationsEnabled,
-  areSoundAlertsEnabled,
 } from '../../selectors/user.selectors';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 
@@ -104,13 +103,9 @@ export class RouterEffects {
     () =>
       this.actions$.pipe(
         ofType(ROOT_EFFECTS_INIT),
-        withLatestFrom(
-          this.store.select(areDesktopNotificationsEnabled),
-          this.store.select(areSoundAlertsEnabled)
-        ),
-        tap(([desktopNotify, soundNotify]) => {
+        withLatestFrom(this.store.select(areDesktopNotificationsEnabled)),
+        tap(([desktopNotify]) => {
           this.notifyService.enableDesktopNotifications(desktopNotify);
-          this.notifyService.enableSoundAlerts(soundNotify);
         })
       ),
     { dispatch: false }

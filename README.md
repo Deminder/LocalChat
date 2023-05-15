@@ -28,7 +28,7 @@ Simple local network client-server chatting web app with Spring Boot and Angular
   - Edit member color or permissions: administrate, moderate, read, voice, write
   - Send or edit messages
   - Receive messages by Server-sent events (SSE)
-    - Optional desktop notification and notification sound
+    - Optional desktop notification
   - Fetch older messages while scrolling
   - Search for text (or regex) in message history
   - Basic voice transmission via WebSockets (not using WebRTC)

@@ -229,7 +229,7 @@ export const conversationReducer = createReducer(
   })),
   on(changeMessageSearchCount, (state, action) => ({
     ...state,
-    search: { ...state.search, index: 0, count: action.total },
+    search: { ...state.search, index: action.total === 0 ? -1 : 0, count: action.total },
   })),
   on(changeMessageSearch, (state, action) => ({
     ...state,

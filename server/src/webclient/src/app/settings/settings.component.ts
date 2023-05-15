@@ -6,11 +6,9 @@ import {
   deleteTokenActions,
   listLoginTokensActions,
   toggleDesktopNotifications,
-  toggleSoundAlerts,
 } from '../store/actions/user.actions';
 import {
   areDesktopNotificationsEnabled,
-  areSoundAlertsEnabled,
   selectLoginTokens,
   selectSelfName,
 } from '../store/selectors/user.selectors';
@@ -24,7 +22,6 @@ export class SettingsComponent {
   selfName$ = this.store.select(selectSelfName);
   tokens$ = this.store.select(selectLoginTokens);
   desktopNotification$ = this.store.select(areDesktopNotificationsEnabled);
-  soundAlerts$ = this.store.select(areSoundAlertsEnabled);
 
   constructor(private store: Store) {}
 
@@ -44,7 +41,4 @@ export class SettingsComponent {
     this.store.dispatch(toggleDesktopNotifications({ enabled }))
   }
 
-  enableSoundAlerts(enabled: boolean): void {
-    this.store.dispatch(toggleSoundAlerts({ enabled }));
-  }
 }

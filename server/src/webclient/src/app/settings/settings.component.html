@@ -21,11 +21,6 @@
       (ngModelChange)="enableNotifications($event)"
       >Enable Desktop Notifications</mat-checkbox
     >
-    <mat-checkbox
-      [ngModel]="soundAlerts$ | async"
-      (ngModelChange)="enableSoundAlerts($event)"
-      >Enable Sound Alerts</mat-checkbox
-    >
   </section>
   <button id="logoutButton" mat-raised-button (click)="doLogout()">
     Logout
