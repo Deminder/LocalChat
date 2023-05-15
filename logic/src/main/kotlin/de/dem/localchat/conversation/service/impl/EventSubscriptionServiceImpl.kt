@@ -20,7 +20,7 @@ class EventSubscriptionServiceImpl(
     override fun notifyMembers(event: ConversationEvent, conversationId: Long, vararg excluded: String) {
         userRepository.findByConversationId(conversationId)
                 .map { it.username }.toSet()
-                .minus(excluded)
+                .minus(excluded.toSet())
                 .forEach { name ->
                     userQueues.getOrDefault(name, emptyMap()).forEach {
                         it.value.put(event)

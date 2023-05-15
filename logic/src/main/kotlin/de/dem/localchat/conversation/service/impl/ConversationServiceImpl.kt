@@ -7,6 +7,7 @@ import de.dem.localchat.conversation.entity.Conversation
 import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
+import de.dem.localchat.conversation.exception.invalid
 import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.conversation.service.ConversationService
 import de.dem.localchat.security.dataacess.UserRepository
@@ -40,7 +41,7 @@ class ConversationServiceImpl(
     override fun changeConversationName(conversationId: Long, newName: String) =
             conversationRepository.findConvById(conversationId)?.let {
                 conversationRepository.save(it.copy(name = newName))
-            } ?: error("No such conversation!")
+            } ?: invalid("No such conversation!")
 
 
     override fun upsertMessage(conversationId: Long, messageId: Long?, text: String): ConversationMessage =
@@ -53,13 +54,13 @@ class ConversationServiceImpl(
                             conversationMessageRepository.save(it.copy(
                                     text = text
                             ))
-                        } ?: error("Requesting user did not author message $messageId!")
+                        } ?: invalid("Requesting user did not author message $messageId!")
             }
 
     override fun deleteMessage(conversationId: Long, messageId: Long) =
             conversationMessageRepository.findByIdAndConversationId(messageId, conversationId)?.let {
                 conversationMessageRepository.delete(it)
-            } ?: error("Message $messageId not found in conversation $conversationId!")
+            } ?: invalid("Message $messageId not found in conversation $conversationId!")
 
 
     override fun conversationMessagePage(conversationId: Long, page: Int, pageSize: Int,
@@ -88,7 +89,7 @@ class ConversationServiceImpl(
     override fun memberReadsConversation(conversationId: Long): Member =
         memberRepository.findByConvIdAndUserId(conversationId, uid())?.let {
             memberRepository.save(it.copy(lastRead = Instant.now()))
-        } ?: error("Member not found!")
+        } ?: invalid("Member not found!")
 
 
     override fun createConversation(conversationName: String,
@@ -121,9 +122,9 @@ class ConversationServiceImpl(
             }
 
     private fun uid(): Long = uid(username())!!
-    private fun uid(name: String): Long? = (userRepository.findByUsername(name) ?: error("User not found!")).id
+    private fun uid(name: String): Long? = (userRepository.findByUsername(name) ?: invalid("User not found!")).id
 
     private fun username() = SecurityContextHolder.getContext().authentication?.name
-            ?: error("Not logged in!")
+            ?: invalid("Not logged in!")
 }
 

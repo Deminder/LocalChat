@@ -5,6 +5,7 @@ import de.dem.localchat.conversation.dataaccess.ConversationRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
+import de.dem.localchat.conversation.exception.invalid
 import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.security.dataacess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,7 +47,7 @@ class MemberServiceImpl(
     override fun setColor(cid: Long, username: String, color: Int?): Member =
         memberRepository.findByIdAndUsername(cid, username)?.let {
             memberRepository.save(it.copy(color = color))
-        } ?: error("Not a member!")
+        } ?: throw IllegalArgumentException("Not a member!")
 
 
     private fun authorizedMember(cid: Long) = SecurityContextHolder.getContext().authentication?.let {
@@ -59,13 +60,13 @@ class MemberServiceImpl(
     private fun findOrCreateMember(cid: Long, userId: Long) =
         memberRepository.findByConvIdAndUserId(cid, userId) ?: if (userRepository.existsById(userId))
             Member(conversationId = cid, userId = userId) else
-            error("User with id $userId does not exist!")
+            invalid("User with id $userId does not exist!")
 
 
     private fun subjectAndAuthorPair(cid: Long, subjectId: Long) =
         authorizedMember(cid)?.let { author ->
             findOrCreateMember(cid, subjectId) to author
-        } ?: error("Requesting user must be member of conversation $cid!")
+        } ?: invalid("Requesting user must be member of conversation $cid!")
 
 
     override fun upsertMember(conversationId: Long, userId: Long, newPermission: Permission, color: Int?): Member =
@@ -83,7 +84,7 @@ class MemberServiceImpl(
                         adminMembersOf(conversationId).minus(subject).isNotEmpty()
                     )
                         memberRepository.save(it)
-                    else error("Choose next admin before removing the current!")
+                    else invalid("Choose next admin before removing the current!")
                 }
         }
 

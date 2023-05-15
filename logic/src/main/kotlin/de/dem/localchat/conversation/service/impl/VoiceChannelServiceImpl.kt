@@ -1,5 +1,6 @@
 package de.dem.localchat.conversation.service.impl
 
+import de.dem.localchat.conversation.exception.invalid
 import de.dem.localchat.conversation.model.VoiceBuffer
 import de.dem.localchat.conversation.service.MemberService
 import de.dem.localchat.conversation.service.VoiceChannelService
@@ -24,7 +25,7 @@ class VoiceChannelServiceImpl(
                             channels.getOrDefault(conversationId, emptyMap()) +
                             (sid(username, sessionId) to queue))
 
-        } else error("Missing voice permission!")
+        } else invalid("Missing voice permission!")
 
 
     @Synchronized
