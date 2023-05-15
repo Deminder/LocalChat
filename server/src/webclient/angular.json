@@ -80,7 +80,7 @@
               "browserTarget": "webclient:build:production"
             },
             "development": {
-              "browserTarget": "test123:build:development"
+              "browserTarget": "webclient:build:development"
             }
           }
         },

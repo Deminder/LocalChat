@@ -4,14 +4,10 @@
       <mat-spinner></mat-spinner>
     </div>
   </div>
-  <div *ngFor="let msg of messages" #message class="msg-item">
+  <div *ngFor="let msg of messages; let i = index" #message class="msg-item">
     <div
       [@highlight]="highlight === msg.id ? 'active' : 'no'"
-      [ngClass]="
-        messageClasses(msg).concat(
-          'msg-color-' + (1 + (msg.authorUserId | authorColor: memberDict))
-        )
-      "
+      [ngClass]="messageClasses(msg, i)"
       (dblclick)="selectMessage(msg.id)"
       (blur)="selectMessage(-1)"
     >

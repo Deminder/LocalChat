@@ -23,6 +23,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import {AuthorColorPipe} from 'src/app/shared/author-color.pipe';
 
 function escapeRegExp(value: string): string {
   return value.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
@@ -57,7 +58,7 @@ export class MessageListComponent implements OnChanges, AfterViewChecked {
   highlight = -1;
 
   searchMatcher: RegExp | null = null;
-  searchResult: { [msgId: number]: boolean } = {};
+  messageSearch: boolean[] = [];
 
   @Input()
   set search(s: MessageSearch | null) {
@@ -106,12 +107,8 @@ export class MessageListComponent implements OnChanges, AfterViewChecked {
     }
     const sRegex = this.searchMatcher;
     if (sRegex !== null && (changes['messages'] || changes['search'])) {
-      this.searchResult = Object.fromEntries(
-        this.messages.map((msg) => [msg.id, sRegex.test(msg.text)])
-      );
-      this.searchSize.emit(
-        Object.values(this.searchResult).filter((v) => v).length
-      );
+      this.messageSearch = this.messages.map((msg) => sRegex.test(msg.text));
+      this.searchSize.emit(this.messageSearch.filter((v) => v).length);
     }
   }
 
@@ -119,23 +116,28 @@ export class MessageListComponent implements OnChanges, AfterViewChecked {
     this.searchTopOffsets.emit(
       Object.fromEntries(
         this.messageElements
-          .map((element, i) => [this.searchResult[i], element, i])
-          .filter(([r]) => r)
-          .map(([_, e, i]) => [i, e])
+          .map(
+            (element, i) =>
+              [this.messageSearch[i], this.messages[i].id, element] as [
+                boolean,
+                number,
+                ElementRef<any>
+              ]
+          )
+          .filter(([isMatch]) => isMatch)
+          .map(([_, msgId, ele]) => [msgId, ele.nativeElement.offsetTop])
       )
     );
   }
 
-  isOutgoing(msg: ConversationMessageDto): boolean {
-    return this.selfUserId === msg.authorUserId;
-  }
-
-  messageClasses(msg: ConversationMessageDto): string[] {
+  messageClasses(msg: ConversationMessageDto, index: number): string[] {
+    const colorPipe = new AuthorColorPipe();
     return [
       'chatmessage',
-      this.isOutgoing(msg) ? 'outgoing' : 'incoming',
+      this.selfUserId === msg.authorUserId ? 'outgoing' : 'incoming',
+      'msg-color-' + (1 + (colorPipe.transform(msg.authorUserId, this.memberDict)))
     ].concat(
-      !this.searchMatcher || this.searchResult[msg.id] ? [] : ['nomatch']
+      !this.searchMatcher || this.messageSearch[index] ? [] : ['nomatch']
     );
   }
 

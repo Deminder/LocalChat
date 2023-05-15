@@ -3,7 +3,7 @@
     mat-icon-button
     class="switch-button"
     aria-label="Next"
-    [disabled]="(searchItemCount$ | async) ?? 0"
+    [disabled]="((searchItemCount$ | async) ?? 0) <= 0"
     (click)="nextItem()"
   >
     <mat-icon>keyboard_arrow_up</mat-icon>
@@ -15,7 +15,7 @@
     mat-icon-button
     class="switch-button"
     aria-label="Previous"
-    [disabled]="(searchItemCount$ | async) ?? 0"
+    [disabled]="((searchItemCount$ | async) ?? 0) <= 0"
     (click)="previousItem()"
   >
     <mat-icon>keyboard_arrow_down</mat-icon>
@@ -51,13 +51,14 @@
     [(ngModel)]="searchText"
     (ngModelChange)="searchUpdate(false)"
   />
+</mat-form-field>
+<div class="clear-button" [class.hidden]="searchCollapsed">
   <button
     mat-icon-button
     [class.hidden]="isClear"
-    class="clear-button"
     aria-label="Clear"
     (click)="searchText = ''; searchUpdate()"
   >
     <mat-icon>clear</mat-icon>
   </button>
-</mat-form-field>
+</div>

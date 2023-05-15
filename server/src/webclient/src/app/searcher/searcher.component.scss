@@ -8,16 +8,12 @@
 }
 
 .clear-button {
-  display: inline-block;
-  position: absolute;
-  right: -1.5em;
-  top: 0;
+  width: 2.5em;
 }
 
 .search-field {
   flex: 1;
   max-width: 12em;
-  margin-right: 1.5em;
 }
 
 .search-field > input {
@@ -31,7 +27,7 @@
 }
 
 .switch-section span {
-  line-height: 40px;
+  line-height: 50px;
 }
 
 .regex-checkbox {
@@ -45,5 +41,9 @@
 }
 
 .hidden {
+  display: none;
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
