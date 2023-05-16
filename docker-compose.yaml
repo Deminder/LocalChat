@@ -2,13 +2,14 @@ version: '3.7'
 services:
   server:
     image: localhost/localchat2:latest
+    build: .
     restart: always
     depends_on:
       - db
     ports:
-      - 9432:9432
+      - 127.0.0.1:9433:9432
   db:
-    image: postgres:12
+    image: postgres:15.3-alpine
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -17,7 +18,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data:z
     ports:
-      - 5432:5432
+      - 127.0.0.1:5433:5432
 
 volumes:
   postgres-data:

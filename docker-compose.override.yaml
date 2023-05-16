@@ -1,7 +1,6 @@
 
 services:
   server:
-    build: .
     environment:
       spring_profiles_active: dev
       KEY_STORE_PKCS_FILE: server-dev.p12
@@ -20,7 +19,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: secret
       PGADMIN_LISTEN_PORT: 6060
     ports:
-      - 6060:6060
+      - 127.0.0.1:6060:6060
     volumes:
       - pgadmin-data:/var/lib/pgadmin:z
 
