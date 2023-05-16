@@ -7,6 +7,6 @@ frontend {
   yarnEnabled.set(true)
   yarnVersion.set("1.22.5")
   assembleScript.set("run assemble")
-  checkScript.set("run check")
+  checkScript.set("run lint")
   cleanScript.set("run clean")
 }
