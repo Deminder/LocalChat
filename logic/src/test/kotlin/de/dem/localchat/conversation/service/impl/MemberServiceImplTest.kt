@@ -1,5 +1,6 @@
 package de.dem.localchat.conversation.service.impl
 
+import de.dem.localchat.conversation.exception.ConversationException
 import de.dem.localchat.conversation.dataaccess.ConversationMessageRepository
 import de.dem.localchat.conversation.dataaccess.ConversationRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
@@ -319,7 +320,7 @@ internal class MemberServiceImplTest {
             // remove admin permission
             unit.upsertMember(cid, 1L, Permission(read = true, write = true, voice = true, moderate = true), null)
             fail { "Last admin can not be removed when user remains!" }
-        } catch (ex: IllegalStateException) {
+        } catch (ex: ConversationException) {
             assertThat(ex.message, equalTo("Choose next admin before removing the current!"))
         }
     }

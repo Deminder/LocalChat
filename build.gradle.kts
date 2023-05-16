@@ -98,9 +98,11 @@ configure(subprojects.filter { it.name != "webclient" }) {
     tasks.withType<Test> {
         // alias docker-machine="podman machine"
         val podmanSocket = "/run/user/${"id -u".runCommand()?.trimEnd()}/podman/podman.sock"
-        environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", podmanSocket)
-        environment("DOCKER_HOST", "unix://${podmanSocket}")
-        environment("TESTCONTAINERS_RYUK_DISABLED", "true")
+        if (file(podmanSocket).exists()) {
+            environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", podmanSocket)
+            environment("DOCKER_HOST", "unix://${podmanSocket}")
+            environment("TESTCONTAINERS_RYUK_DISABLED", "true")
+        }
     }
 
     tasks.compileKotlin {
