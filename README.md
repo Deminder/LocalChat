@@ -1,37 +1,36 @@
 # Local Chat
-Simple local network client-server chatting web app with Spring Boot and Angular. Intended as a learning aid and personal reference. **Unsafe for production**.
+Simple local network client-server chatting web app with Spring Boot and Angular.
 
+![Screenshot of webclient](webclient-screenshot.png)
+Note that this app is intended as a learning aid and personal reference. **Unsafe for production** due to custom authentication logic.
 ## Stack
 
-- Kotlin backend: Spring Boot 2.3.3
+- Backend
+  - Spring Boot 
   - PostgreSQL (with Flyway migrations)
   - Swagger codegen (openapi)
-  - SSL certificate
   - WebSockets
   - Unit tests (SpringBoot, MockK)
-- Typescript frontend: Angular 10
-  - Material Design
+- Frontend
+  - Angular 16 ( + Material Design )
   - NgRx store ( + router-store)
   - Audio worklets + WebSockets (for basic voice transmission)
   - Karma tests
-- Deployment: Podman (Docker)
+- Deployment with Docker/Podman
   - Build with _gradle_ and run on _openjdk:17-jdk-alpine_ image
-  - Dev and prod profiles for _docker-compose.yaml_ (via _.env_ files)
+  - *Dev* and *prod* configurations for _docker-compose.yaml_
 
 ## Features
 
 - User authentication
-  - Register with username and password
-  - Login/logout and view/delete active login cookies
+  - Register/login/logout and view/delete active login cookies
 - Conversation
-  - Users may create a conversation and add/remove members
-  - Edit member color or permissions: administrate, moderate, read, voice, write
-  - Send or edit messages
-  - Receive messages by Server-sent events (SSE)
-    - Optional desktop notification
-  - Fetch older messages while scrolling
-  - Search for text (or regex) in message history
-  - Basic voice transmission via WebSockets (not using WebRTC)
+  - Users may create a new conversation and add/remove members
+  - Desktop notifications (informed by Server-sent events (SSE))
+  - Infinite scroll for older messages
+  - Edit member permissions (and color)
+  - Text/Regex search with message highlighting
+  - Experimental voice transmission (without WebRTC) via WebSockets + AudioWorklet
 
 ## Development
 Generate a key store for the `dev` profile:
