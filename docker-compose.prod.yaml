@@ -7,6 +7,10 @@ services:
       KEY_STORE_PASSWORD: changeme
       POSTGRES_PASSWORD: secret
       ADMIN_PASSWORD: secret
+    ports:
+      - 127.0.0.1:9433:9432
   db:
     environment:
       POSTGRES_PASSWORD: secret
+    ports:
+      - 127.0.0.1:5433:5432
