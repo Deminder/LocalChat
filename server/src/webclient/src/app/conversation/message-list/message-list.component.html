@@ -37,19 +37,13 @@
         <div class="divider"></div>
         <span>{{ msg.authorDate | date: "short" }}</span>
       </div>
-      <span class="text">
+      <div class="text">
         <ng-template ngFor [ngForOf]="msg.text | displayText" let-seg>
-          <ng-template [ngIf]="seg.link" [ngIfElse]="textblock">
-            <a [href]="seg.text">{{ seg.text }}</a>
-          </ng-template>
-          <ng-template #textblock>
-            {{ seg.text }}
-          </ng-template>
-          <ng-container *ngIf="seg.newline">
-            <br />
-          </ng-container>
+            <a *ngIf="seg.link" [href]="seg.text">{{ seg.text }}</a>
+            <span *ngIf="!seg.link">{{ seg.text }}</span>
+            <br *ngIf="seg.newline"/>
         </ng-template>
-      </span>
+      </div>
     </div>
   </div>
 </div>
