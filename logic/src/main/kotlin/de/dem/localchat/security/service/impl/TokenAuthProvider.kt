@@ -1,7 +1,7 @@
 package de.dem.localchat.security.service.impl
 
-import de.dem.localchat.security.dataacess.UserRepository
-import de.dem.localchat.security.dataacess.UserTokenRepository
+import de.dem.localchat.security.dataaccess.UserRepository
+import de.dem.localchat.security.dataaccess.UserTokenRepository
 import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User
 import de.dem.localchat.security.entity.clean

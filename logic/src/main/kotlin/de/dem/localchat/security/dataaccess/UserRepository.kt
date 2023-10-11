@@ -1,4 +1,4 @@
-package de.dem.localchat.security.dataacess
+package de.dem.localchat.security.dataaccess
 
 import de.dem.localchat.security.entity.User
 import org.springframework.data.jdbc.repository.query.Query

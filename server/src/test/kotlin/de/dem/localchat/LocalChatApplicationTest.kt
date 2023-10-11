@@ -6,7 +6,7 @@ import de.dem.localchat.dtos.ConversationNameDto
 import de.dem.localchat.dtos.requests.ConversationCreateRequest
 import de.dem.localchat.rest.ConversationController
 import de.dem.localchat.rest.ConversationEventsController
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import de.dem.localchat.security.entity.User
 import de.dem.localchat.security.entity.clean
 import de.dem.localchat.security.model.TokenRef

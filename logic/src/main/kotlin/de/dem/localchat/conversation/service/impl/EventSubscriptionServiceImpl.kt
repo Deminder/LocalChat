@@ -2,7 +2,7 @@ package de.dem.localchat.conversation.service.impl
 
 import de.dem.localchat.conversation.model.ConversationEvent
 import de.dem.localchat.conversation.service.EventSubscriptionService
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*

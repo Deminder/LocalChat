@@ -1,4 +1,4 @@
-package de.dem.localchat.security.dataacess
+package de.dem.localchat.security.dataaccess
 
 import de.dem.localchat.security.entity.LoginToken
 import de.dem.localchat.security.entity.User

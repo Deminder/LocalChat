@@ -8,7 +8,7 @@ import de.dem.localchat.conversation.entity.ConversationMessage
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.model.ConversationMessagePage
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

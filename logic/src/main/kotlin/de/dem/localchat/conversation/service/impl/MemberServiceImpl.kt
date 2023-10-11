@@ -7,7 +7,7 @@ import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.exception.invalid
 import de.dem.localchat.conversation.service.MemberService
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder

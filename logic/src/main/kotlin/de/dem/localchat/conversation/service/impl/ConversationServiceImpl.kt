@@ -10,7 +10,7 @@ import de.dem.localchat.conversation.entity.Permission
 import de.dem.localchat.conversation.exception.invalid
 import de.dem.localchat.conversation.model.ConversationMessagePage
 import de.dem.localchat.conversation.service.ConversationService
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service

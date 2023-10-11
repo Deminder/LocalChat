@@ -6,7 +6,7 @@ import de.dem.localchat.conversation.dataaccess.ConversationRepository
 import de.dem.localchat.conversation.dataaccess.MemberRepository
 import de.dem.localchat.conversation.entity.Member
 import de.dem.localchat.conversation.entity.Permission
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

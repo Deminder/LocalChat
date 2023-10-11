@@ -1,12 +1,11 @@
 package de.dem.localchat.management.service.impl
 
 import de.dem.localchat.management.service.ManagementService
-import de.dem.localchat.security.dataacess.UserRepository
+import de.dem.localchat.security.dataaccess.UserRepository
 import de.dem.localchat.security.entity.User
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ManagementServiceImpl(
